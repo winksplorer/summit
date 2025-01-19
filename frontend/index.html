@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>login</title>
+        <!-- since we have unique css for this, we just include it in the html -->
+        <style>
+            body {
+                background: black;
+                display:flex;
+                justify-content: center;
+                align-items: center;
+                height:90vh;
+            }
+
+            h1 { font-size: 3.5vh; }
+
+            .login-container {
+                background: #eeeef6;
+                padding:1vw;
+                border-radius: 2px;
+            }
+
+            input {
+                font-family: 'Times New Roman', Times, serif;
+                box-sizing: border-box;
+                font-size: 1.7vh;
+            }
+
+            #authfail {
+                color: #9f0000;
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="login-container">
+            <h1 id="hostname">?</h1>
+            <form action="/api/login" method="POST">
+                <input type="text" id="username" name="username" placeholder="username" required>
+                <br><br>
+                <input type="password" id="password" name="password" placeholder="password" required>
+                <input type="submit" value="login">
+            </form>
+            <p id="authfail">authentication failed</p>
+        </div>
+
+        <!-- simple javascript to ask the server for a hostname, and to show auth fail message if auth=fail in params -->
+        <script>
+            fetch('/api/am-i-authed')
+                .then(response => {
+                    if (response.status !== 401) return response.text();
+                    throw new Error('didn\'t auth');
+                })
+                .then(data => { window.location.href = data; })
+                .catch(error => { console.error('couldn\'t ask server for auth:', error); });
+
+            fetch('/api/get-hostname')
+                .then(response => {
+                    if (response.ok) return response.text();
+                    throw new Error('Network response was not ok');
+                })
+                .then(data => { document.getElementById('hostname').innerText = data; })
+                .catch(error => { console.error('couldn\'t ask server for hostname:', error); });
+
+            function checkAuthFail() {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('auth') === 'fail') {
+                    document.getElementById('authfail').style.display = 'block';
+                }
+            }
+
+            // Run the checkAuthFail function when the page loads
+            window.onload = checkAuthFail;
+        </script>
+    </body>
+</html>

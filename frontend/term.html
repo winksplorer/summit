@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="style.css" type="text/css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="jquery-3.7.1.min.js"></script>
+        <title>statistics</title>
+    </head>
+    <body>
+        <div class="sidebar">
+            <h1 id="hostname">?</h1>
+            <script>
+                $(document).ready(function() {
+                    $.get('/api/get-hostname', function(response) { $('#hostname').html(response); })
+                });
+            </script>
+
+            <div class="sidebar-items">
+                <a class="current" href="term.html">terminal</a>
+                <a href="log.html">logging</a>
+                <a href="storage.html">storage</a>
+                <a href="net.html">networking</a>
+                <a href="vms.html">virtual machines</a>
+                <a href="services.html">services</a>
+                <a href="config.html">settings</a>
+            </div>
+            <br>
+            <div class="quick-actions">
+                <a href="/api/reboot">↺</a>
+                <a href="/api/poweroff">⏻</a>
+                <a href="/api/logout">⇒</a>
+            </div>
+
+            <div class="stats">
+                <p id="memory">mem 0/0</p>
+                <script>
+                    $(document).ready(function() {
+                        function updateMemory() {
+                            $.get('/api/stat-memory', function(response) { $('#memory').html(response); });
+                        }
+                        updateMemory();
+                        setInterval(updateMemory, 5000);
+                    });
+                </script>
+
+                <p id="cpu">cpu 0%</p>
+                <script>
+                    $(document).ready(function() {
+                        function updateCpu() {
+                            $.get('/api/stat-cpu', function(response) { $('#cpu').html(response); });
+                        }
+                        updateCpu();
+                        setInterval(updateCpu, 5000);
+                    });
+                </script>
+            </div>
+        </div>
+    </body>
+</html>

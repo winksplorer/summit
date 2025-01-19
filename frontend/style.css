@@ -1,0 +1,28 @@
+body {
+    background: black;
+    display:flex;
+    font-size: 1.7vh;
+}
+
+.sidebar {
+    background: #eeeef6;
+    padding: 1vw;
+    border-radius: 2px;
+}
+
+.sidebar-items {
+    display: grid;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover { font-weight: 700; }
+
+.current { text-decoration: underline; }
+
+h1 { font-size: 3.5vh; }
+
+#cpu { margin-top: -1.5vh}
