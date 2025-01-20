@@ -4,12 +4,17 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
+	"time"
 
 	"github.com/msteinert/pam"
 )
 
-var ips []string
+type authedUser struct {
+	id string
+	ua string
+}
+
+var auths []authedUser
 
 // authenticates user with pam
 func PAMAuth(serviceName, userName, passwd string) error {
@@ -45,9 +50,24 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/?auth=fail", http.StatusFound)
 			return
 		}
-		if !authenticated(strings.Split(r.RemoteAddr, ":")[0]) {
-			ips = append(ips, strings.Split(r.RemoteAddr, ":")[0])
-			fmt.Printf("added %s to known ips\n", strings.Split(r.RemoteAddr, ":")[0])
+		if !authenticated(w, r) {
+			id, err := randomBase64String(32)
+			if err != nil {
+				fmt.Println("error: generate login:", err)
+				return
+			}
+			auths = append(auths, authedUser{id: id, ua: r.UserAgent()})
+
+			http.SetCookie(w, &http.Cookie{
+				Name:  "st",
+				Value: id,
+				//Path:     "/",
+				HttpOnly: true,
+				SameSite: http.SameSiteStrictMode,
+				Expires:  time.Now().Add(4 * time.Hour),
+			})
+
+			fmt.Printf("added {%s,%s} to known authed users\n", id, r.UserAgent())
 		}
 		http.Redirect(w, r, "/term.html", http.StatusFound)
 	}
@@ -56,19 +76,56 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 // handles /api/logout
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		if authenticated(strings.Split(r.RemoteAddr, ":")[0]) {
-			ips = remove(ips, strings.Split(r.RemoteAddr, ":")[0])
+		if authenticated(w, r) {
+			cookie, err := r.Cookie("st")
+			if err != nil {
+				fmt.Println("error: st disappeared:", err)
+				http.Error(w, "value magically disappeared", http.StatusInternalServerError)
+				return
+			}
+
+			auths = removeAuth(auths, authedUser{id: cookie.Value, ua: r.UserAgent()})
+			deleteAuthCookie(w)
+			fmt.Printf("removed {%s,%s} from known authed users\n", cookie.Value, r.UserAgent())
 		}
-		fmt.Printf("removed %s from known ips\n", strings.Split(r.RemoteAddr, ":")[0])
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
 }
 
+// removes an authorized user
+func removeAuth(auths []authedUser, userToRemove authedUser) []authedUser {
+	for i, v := range auths {
+		if v == userToRemove {
+			return append(auths[:i], auths[i+1:]...)
+		}
+	}
+	return auths
+}
+
+func deleteAuthCookie(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:  "st",
+		Value: "",
+		//	Path:    "/",
+		Expires: time.Now().Add(-time.Hour),
+		MaxAge:  -1,
+	})
+}
+
 // checks if user is authenticated
-func authenticated(ip string) bool {
-	for _, v := range ips {
-		if v == ip {
-			return true
+func authenticated(w http.ResponseWriter, r *http.Request) bool {
+	cookie, err := r.Cookie("st")
+	if err != nil {
+		return false
+	}
+	for _, v := range auths {
+		if v.id == cookie.Value {
+			if v.ua == r.UserAgent() {
+				return true
+			}
+			auths = removeAuth(auths, v)
+			deleteAuthCookie(w)
+			return false
 		}
 	}
 	return false
@@ -76,7 +133,7 @@ func authenticated(ip string) bool {
 
 func amIAuthedHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		if authenticated(strings.Split(r.RemoteAddr, ":")[0]) {
+		if authenticated(w, r) {
 			w.Header().Set("Content-Type", "text/plain")
 			fmt.Fprintln(w, "/term.html")
 			return

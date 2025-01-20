@@ -33,6 +33,8 @@
                 display: none;
             }
         </style>
+
+        <script src="login.js" defer></script>
     </head>
     <body>
         <div class="login-container">
@@ -45,34 +47,5 @@
             </form>
             <p id="authfail">authentication failed</p>
         </div>
-
-        <!-- simple javascript to ask the server for a hostname, and to show auth fail message if auth=fail in params -->
-        <script>
-            fetch('/api/am-i-authed')
-                .then(response => {
-                    if (response.status !== 401) return response.text();
-                    throw new Error('didn\'t auth');
-                })
-                .then(data => { window.location.href = data; })
-                .catch(error => { console.error('couldn\'t ask server for auth:', error); });
-
-            fetch('/api/get-hostname')
-                .then(response => {
-                    if (response.ok) return response.text();
-                    throw new Error('Network response was not ok');
-                })
-                .then(data => { document.getElementById('hostname').innerText = data; })
-                .catch(error => { console.error('couldn\'t ask server for hostname:', error); });
-
-            function checkAuthFail() {
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.get('auth') === 'fail') {
-                    document.getElementById('authfail').style.display = 'block';
-                }
-            }
-
-            // Run the checkAuthFail function when the page loads
-            window.onload = checkAuthFail;
-        </script>
     </body>
 </html>

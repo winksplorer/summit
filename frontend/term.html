@@ -4,17 +4,12 @@
         <link rel="stylesheet" href="style.css" type="text/css">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="jquery-3.7.1.min.js"></script>
-        <title>statistics</title>
+        <title>terminal</title>
+        <script src="sidebar.js" defer></script>
     </head>
     <body>
         <div class="sidebar">
             <h1 id="hostname">?</h1>
-            <script>
-                $(document).ready(function() {
-                    $.get('/api/get-hostname', function(response) { $('#hostname').html(response); })
-                });
-            </script>
 
             <div class="sidebar-items">
                 <a class="current" href="term.html">terminal</a>
@@ -34,26 +29,7 @@
 
             <div class="stats">
                 <p id="memory">mem 0/0</p>
-                <script>
-                    $(document).ready(function() {
-                        function updateMemory() {
-                            $.get('/api/stat-memory', function(response) { $('#memory').html(response); });
-                        }
-                        updateMemory();
-                        setInterval(updateMemory, 5000);
-                    });
-                </script>
-
                 <p id="cpu">cpu 0%</p>
-                <script>
-                    $(document).ready(function() {
-                        function updateCpu() {
-                            $.get('/api/stat-cpu', function(response) { $('#cpu').html(response); });
-                        }
-                        updateCpu();
-                        setInterval(updateCpu, 5000);
-                    });
-                </script>
             </div>
         </div>
     </body>

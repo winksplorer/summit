@@ -1,13 +1,14 @@
 package main
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
-	"syscall"
 
 	"github.com/shirou/gopsutil/v3/cpu"
+	"github.com/shirou/gopsutil/v3/mem"
 )
 
 // handles /api/get-hostname
@@ -26,30 +27,27 @@ func getHostnameHandler(w http.ResponseWriter, r *http.Request) {
 
 // handles /api/stat-memory
 func statMemoryHandler(w http.ResponseWriter, r *http.Request) {
-	if !authenticated(strings.Split(r.RemoteAddr, ":")[0]) {
+	if !authenticated(w, r) {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
 	if r.Method == http.MethodGet {
-		var sysInfo syscall.Sysinfo_t
-
-		// Get system memory info
-		if err := syscall.Sysinfo(&sysInfo); err != nil {
+		virtualMem, err := mem.VirtualMemory()
+		if err != nil {
 			fmt.Println("couldn't get memory info:", err)
+			return
 		}
 
-		// Total and free memory in bytes
-		totalMemory := sysInfo.Totalram
-		freeMemory := sysInfo.Freeram
-
 		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprintf(w, "mem %s/%s", humanReadable(totalMemory-freeMemory), humanReadable(totalMemory))
+		fmt.Fprintf(w, "mem %s/%s", humanReadable(virtualMem.Used), humanReadable(virtualMem.Total))
 	}
 }
 
 // handles /api/stat-cpu
 func statCpuHandler(w http.ResponseWriter, r *http.Request) {
-	if !authenticated(strings.Split(r.RemoteAddr, ":")[0]) {
+	if !authenticated(w, r) {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
@@ -57,22 +55,12 @@ func statCpuHandler(w http.ResponseWriter, r *http.Request) {
 		percentages, err := cpu.Percent(0, false)
 		if err != nil {
 			fmt.Println("couldn't get cpu info:", err)
+			return
 		}
 
 		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprintf(w, "cpu %d%%", int(percentages[0]))
 	}
-}
-
-// removes item from string slice
-func remove(slice []string, value string) []string {
-	var result []string
-	for _, item := range slice {
-		if item != value {
-			result = append(result, item)
-		}
-	}
-	return result
 }
 
 // human readable byte sizes
@@ -93,4 +81,15 @@ func humanReadable(bytes uint64) string {
 	default:
 		return fmt.Sprintf("%d", bytes)
 	}
+}
+
+// generate random b64 str
+func randomBase64String(length int) (string, error) {
+	numBytes := (length * 3) / 4
+	randomBytes := make([]byte, numBytes)
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		return "", err
+	}
+	return base64.RawURLEncoding.EncodeToString(randomBytes)[:length], nil
 }
