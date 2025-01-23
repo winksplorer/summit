@@ -20,7 +20,7 @@ The self-extracting archive code so that the entire server is distributed as one
 ### Alpine
 
 ```sh
-apk add go make linux-pam-dev git \
+apk add go make clang binutils libarchive-dev linux-pam-dev git \
     && git clone https://github.com/winksplorer/summit
     && cd summit
     && make
@@ -35,4 +35,4 @@ apt install golang-go make clang binutils libarchive-dev libpam0g-dev git \
     && make
 ```
 
-summit will probably run on other distributions, but I haven't tried.
+summit will probably build & run on other distributions, but I haven't tried.

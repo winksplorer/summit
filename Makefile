@@ -1,12 +1,19 @@
 GO ?= go
 CC ?= clang
 
+# Alpine is weird and wants us to directly link libarchive in SEA for some reason
+ifneq ($(wildcard /usr/lib/libarchive.so),)
+    LIBARCHIVE_FLAGS = /usr/lib/libarchive.so
+else
+    LIBARCHIVE_FLAGS =
+endif
+
 .PHONY: backend all sea
 
 all: backend sea
 
 clean:
-	rm server summit summit.tar.gz summit.tar.gz.o
+	rm -f server summit summit.tar.gz summit.tar.gz.o
 
 backend:
 	cd backend && go mod tidy && $(GO) build -o ../server
@@ -14,4 +21,7 @@ backend:
 sea:
 	tar -czf summit.tar.gz server frontend
 	ld -r -b binary -o summit.tar.gz.o summit.tar.gz
-	clang -larchive -o summit sea.c summit.tar.gz.o
+	clang -larchive -o summit sea.c summit.tar.gz.o $(LIBARCHIVE_FLAGS)
+
+install:
+	install -m 755 summit /usr/bin
