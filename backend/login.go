@@ -50,6 +50,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/?auth=fail", http.StatusFound)
 			return
 		}
+
 		if !authenticated(w, r) {
 			id, err := randomBase64String(32)
 			if err != nil {

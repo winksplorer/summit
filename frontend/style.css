@@ -7,7 +7,7 @@ body {
 .sidebar {
     background: #eeeef6;
     padding: 1vw;
-    border-radius: 2px;
+    border-radius: 0.225vh;
 }
 
 .sidebar-items {

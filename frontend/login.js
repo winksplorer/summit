@@ -1,4 +1,4 @@
-// summit login.js: handles does stuff auto automatically redirecting if you are logged in, getting the hostname, or knowing when to show the auth fail message
+// summit login.js: handles automatically redirecting if you are logged in, getting the hostname, or knowing when to show the auth fail message
 
 fetch('/api/am-i-authed')
     .then(response => {
