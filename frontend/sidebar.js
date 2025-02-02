@@ -3,7 +3,7 @@
 // redirect to login page if unauthorized
 fetch('/api/am-i-authed')
     .then(response => {
-        if (response.status !== 200) window.location.href = "/";
+        if (response.status !== 200 && response.status !== 404) window.location.href = "/";
     })
 
 // hostname
