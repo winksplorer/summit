@@ -1,17 +1,19 @@
 body {
     background: black;
     display:flex;
-    font-size: 1.7vh;
+    font-size: 1.5em;
 }
 
-.sidebar {
+.navbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
     background: #eeeef6;
+    width:100%;
+
     padding: 1vw;
     border-radius: 0.225vh;
-}
-
-.sidebar-items {
-    display: grid;
 }
 
 a {
@@ -21,8 +23,36 @@ a {
 
 a:hover { font-weight: 700; }
 
+.navbar-items { 
+    display: flex;
+    flex-wrap: wrap; /* Allows items to wrap when needed */
+    gap: 0.2em; /* Controls spacing between links */
+    white-space: nowrap; /* Ensures links are not split */
+ }
+
+.navbar-items > a { margin-right: 0.2em; }
+
 .current { text-decoration: underline; }
 
-h1 { font-size: 3.5vh; }
+.stats {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-#cpu { margin-top: -1.5vh}
+    margin-top: -0.9em;
+    margin-bottom: -0.9em;
+}
+
+.stats > p {
+    margin-left: 0.8em;
+}
+
+.right { margin-left: auto; }
+
+.quick-actions { float:right; }
+
+#hostname { 
+    margin-top: -0.2em;
+    margin-bottom: -0.2em;
+    margin-right: 0.4em;
+}
