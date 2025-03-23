@@ -1,8 +1,7 @@
 package main
 
 import (
-	"crypto/rand"
-	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -17,6 +16,7 @@ func getHostnameHandler(w http.ResponseWriter, r *http.Request) {
 		hostname, err := os.Hostname()
 		if err != nil {
 			fmt.Println("couldn't get hostname:", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
@@ -25,7 +25,58 @@ func getHostnameHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// handles /api/stats
 func statsHandler(w http.ResponseWriter, r *http.Request) {
+	if !authenticated(w, r) {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	if r.Method == http.MethodGet {
+		percentages, err := cpu.Percent(0, false)
+		if err != nil {
+			fmt.Println("couldn't get cpu info:", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		virtualMem, err := mem.VirtualMemory()
+		if err != nil {
+			fmt.Println("couldn't get memory info:", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprintf(w, "<span>mem %s/%s</span> <span>cpu %d%%</span>", humanReadable(virtualMem.Used), humanReadable(virtualMem.Total), int(percentages[0]))
+	}
+}
+
+// handles /api/server-euid
+func servereuidHandler(w http.ResponseWriter, r *http.Request) {
+	if !authenticated(w, r) {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	if r.Method == http.MethodGet {
+		euid := os.Geteuid()
+
+		response := map[string]int{"euid": euid}
+		jsonData, err := json.Marshal(response)
+		if err != nil {
+			fmt.Println("couldn't format json:", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, string(jsonData))
+	}
+}
+
+// handles /api/reboot
+func rebootHandler(w http.ResponseWriter, r *http.Request) {
 	if !authenticated(w, r) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -47,35 +98,4 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprintf(w, "<span>mem %s/%s</span> <span>cpu %d%%</span>", humanReadable(virtualMem.Used), humanReadable(virtualMem.Total), int(percentages[0]))
 	}
-}
-
-// human readable byte sizes
-func humanReadable(bytes uint64) string {
-	const (
-		kb = 1024
-		mb = kb * 1024
-		gb = mb * 1024
-	)
-
-	switch {
-	case bytes >= gb:
-		return fmt.Sprintf("%.1fg", float64(bytes)/float64(gb))
-	case bytes >= mb:
-		return fmt.Sprintf("%.1fm", float64(bytes)/float64(mb))
-	case bytes >= kb:
-		return fmt.Sprintf("%.1fk", float64(bytes)/float64(kb))
-	default:
-		return fmt.Sprintf("%d", bytes)
-	}
-}
-
-// generate random b64 str
-func randomBase64String(length int) (string, error) {
-	numBytes := (length * 3) / 4
-	randomBytes := make([]byte, numBytes)
-	_, err := rand.Read(randomBytes)
-	if err != nil {
-		return "", err
-	}
-	return base64.RawURLEncoding.EncodeToString(randomBytes)[:length], nil
 }

@@ -37,11 +37,13 @@ void extract_mem(const void *data, size_t data_size, const char *output_dir) {
     archive_write_free(disk);
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     printf("summit SEA (%s %s)\narchive size = %lu bytes\n", __DATE__, __TIME__, _binary_summit_tar_gz_end - _binary_summit_tar_gz_start);
     struct stat st;
     if (stat("/tmp/summit", &st) == 0 && S_ISDIR(st.st_mode)) rmdir("/tmp/summit");
     extract_mem(_binary_summit_tar_gz_start, _binary_summit_tar_gz_end - _binary_summit_tar_gz_start, "/tmp/summit");
-    execv("/tmp/summit/server", (char *[]){"server", NULL});
+
+    if (argc == 1) execv("/tmp/summit/server", (char *[]){"/tmp/summit/server", NULL});
+    else  execv("/tmp/summit/server", (char *[]){"/tmp/summit/server", argv[1], NULL});
     return 0;
 }

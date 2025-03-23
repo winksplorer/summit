@@ -1,12 +1,9 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
-
-	"github.com/msteinert/pam"
 )
 
 type authedUser struct {
@@ -15,28 +12,6 @@ type authedUser struct {
 }
 
 var auths []authedUser
-
-// authenticates user with pam
-func PAMAuth(serviceName, userName, passwd string) error {
-	t, err := pam.StartFunc(serviceName, userName, func(s pam.Style, msg string) (string, error) {
-		switch s {
-		case pam.PromptEchoOff:
-			return passwd, nil
-		case pam.PromptEchoOn, pam.ErrorMsg, pam.TextInfo:
-			return "", nil
-		}
-		return "", errors.New("unrecognized pam message style")
-	})
-
-	if err != nil {
-		return err
-	}
-	if err = t.Authenticate(0); err != nil {
-		return err
-	}
-
-	return nil
-}
 
 // handles /api/login
 func loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +62,6 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 
 			auths = removeAuth(auths, authedUser{id: cookie.Value, ua: r.UserAgent()})
 			deleteAuthCookie(w)
-			fmt.Printf("removed {%s,%s} from known authed users\n", cookie.Value, r.UserAgent())
 		}
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
@@ -97,6 +71,7 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 func removeAuth(auths []authedUser, userToRemove authedUser) []authedUser {
 	for i, v := range auths {
 		if v == userToRemove {
+			fmt.Printf("removed {%s,%s} from known authed users\n", v.id, v.ua)
 			return append(auths[:i], auths[i+1:]...)
 		}
 	}
@@ -124,6 +99,7 @@ func authenticated(w http.ResponseWriter, r *http.Request) bool {
 			if v.ua == r.UserAgent() {
 				return true
 			}
+			fmt.Println("ALERT!! SOMEONE ATTEMPTED TO LOG IN WITH A VALID TOKEN BUT FROM A DIFFERENT BROWSER! BE WARY ABOUT POSSIBLE FUTURE ATTACKS! REVOKING TOKEN...")
 			auths = removeAuth(auths, v)
 			deleteAuthCookie(w)
 			return false

@@ -17,7 +17,7 @@ body {
     background: #eeeef6;
     width:100%;
 
-    padding: 1vw;
+    padding: 0.7em;
     border-radius: 0.225vh;
     
     flex-shrink: 0;
@@ -48,7 +48,6 @@ a:hover { font-weight: 700; }
  }
 
 .navbar-items > a { margin-right: 0.3em; }
-
 .current { text-decoration: underline; }
 
 #stats {
@@ -57,12 +56,8 @@ a:hover { font-weight: 700; }
     text-align: right;
 }
 
-span {
-    white-space: nowrap;
-}
-
+span { white-space: nowrap; }
 .right { margin-left: auto; }
-
 .quick-actions { float:right; }
 
 #hostname { 
@@ -70,3 +65,18 @@ span {
     margin-bottom: -0.2em;
     margin-right: 0.4em;
 }
+
+#message {
+    background: #eeeef6;
+    margin-top: 0.5em;
+    border-radius: 0.225vh;
+
+    display: none;
+    flex-direction: row;
+    align-items: center;
+}
+
+#message > p { text-align: right; }
+#message > h3 { color: orangered; }
+#message > button { margin-left: auto; margin-right: 1em; }
+#message > * { margin: 0.5em; }

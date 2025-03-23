@@ -6,10 +6,12 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>terminal</title>
-        <script src="sidebar.js" defer></script>
 
-        <script type="module" src="hterm.js" defer></script>
-        <script type="module" src="term.js" defer></script>
+        <script type="module" src="js/message.js" defer></script>
+        <script src="js/sidebar.js" defer></script>
+        <script type="module" src="js/rootHandler.js" defer></script>
+        <script type="module" src="js/hterm.js" defer></script>
+        <script type="module" src="js/term.js" defer></script>
     </head>
     <body>
         <div class="navbar">
@@ -29,11 +31,17 @@
                 <p id="stats"><span>mem 0/0</span> <span>cpu 0%</span></p>
 
                 <div class="quick-actions">
-                    <a href="/api/reboot">↺</a>
-                    <a href="/api/poweroff">⏻</a>
+                    <a href="/api/reboot" class="rootRequired">↺</a>
+                    <a href="/api/poweroff" class="rootRequired">⏻</a>
                     <a href="/api/logout">⇒</a>
                 </div>
             </div>
+        </div>
+
+        <div id="message">
+            <h3 id="messageTitle"></h3>
+            <p id="messageSubtitle"></p>
+            <button id="messageDismiss">x</button>
         </div>
 
         <div id="terminal"></div>
