@@ -1,7 +1,12 @@
 body {
-    background: black;
+    background: #222;
     display:flex;
+    flex-direction: column;
+
     font-size: 1.5em;
+    font-family: 'Helvetica Neue Condensed', sans-serif;
+    height: 99vh;
+    overflow-y: hidden;
 }
 
 .navbar {
@@ -14,11 +19,23 @@ body {
 
     padding: 1vw;
     border-radius: 0.225vh;
+    
+    flex-shrink: 0;
+    box-sizing: border-box; /* Ensures padding/borders don’t cause overflow */
 }
 
 a {
     color: black;
     text-decoration: none;
+}
+
+#terminal {
+    position:relative;
+    margin-top: 0.5em;
+    width: auto;
+    background-color: #000;
+    flex-grow: 1;
+    margin-bottom: 0.5em;
 }
 
 a:hover { font-weight: 700; }
@@ -30,21 +47,18 @@ a:hover { font-weight: 700; }
     white-space: nowrap; /* Ensures links are not split */
  }
 
-.navbar-items > a { margin-right: 0.2em; }
+.navbar-items > a { margin-right: 0.3em; }
 
 .current { text-decoration: underline; }
 
-.stats {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    margin-top: -0.9em;
-    margin-bottom: -0.9em;
+#stats {
+    margin-top: -0.2em;
+    margin-bottom: 0.1em;
+    text-align: right;
 }
 
-.stats > p {
-    margin-left: 0.8em;
+span {
+    white-space: nowrap;
 }
 
 .right { margin-left: auto; }

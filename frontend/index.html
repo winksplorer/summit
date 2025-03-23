@@ -5,9 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>login</title>
         <!-- since we have unique css for this, we just include it in the html -->
+        <link rel="stylesheet" href="typography.css" type="text/css">
         <style>
+            * {
+                font-family: 'Helvetica Neue Condensed', sans-serif;
+            }
+
             body {
-                background: black;
+                background: #000;
                 display:flex;
                 justify-content: center;
                 align-items: center;
@@ -18,12 +23,11 @@
 
             .login-container {
                 background: #eeeef6;
-                padding:1vw;
+                padding:0.5vw;
                 border-radius: 0.225vh;
             }
 
             input {
-                font-family: 'Times New Roman', Times, serif;
                 box-sizing: border-box;
                 font-size: 1.7vh;
             }

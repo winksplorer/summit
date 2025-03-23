@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Helvetica Neue Condensed';
+    src: url('assets/HelveticaNeue-Condensed.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue Condensed';
+    src: url('assets/HelveticaNeue-BoldCondObl.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}

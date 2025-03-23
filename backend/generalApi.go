@@ -25,27 +25,7 @@ func getHostnameHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// handles /api/stat-memory
-func statMemoryHandler(w http.ResponseWriter, r *http.Request) {
-	if !authenticated(w, r) {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	if r.Method == http.MethodGet {
-		virtualMem, err := mem.VirtualMemory()
-		if err != nil {
-			fmt.Println("couldn't get memory info:", err)
-			return
-		}
-
-		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprintf(w, "mem %s/%s", humanReadable(virtualMem.Used), humanReadable(virtualMem.Total))
-	}
-}
-
-// handles /api/stat-cpu
-func statCpuHandler(w http.ResponseWriter, r *http.Request) {
+func statsHandler(w http.ResponseWriter, r *http.Request) {
 	if !authenticated(w, r) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -58,8 +38,14 @@ func statCpuHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		virtualMem, err := mem.VirtualMemory()
+		if err != nil {
+			fmt.Println("couldn't get memory info:", err)
+			return
+		}
+
 		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprintf(w, "cpu %d%%", int(percentages[0]))
+		fmt.Fprintf(w, "<span>mem %s/%s</span> <span>cpu %d%%</span>", humanReadable(virtualMem.Used), humanReadable(virtualMem.Total), int(percentages[0]))
 	}
 }
 

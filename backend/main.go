@@ -10,8 +10,7 @@ func main() {
 	http.HandleFunc("/api/login", loginHandler)
 	http.HandleFunc("/api/logout", logoutHandler)
 	http.HandleFunc("/api/get-hostname", getHostnameHandler)
-	http.HandleFunc("/api/stat-memory", statMemoryHandler)
-	http.HandleFunc("/api/stat-cpu", statCpuHandler)
+	http.HandleFunc("/api/stats", statsHandler)
 	http.HandleFunc("/api/am-i-authed", amIAuthedHandler)
 
 	port := ":7070"

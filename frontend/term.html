@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <link rel="stylesheet" href="typography.css" type="text/css">
         <link rel="stylesheet" href="style.css" type="text/css">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>terminal</title>
         <script src="sidebar.js" defer></script>
+
+        <script type="module" src="hterm.js" defer></script>
+        <script type="module" src="term.js" defer></script>
     </head>
     <body>
         <div class="navbar">
@@ -22,10 +26,7 @@
             </div>
 
             <div class="right">
-                <div class="stats">
-                    <p id="memory">mem 0/0</p>
-                    <p id="cpu">cpu 0%</p>
-                </div>
+                <p id="stats"><span>mem 0/0</span> <span>cpu 0%</span></p>
 
                 <div class="quick-actions">
                     <a href="/api/reboot">↺</a>
@@ -34,5 +35,7 @@
                 </div>
             </div>
         </div>
+
+        <div id="terminal"></div>
     </body>
 </html>
