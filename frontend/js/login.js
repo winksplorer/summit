@@ -14,4 +14,4 @@ fetch('/api/get-hostname')
 
 // checks if url has ?auth=fail, because the server gives that link to you if you weren't able to login.
 const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('auth') === 'fail') document.getElementById('authfail').style.display = 'block';
+if (urlParams.get('auth') === 'fail') document.getElementById('msg').style.display = 'block';

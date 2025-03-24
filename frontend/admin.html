@@ -8,18 +8,18 @@
         <link rel="stylesheet" href="typography.css" type="text/css">
         <link rel="stylesheet" href="login.css" type="text/css">
 
-        <script src="js/login.js" defer></script>
+        <script src="js/admin.js" defer></script>
     </head>
     <body>
         <div class="login-container">
             <h1 id="hostname">?</h1>
-            <form action="/api/login" method="POST">
-                <input type="text" id="username" name="username" placeholder="username" required>
-                <br><br>
+            <p>to continue, enter the root password.<br>
+                the root password is required to <span id="operation"></span>.</p>
+            <form id="authform">
                 <input type="password" id="password" name="password" placeholder="password" required>
-                <input type="submit" value="login">
+                <input type="submit" value="continue">
             </form>
-            <p id="msg">authentication failed</p>
+            <p id="msg"></p>
         </div>
     </body>
 </html>

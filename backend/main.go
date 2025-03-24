@@ -1,12 +1,18 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/bddjr/hlfhr"
+	"golang.org/x/net/http2"
 )
 
 func main() {
+	port := ":7070"
+
 	var frontendDir string
 	if len(os.Args) > 1 && os.Args[1] == "dev" {
 		frontendDir = "./frontend"
@@ -21,11 +27,23 @@ func main() {
 	http.HandleFunc("/api/stats", statsHandler)
 	http.HandleFunc("/api/am-i-authed", amIAuthedHandler)
 	http.HandleFunc("/api/server-euid", servereuidHandler)
+	http.HandleFunc("/api/sudo", sudoHandler)
 
-	port := ":7070"
+	srv := hlfhr.New(&http.Server{
+		Addr: port,
+		TLSConfig: &tls.Config{
+			MinVersion: tls.VersionTLS13,
+		},
+	})
+	http2.ConfigureServer(srv.Server, &http2.Server{})
+
+	srv.HttpOnHttpsPortErrorHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hlfhr.RedirectToHttps(w, r, 308)
+	})
+
 	fmt.Printf("summit on port %s\n", port)
 
-	if err := http.ListenAndServe(port, nil); err != nil {
+	if err := srv.ListenAndServeTLS("/tmp/summit/summit.crt", "/tmp/summit/summit.key"); err != nil {
 		fmt.Println("error:", err)
 	}
 }

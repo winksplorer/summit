@@ -1,0 +1,44 @@
+* {
+    font-family: 'Helvetica Neue Condensed', sans-serif;
+}
+
+body {
+    background: black;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height:90vh;
+}
+
+h1 { font-size: 3.5vh; }
+
+.login-container {
+    background: #eeeef6;
+    padding:0.5vw;
+    border-radius: 0.225vh;
+}
+
+#authform {
+    display: flex;
+    align-items: center;
+}
+
+#password { 
+    flex-grow: 1;
+    margin-right: 5px;
+}
+
+input { box-sizing: border-box; }
+p, input { font-size: 1.7vh; }
+
+#msg {
+    color: #9f0000;
+    display: none;
+    margin-bottom: 0.3em;
+    margin-top: 0.5em;
+}
+
+h1 {
+    margin-bottom: 0.5em;
+    margin-top: 0.4em;
+}

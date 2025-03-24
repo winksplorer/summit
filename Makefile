@@ -19,9 +19,12 @@ backend:
 	cd backend && go mod tidy && $(GO) build -o ../server
 
 sea:
-	tar -czf summit.tar.gz server frontend
+	tar -czf summit.tar.gz server frontend summit.crt summit.key
 	ld -r -b binary -o summit.tar.gz.o summit.tar.gz
 	clang -larchive -o summit sea.c summit.tar.gz.o $(LIBARCHIVE_FLAGS)
+
+tlskey:
+	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout summit.key -out summit.crt -subj "/C=US/ST=Washington/O=winksplorer & contributors/CN=summit ($(shell uname -n))"
 
 install:
 	install -m 755 summit /usr/bin

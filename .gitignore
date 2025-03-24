@@ -2,3 +2,5 @@ summit
 server
 summit.tar.gz
 summit.tar.gz.o
+summit.crt
+summit.key
