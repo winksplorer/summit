@@ -38,6 +38,14 @@ a {
     margin-bottom: 0.5em;
 }
 
+.main {
+    background: #111111;
+    color: white;
+    flex-grow: 1;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
 a:hover { font-weight: 700; }
 
 .navbar-items { 
@@ -57,8 +65,14 @@ a:hover { font-weight: 700; }
 }
 
 span { white-space: nowrap; }
-.right { margin-left: auto; }
-.quick-actions { float:right; }
+#nav-right { 
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.quick-actions { margin-left: 0.5em; }
 
 #hostname { 
     margin-top: -0.2em;

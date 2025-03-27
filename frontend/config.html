@@ -5,26 +5,25 @@
         <link rel="stylesheet" href="style.css" type="text/css">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>terminal</title>
+        <title>settings</title>
 
-        <script type="module" src="js/message.js" defer></script>
         <script src="js/sidebar.js" defer></script>
+        <script type="module" src="js/message.js" defer></script>
         <script type="module" src="js/rootHandler.js" defer></script>
-        <script type="module" src="js/hterm.js" defer></script>
-        <script type="module" src="js/term.js" defer></script>
+        <script src="js/config.js" defer></script>
     </head>
     <body>
         <div class="navbar">
             <h1 id="hostname">?</h1>
 
             <div class="navbar-items">
-                <a class="current" href="term.html">terminal</a>
+                <a href="term.html">terminal</a>
                 <a href="log.html">logging</a>
                 <a href="storage.html">storage</a>
                 <a href="net.html">networking</a>
                 <a href="vms.html">virtual machines</a>
                 <a href="services.html">services</a>
-                <a href="config.html">settings</a>
+                <a class="current" href="config.html">settings</a>
             </div>
 
             <div id="nav-right">
@@ -44,6 +43,12 @@
             <button id="messageDismiss">x</button>
         </div>
 
-        <div id="terminal"></div>
+        <div class="main">
+            <input type="checkbox" id="compactui">
+            <label for="compactui">compact navbar</label>
+
+            <input type="checkbox" id="segmentstats">
+            <label for="segmentstats">navbar stats in seven segment font</label>
+        </div>
     </body>
 </html>
