@@ -21,8 +21,9 @@ The self-extracting archive code so that the entire server is distributed as one
 
 ```sh
 apk add go make clang binutils libarchive-dev linux-pam-dev git \
-    && git clone https://github.com/winksplorer/summit
-    && cd summit
+    && git clone https://github.com/winksplorer/summit \
+    && cd summit \
+    && make tlskey \
     && make
 ```
 
@@ -30,8 +31,9 @@ apk add go make clang binutils libarchive-dev linux-pam-dev git \
 
 ```sh
 apt install golang-go make clang binutils libarchive-dev libpam0g-dev git \
-    && git clone https://github.com/winksplorer/summit
-    && cd summit
+    && git clone https://github.com/winksplorer/summit \
+    && cd summit \
+    && make tlskey \
     && make
 ```
 

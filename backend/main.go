@@ -28,6 +28,7 @@ func main() {
 	http.HandleFunc("/api/am-i-authed", amIAuthedHandler)
 	http.HandleFunc("/api/server-euid", servereuidHandler)
 	http.HandleFunc("/api/sudo", sudoHandler)
+	http.HandleFunc("/api/pty", ptyHandler)
 
 	srv := hlfhr.New(&http.Server{
 		Addr: port,

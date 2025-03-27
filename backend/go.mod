@@ -4,9 +4,12 @@ go 1.23.4
 
 require (
 	github.com/bddjr/hlfhr v1.3.8
+	github.com/creack/pty v1.1.24
+	github.com/gorilla/websocket v1.5.3
 	github.com/msteinert/pam v1.2.0
 	github.com/shirou/gopsutil/v3 v3.24.5
 	golang.org/x/net v0.37.0
+	golang.org/x/term v0.30.0
 )
 
 require (
