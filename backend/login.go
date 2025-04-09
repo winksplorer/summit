@@ -7,8 +7,9 @@ import (
 )
 
 type authedUser struct {
-	id string
-	ua string
+	id   string
+	ua   string
+	user string
 }
 
 var auths []authedUser
@@ -32,7 +33,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 				fmt.Println("error: generate login:", err)
 				return
 			}
-			auths = append(auths, authedUser{id: id, ua: r.UserAgent()})
+			auths = append(auths, authedUser{id: id, ua: r.UserAgent(), user: r.FormValue("username")})
 
 			http.SetCookie(w, &http.Cookie{
 				Name:  "st",
@@ -43,7 +44,16 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 				Expires:  time.Now().Add(4 * time.Hour),
 			})
 
-			fmt.Printf("added {%s,%s} to known authed users\n", id, r.UserAgent())
+			http.SetCookie(w, &http.Cookie{
+				Name:  "u",
+				Value: r.FormValue("username"),
+				//Path:     "/",
+				HttpOnly: true,
+				SameSite: http.SameSiteStrictMode,
+				Expires:  time.Now().Add(4 * time.Hour),
+			})
+
+			fmt.Printf("added {%s,%s,%s} to known authed users\n", id, r.UserAgent(), r.FormValue("username"))
 		}
 		http.Redirect(w, r, "/term.html", http.StatusFound)
 	}
@@ -53,14 +63,21 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		if authenticated(w, r) {
-			cookie, err := r.Cookie("st")
+			st, err := r.Cookie("st")
 			if err != nil {
 				fmt.Println("error: st disappeared:", err)
-				http.Error(w, "value magically disappeared", http.StatusInternalServerError)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				return
 			}
 
-			auths = removeAuth(auths, authedUser{id: cookie.Value, ua: r.UserAgent()})
+			u, err := r.Cookie("u")
+			if err != nil {
+				fmt.Println("error: u disappeared:", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+
+			auths = removeAuth(auths, authedUser{id: st.Value, ua: r.UserAgent(), user: u.Value})
 			deleteAuthCookie(w)
 		}
 		http.Redirect(w, r, "/", http.StatusFound)
@@ -86,20 +103,34 @@ func deleteAuthCookie(w http.ResponseWriter) {
 		Expires: time.Now().Add(-time.Hour),
 		MaxAge:  -1,
 	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:  "u",
+		Value: "",
+		//	Path:    "/",
+		Expires: time.Now().Add(-time.Hour),
+		MaxAge:  -1,
+	})
 }
 
 // checks if user is authenticated
 func authenticated(w http.ResponseWriter, r *http.Request) bool {
-	cookie, err := r.Cookie("st")
+	st, err := r.Cookie("st")
 	if err != nil {
 		return false
 	}
+
+	u, err := r.Cookie("u")
+	if err != nil {
+		return false
+	}
+
 	for _, v := range auths {
-		if v.id == cookie.Value {
-			if v.ua == r.UserAgent() {
+		if v.id == st.Value {
+			if v.ua == r.UserAgent() && v.user == u.Value {
 				return true
 			}
-			fmt.Println("ALERT!! SOMEONE ATTEMPTED TO LOG IN WITH A VALID TOKEN BUT FROM A DIFFERENT BROWSER! BE WARY ABOUT POSSIBLE FUTURE ATTACKS! REVOKING TOKEN...")
+			fmt.Println("ALERT!! either someone tried to spoof their username, or they tried to login from a different browser using your token. the token has now been marked as invalid.")
 			auths = removeAuth(auths, v)
 			deleteAuthCookie(w)
 			return false
