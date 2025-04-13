@@ -15,7 +15,10 @@ function updateStats() {
     fetch('/api/stats')
         .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))
         .then(data => document.getElementById('stats').innerHTML = data)
-        .catch(err => console.error('failed to fetch server\'s stats', err));
+        .catch(err => {
+            console.error('failed to fetch server\'s stats', err);
+            document.getElementById('stats').innerHTML = "<span>mem ?/?</span> <span>cpu ?%</span>";
+        });
 }
 
 updateStats();

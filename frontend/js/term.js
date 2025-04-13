@@ -12,12 +12,12 @@ t.onTerminalReady = function() {
 
     io.onVTKeystroke = (str) => {
         socket.send(str);
-        t.io.print(str.replace("", "\b \b"));
+        //t.io.print(str.replace("", "\b \b"));
     };
 
     io.sendString = (str) => {
         socket.send(str);
-        t.io.print(str);
+        //t.io.print(str);
     };
 
     io.onTerminalResize = (columns, rows) => {

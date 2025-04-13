@@ -7,11 +7,11 @@ import (
 	"os/exec"
 	"os/user"
 	"strconv"
+	"strings"
 	"syscall"
 
 	"github.com/creack/pty"
 	"github.com/gorilla/websocket"
-	"golang.org/x/term"
 )
 
 var upgrader = websocket.Upgrader{
@@ -65,24 +65,29 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	// start pty
-	cmd := exec.Command("bash")
+	// get login shell
+	out, err := exec.Command("getent", "passwd", strconv.FormatInt(uid, 10)).Output()
+	shell := "bash"
+	if err == nil {
+		shell = strings.Split(strings.TrimSuffix(string(out), "\n"), ":")[6]
+	}
+
+	// prepare shell
+	cmd := exec.Command(shell)
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.SysProcAttr.Credential = &syscall.Credential{Uid: uint32(uid), Gid: uint32(gid)}
+	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=/home/%s", uc.Value))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("USER=%s", uc.Value))
+	cmd.Env = append(cmd.Env, "TERM=xterm-256color")
+	cmd.Dir = fmt.Sprintf("/home/%s", uc.Value)
+
+	// start shell with pty
 	ptmx, err := pty.Start(cmd)
 	if err != nil {
 		fmt.Println("couldn't start pty:", err)
 		return
 	}
 	defer ptmx.Close()
-
-	// raw terminal
-	oldState, err := term.MakeRaw(int(ptmx.Fd()))
-	if err != nil {
-		fmt.Println("couldn't set pty raw mode:", err)
-		return
-	}
-	defer term.Restore(int(ptmx.Fd()), oldState)
 
 	// pty -> websocket
 	go func() {
@@ -91,10 +96,12 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 			n, err := ptmx.Read(buf)
 			if err != nil {
 				fmt.Println("couldn't read from pty:", err)
+				ptmx.Close()
 				return
 			}
 			if err := conn.WriteMessage(websocket.TextMessage, buf[:n]); err != nil {
 				fmt.Println("couldn't send to websockets:", err)
+				ptmx.Close()
 				return
 			}
 		}
@@ -105,6 +112,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
 			fmt.Println("couldn't read from websockets:", err)
+			ptmx.Close()
 			break
 		}
 
@@ -117,6 +125,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 
 		if _, err := ptmx.Write(msg); err != nil {
 			fmt.Println("couldn't write to pty:", err)
+			ptmx.Close()
 			break
 		}
 	}
