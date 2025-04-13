@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     if (stat("/tmp/summit", &st) == 0 && S_ISDIR(st.st_mode)) rmdir("/tmp/summit");
     extract_mem(_binary_summit_tar_gz_start, _binary_summit_tar_gz_end - _binary_summit_tar_gz_start, "/tmp/summit");
 
-    if (argc == 1) execv("/tmp/summit/server", (char *[]){"/tmp/summit/server", NULL});
-    else  execv("/tmp/summit/server", (char *[]){"/tmp/summit/server", argv[1], NULL});
+    if (argc == 1) execv("/tmp/summit/summit-server", (char *[]){"/tmp/summit/summit-server", NULL});
+    else  execv("/tmp/summit/summit-server", (char *[]){"/tmp/summit/summit-server", argv[1], NULL});
     return 0;
 }

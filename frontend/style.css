@@ -39,7 +39,7 @@ a {
 }
 
 .main {
-    background: #111111;
+    background: #101010;
     color: white;
     flex-grow: 1;
     margin-top: 0.5em;
@@ -92,5 +92,5 @@ span { white-space: nowrap; }
 
 #message > p { text-align: right; }
 #message > h3 { color: orangered; }
-#message > button { margin-left: auto; margin-right: 1em; }
+#message > button { margin-left: auto; margin-right: 1em; font-size: 0.8em; }
 #message > * { margin: 0.5em; }

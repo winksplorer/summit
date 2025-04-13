@@ -7,9 +7,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>settings</title>
 
-        <script src="js/sidebar.js" defer></script>
-        <script type="module" src="js/message.js" defer></script>
-        <script type="module" src="js/rootHandler.js" defer></script>
+        <script type="module" src="js/modules/message.js" defer></script>
+        <script type="module" src="js/modules/helpers.js" defer></script>
+        <script type="module" src="js/sidebar.js" defer></script>
         <script src="js/config.js" defer></script>
     </head>
     <body>
@@ -30,8 +30,8 @@
                 <p id="stats"><span>mem ?/?</span> <span>cpu ?%</span></p>
 
                 <div class="quick-actions">
-                    <a href="admin.html?operation=reboot" class="rootRequired">↺</a>
-                    <a href="admin.html?operation=poweroff" class="rootRequired">⏻</a>
+                    <a href="admin.html?operation=reboot">↺</a>
+                    <a href="admin.html?operation=poweroff">⏻</a>
                     <a href="/api/logout">⇒</a>
                 </div>
             </div>

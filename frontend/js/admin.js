@@ -1,4 +1,4 @@
-// summit admin.js: handles admin.html root login page
+// summit frontend/js/admin.js - handles admin.html root login page
 
 fetch('/api/get-hostname')
     .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))

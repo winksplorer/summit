@@ -1,4 +1,4 @@
-// summit message.js - handles messages
+// summit frontend/js/modules/message.js - handles ui messages
 
 export function dispatchMessage(title, subtitle) {
     document.getElementById('messageTitle').textContent = title;

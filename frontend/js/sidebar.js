@@ -1,4 +1,6 @@
-// summit sidebar.js - handles sidebar & automatic redirect to login page 
+// summit frontend/js/sidebar.js - handles navbar, and is sort of the main js code
+
+import { fetchDataForElementText, fetchDataForElementHtml } from './modules/helpers.js';
 
 // redirect to login page if unauthorized
 fetch('/api/am-i-authed')
@@ -6,20 +8,7 @@ fetch('/api/am-i-authed')
     .catch(() => window.location.replace('/'));
 
 // hostname
-fetch('/api/get-hostname')
-    .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))
-    .then(data => document.getElementById('hostname').textContent = data)
-    .catch(err => console.error('failed to fetch hostname:', err));
+fetchDataForElementText('/api/get-hostname', 'hostname')
 
-function updateStats() {
-    fetch('/api/stats')
-        .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))
-        .then(data => document.getElementById('stats').innerHTML = data)
-        .catch(err => {
-            console.error('failed to fetch server\'s stats', err);
-            document.getElementById('stats').innerHTML = "<span>mem ?/?</span> <span>cpu ?%</span>";
-        });
-}
-
-updateStats();
-setInterval(updateStats, 5000);
+// stats every 5 seconds
+setInterval(fetchDataForElementHtml('/api/stats', 'stats'), 5000);

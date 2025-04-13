@@ -13,13 +13,13 @@ endif
 all: backend sea
 
 clean:
-	rm -f server summit summit.tar.gz summit.tar.gz.o
+	rm -f summit-server summit summit.tar.gz summit.tar.gz.o
 
 backend:
-	cd backend && go mod tidy && $(GO) build -o ../server
+	cd backend && go mod tidy && $(GO) build -o ../summit-server
 
 sea:
-	tar -czf summit.tar.gz server frontend summit.crt summit.key
+	tar -czf summit.tar.gz summit-server frontend summit.crt summit.key
 	ld -r -b binary -o summit.tar.gz.o summit.tar.gz
 	clang -larchive -o summit sea.c summit.tar.gz.o $(LIBARCHIVE_FLAGS)
 
