@@ -10,6 +10,10 @@ import (
 	"golang.org/x/net/http2"
 )
 
+var BuildDate string = "undefined"
+var Version string = "undefined"
+var Edition string = "undefined"
+
 func main() {
 	port := ":7070"
 
@@ -26,7 +30,8 @@ func main() {
 	http.HandleFunc("/api/get-hostname", getHostnameHandler)
 	http.HandleFunc("/api/stats", statsHandler)
 	http.HandleFunc("/api/am-i-authed", amIAuthedHandler)
-	http.HandleFunc("/api/server-euid", servereuidHandler)
+	http.HandleFunc("/api/server-pages", serverPagesHandler)
+	http.HandleFunc("/api/buildstring", buildstringHandler)
 	http.HandleFunc("/api/sudo", sudoHandler)
 	http.HandleFunc("/api/pty", ptyHandler)
 

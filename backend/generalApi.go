@@ -16,7 +16,7 @@ var allowedSudoCommands = map[string]string{
 	"poweroff": "/sbin/poweroff",
 }
 
-// struct to hold the JSON data
+// struct to sudo request data
 type SudoRequest struct {
 	Password  string `json:"password"`
 	Operation string `json:"operation"`
@@ -64,16 +64,40 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// handles /api/server-euid
-func servereuidHandler(w http.ResponseWriter, r *http.Request) {
+// handles /api/server-pages
+func serverPagesHandler(w http.ResponseWriter, r *http.Request) {
 	if !authenticated(w, r) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
 	if r.Method == http.MethodGet {
-		response := map[string]int{"euid": os.Geteuid()}
-		jsonData, err := json.Marshal(response)
+		var dict [][2]string
+
+		if Edition == "RH" {
+			dict = [][2]string{
+				{"term.html", "terminal"},
+				{"log.html", "logging"},
+				{"stor.html", "storage"},
+				{"net.html", "networking"},
+				{"vm.html", "virtual machines"},
+				{"services.html", "services"},
+				{"updates.html", "updates"},
+				{"config.html", "settings"},
+			}
+		} else {
+			dict = [][2]string{
+				{"term.html", "terminal"},
+				{"log.html", "logging"},
+				{"stor.html", "storage"},
+				{"net.html", "networking"},
+				{"services.html", "services"},
+				{"updates.html", "updates"},
+				{"config.html", "settings"},
+			}
+		}
+
+		jsonData, err := json.Marshal(dict)
 		if err != nil {
 			fmt.Println("couldn't format json:", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -82,6 +106,23 @@ func servereuidHandler(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprint(w, string(jsonData))
+	}
+}
+
+// handles /api/buildstring
+func buildstringHandler(w http.ResponseWriter, r *http.Request) {
+	if !authenticated(w, r) {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	if r.Method == http.MethodGet {
+		var editionName = "guests"
+		if Edition == "RH" {
+			editionName = "hosts"
+		}
+
+		fmt.Fprintf(w, "summit for %s v%s (built on %s)", editionName, Version, BuildDate)
 	}
 }
 

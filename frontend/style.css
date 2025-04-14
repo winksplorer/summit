@@ -7,6 +7,8 @@ body {
     font-family: 'Helvetica Neue Condensed', sans-serif;
     height: 99vh;
     overflow-y: hidden;
+
+    color: white;
 }
 
 .navbar {
@@ -35,33 +37,33 @@ a {
     width: auto;
     background-color: #000;
     flex-grow: 1;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.25em;
 }
 
 .main {
     background: #101010;
-    color: white;
     flex-grow: 1;
     margin-top: 0.5em;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.25em;
 }
 
 a:hover { font-weight: 700; }
 
-.navbar-items { 
+#navbar-items { 
     display: flex;
     flex-wrap: wrap; /* Allows items to wrap when needed */
     gap: 0.2em; /* Controls spacing between links */
     white-space: nowrap; /* Ensures links are not split */
  }
 
-.navbar-items > a { margin-right: 0.3em; }
+#navbar-items > a { margin-right: 0.3em; }
 .current { text-decoration: underline; }
 
 #stats {
     margin-top: -0.2em;
     margin-bottom: 0.1em;
     text-align: right;
+    color: black;
 }
 
 span { white-space: nowrap; }
@@ -78,6 +80,7 @@ span { white-space: nowrap; }
     margin-top: -0.2em;
     margin-bottom: -0.2em;
     margin-right: 0.4em;
+    color: black;
 }
 
 #message {
@@ -90,7 +93,30 @@ span { white-space: nowrap; }
     align-items: center;
 }
 
-#message > p { text-align: right; }
+#message > p { text-align: right; color: black; }
 #message > h3 { color: orangered; }
 #message > button { margin-left: auto; margin-right: 1em; font-size: 0.8em; }
 #message > * { margin: 0.5em; }
+
+#footer {
+    padding-bottom: 0.125em;
+    font-size: 0.85em;
+}
+
+/* settings page */
+
+.config-container {
+    border: 1px solid #eeeef6;
+    padding: 1em;
+    position: relative;
+    margin-top: 1.5em;
+    margin: 1em;
+}
+
+.config-container > h3 {
+    position: absolute;
+    top: 0;
+    transform: translateY(-150%);
+    background: #101010; /* match page background */
+    padding: 0 0.25em;
+}

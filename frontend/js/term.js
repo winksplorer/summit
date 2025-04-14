@@ -1,6 +1,6 @@
 // summit frontend/js/term.js - handles terminal
 
-import { hterm } from './hterm.min.js';
+import { hterm } from './modules/hterm.min.js';
 
 const t = new hterm.Terminal();
 

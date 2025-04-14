@@ -7,26 +7,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>terminal</title>
 
-        <script type="module" src="js/modules/message.js" defer></script>
-        <script type="module" src="js/modules/helpers.js" defer></script>
-        <script type="module" src="js/sidebar.js" defer></script>
-        <script type="module" src="js/hterm.min.js" defer></script>
+        <!-- General JS -->
+        <script type="module" src="js/navbar.js" defer></script>
+
+        <!-- Page-specific JS -->
+        <script type="module" src="js/modules/hterm.min.js" defer></script>
         <script type="module" src="js/term.js" defer></script>
     </head>
     <body>
         <div class="navbar">
             <h1 id="hostname">?</h1>
-
-            <div class="navbar-items">
-                <a class="current" href="term.html">terminal</a>
-                <a href="log.html">logging</a>
-                <a href="storage.html">storage</a>
-                <a href="net.html">networking</a>
-                <a href="vms.html">virtual machines</a>
-                <a href="services.html">services</a>
-                <a href="config.html">settings</a>
-            </div>
-
+            <div id="navbar-items"></div>
             <div id="nav-right">
                 <p id="stats"><span>mem 0/0</span> <span>cpu 0%</span></p>
 
@@ -45,5 +36,7 @@
         </div>
 
         <div id="terminal"></div>
+
+        <footer id="footer"></footer>
     </body>
 </html>

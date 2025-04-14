@@ -7,25 +7,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>settings</title>
 
-        <script type="module" src="js/modules/message.js" defer></script>
-        <script type="module" src="js/modules/helpers.js" defer></script>
-        <script type="module" src="js/sidebar.js" defer></script>
+        <!-- General JS -->
+        <script type="module" src="js/navbar.js" defer></script>
+
+        <!-- Page-specific JS -->
         <script src="js/config.js" defer></script>
     </head>
     <body>
         <div class="navbar">
             <h1 id="hostname">?</h1>
-
-            <div class="navbar-items">
-                <a href="term.html">terminal</a>
-                <a href="log.html">logging</a>
-                <a href="storage.html">storage</a>
-                <a href="net.html">networking</a>
-                <a href="vms.html">virtual machines</a>
-                <a href="services.html">services</a>
-                <a class="current" href="config.html">settings</a>
-            </div>
-
+            <div id="navbar-items"></div>
             <div id="nav-right">
                 <p id="stats"><span>mem ?/?</span> <span>cpu ?%</span></p>
 
@@ -44,11 +35,16 @@
         </div>
 
         <div class="main">
-            <input type="checkbox" id="compactui">
-            <label for="compactui">compact navbar</label>
+            <div class="config-container">
+                <h3>appearance</h3>
+                <input type="checkbox" id="compactui">
+                <label for="compactui">compact navbar</label>
 
-            <input type="checkbox" id="segmentstats">
-            <label for="segmentstats">navbar stats in seven segment font</label>
+                <input type="checkbox" id="segmentstats">
+                <label for="segmentstats">navbar stats in seven segment font</label>
+            </div>
         </div>
+
+        <footer id="footer"></footer>
     </body>
 </html>
