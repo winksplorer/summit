@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os/exec"
 	"os/user"
@@ -38,21 +39,21 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 
 	u, err := user.Lookup(uc.Value)
 	if err != nil {
-		fmt.Println("couldn't lookup username:", err)
+		log.Println("couldn't lookup username:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	uid, err := strconv.ParseInt(u.Uid, 10, 32)
 	if err != nil {
-		fmt.Println("couldn't parse uid:", err)
+		log.Println("couldn't parse uid:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	gid, err := strconv.ParseInt(u.Gid, 10, 32)
 	if err != nil {
-		fmt.Println("couldn't parse gid:", err)
+		log.Println("couldn't parse gid:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -60,7 +61,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 	// upgrade to ws
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		fmt.Println("couldn't upgrade to websockets:", err)
+		log.Println("couldn't upgrade to websockets:", err)
 		return
 	}
 	defer conn.Close()
@@ -84,7 +85,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 	// start shell with pty
 	ptmx, err := pty.Start(cmd)
 	if err != nil {
-		fmt.Println("couldn't start pty:", err)
+		log.Println("couldn't start pty:", err)
 		return
 	}
 	defer ptmx.Close()
@@ -95,12 +96,12 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		for {
 			n, err := ptmx.Read(buf)
 			if err != nil {
-				fmt.Println("couldn't read from pty:", err)
+				log.Println("couldn't read from pty:", err)
 				ptmx.Close()
 				return
 			}
 			if err := conn.WriteMessage(websocket.TextMessage, buf[:n]); err != nil {
-				fmt.Println("couldn't send to websockets:", err)
+				log.Println("couldn't send to websockets:", err)
 				ptmx.Close()
 				return
 			}
@@ -111,7 +112,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			fmt.Println("couldn't read from websockets:", err)
+			log.Println("couldn't read from websockets:", err)
 			ptmx.Close()
 			break
 		}
@@ -124,7 +125,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if _, err := ptmx.Write(msg); err != nil {
-			fmt.Println("couldn't write to pty:", err)
+			log.Println("couldn't write to pty:", err)
 			ptmx.Close()
 			break
 		}

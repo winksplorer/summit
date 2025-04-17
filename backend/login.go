@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -18,7 +19,7 @@ var auths []authedUser
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		if err := r.ParseForm(); err != nil {
-			fmt.Println("error: failed to parse login:", err)
+			log.Println("error: failed to parse login:", err)
 			return
 		}
 
@@ -35,7 +36,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		if !authenticated(w, r) {
 			id, err := randomBase64String(32)
 			if err != nil {
-				fmt.Println("error: generate login:", err)
+				log.Println("error: generate login:", err)
 				return
 			}
 			auths = append(auths, authedUser{id: id, ua: r.UserAgent(), user: r.FormValue("username")})
@@ -58,7 +59,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 				Expires:  time.Now().Add(4 * time.Hour),
 			})
 
-			fmt.Printf("added {%s,%s,%s} to known authed users\n", id, r.UserAgent(), r.FormValue("username"))
+			log.Printf("added {%s,%s,%s} to known authed users\n", id, r.UserAgent(), r.FormValue("username"))
 		}
 		http.Redirect(w, r, "/term.html", http.StatusFound)
 	}
@@ -70,14 +71,14 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 		if authenticated(w, r) {
 			st, err := r.Cookie("st")
 			if err != nil {
-				fmt.Println("error: st disappeared:", err)
+				log.Println("error: st disappeared:", err)
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				return
 			}
 
 			u, err := r.Cookie("u")
 			if err != nil {
-				fmt.Println("error: u disappeared:", err)
+				log.Println("error: u disappeared:", err)
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				return
 			}
@@ -93,7 +94,7 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 func removeAuth(auths []authedUser, userToRemove authedUser) []authedUser {
 	for i, v := range auths {
 		if v == userToRemove {
-			fmt.Printf("removed {%s,%s} from known authed users\n", v.id, v.ua)
+			log.Printf("removed {%s,%s} from known authed users\n", v.id, v.ua)
 			return append(auths[:i], auths[i+1:]...)
 		}
 	}
@@ -135,7 +136,7 @@ func authenticated(w http.ResponseWriter, r *http.Request) bool {
 			if v.ua == r.UserAgent() && v.user == u.Value {
 				return true
 			}
-			fmt.Println("ALERT!! either someone tried to spoof their username, or they tried to login from a different browser using your token. the token has now been marked as invalid.")
+			log.Println("ALERT!! either someone tried to spoof their username, or they tried to login from a different browser using your token. the token has now been marked as invalid.")
 			auths = removeAuth(auths, v)
 			deleteAuthCookie(w)
 			return false

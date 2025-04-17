@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
 
 	"github.com/msteinert/pam"
 )
@@ -60,4 +62,14 @@ func randomBase64String(length int) (string, error) {
 		return "", err
 	}
 	return base64.RawURLEncoding.EncodeToString(randomBytes)[:length], nil
+}
+
+type logWriter struct{}
+
+// logging format
+func (lw *logWriter) Write(bs []byte) (int, error) {
+	if strings.Contains(string(bs), ": remote error: tls: unknown certificate") {
+		return fmt.Print()
+	}
+	return fmt.Printf("[%s] %s", time.Now().Format(time.RFC1123), string(bs))
 }

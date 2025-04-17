@@ -2,7 +2,7 @@ package main
 
 import (
 	"crypto/tls"
-	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -47,9 +47,12 @@ func main() {
 		hlfhr.RedirectToHttps(w, r, 308)
 	})
 
-	fmt.Printf("summit on port %s\n", port)
+	log.SetFlags(0)
+	log.SetOutput(new(logWriter))
+
+	log.Printf("summit on port %s\n", port)
 
 	if err := srv.ListenAndServeTLS("/tmp/summit/summit.crt", "/tmp/summit/summit.key"); err != nil {
-		fmt.Println("error:", err)
+		log.Println("error:", err)
 	}
 }

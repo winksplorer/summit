@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -27,7 +28,7 @@ func getHostnameHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		hostname, err := os.Hostname()
 		if err != nil {
-			fmt.Println("couldn't get hostname:", err)
+			log.Println("couldn't get hostname:", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -47,14 +48,14 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		percentages, err := cpu.Percent(0, false)
 		if err != nil {
-			fmt.Println("couldn't get cpu info:", err)
+			log.Println("couldn't get cpu info:", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
 		virtualMem, err := mem.VirtualMemory()
 		if err != nil {
-			fmt.Println("couldn't get memory info:", err)
+			log.Println("couldn't get memory info:", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -99,7 +100,7 @@ func serverPagesHandler(w http.ResponseWriter, r *http.Request) {
 
 		jsonData, err := json.Marshal(dict)
 		if err != nil {
-			fmt.Println("couldn't format json:", err)
+			log.Println("couldn't format json:", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -142,7 +143,7 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 		// Parse the JSON request body
 		var req SudoRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			fmt.Println("error: failed to parse /api/sudo JSON:", err)
+			log.Println("error: failed to parse /api/sudo JSON:", err)
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 			return
 		}
