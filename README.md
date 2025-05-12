@@ -1,7 +1,7 @@
 # summit
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/winksplorer/summit)
 
-summit is an "all-in-one" web UI currrently intended for managing Alpine Linux servers (but supports other, untested systems).
+summit is an "all-in-one" web UI currently intended for managing Alpine Linux servers (but supports other, untested systems).
 
 Currently, summit is *not* ready for production. Many, *many* things are missing, and there are likely lots of bugs and security issues I've yet to fix.
 
@@ -10,7 +10,7 @@ And yes, I'm aware that the code is awful.
 ## Features
 - All of summit is distributed as one file
 - Portable (I think)
-- Simple, understandable user experience (I also hope)
+- Simple, understandable user experience (I hope)
 - As of May 12th, 2025, the entire final executable is 3.1 MB
 - PAM-based login system
 - hterm-based terminal
