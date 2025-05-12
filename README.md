@@ -1,6 +1,5 @@
 # summit
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/winksplorer/summit)
-![GitHub License](https://img.shields.io/github/license/winksplorer/summit?logo=gnu)
 
 summit is an "all-in-one" web UI currrently intended for managing Alpine Linux servers (but supports other, untested systems).
 
