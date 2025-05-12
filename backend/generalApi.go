@@ -149,7 +149,7 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// authenticate as root with PAM
-		if err := PAMAuth("passwd", "root", req.Password); err != nil {
+		if err := pamAuth("passwd", "root", req.Password); err != nil {
 			http.Redirect(w, r, "Unauthorized", http.StatusUnauthorized)
 			return
 		}

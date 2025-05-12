@@ -1,7 +1,22 @@
 # summit
-summit is an "all-in-one" web UI intended for managing Alpine Linux servers (but supports other, untested distributions).
-
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/winksplorer/summit)
+![GitHub License](https://img.shields.io/github/license/winksplorer/summit?logo=gnu)
+
+summit is an "all-in-one" web UI currrently intended for managing Alpine Linux servers (but supports other, untested systems).
+
+Currently, summit is *not* ready for production. Many, *many* things are missing, and there are likely lots of bugs and security issues I've yet to fix.
+
+And yes, I'm aware that the code is awful.
+
+## Features
+- All of summit is distributed as one file
+- Portable (I think)
+- Simple, understandable code (I hope)
+- Simple, understandable user experience (I also hope)
+- As of May 12th, 2025, the entire final executable is 3.1 MB
+- PAM-based login system
+- hterm-based terminal
+- HTTP/2 & HTTPS
 
 ## TODO
 
@@ -13,20 +28,26 @@ summit is an "all-in-one" web UI intended for managing Alpine Linux servers (but
     - [X] Login page
     - [X] Cookies
     - [X] Admin system
-    - [ ] Slight refactoring (use yawst login code instead)
+    - [ ] Slight refactoring (use my other login impl instead)
 - [ ] Stats
     - [X] Basic numerical stats
     - [ ] Graphing
-- [X] WebSocket terminal
+- [X] WebSocket terminal with hterm
+    - [ ] Firefox compatibility
+- [X] UI Notifications
+- [ ] Get rid of the dumb awful edition system
 - [ ] Settings
     - [ ] Settings page
     - [ ] Settings system
 - [ ] Logging page
 - [ ] Storage page
 - [ ] Networking page
+- [ ] Virtual machines
+    - [ ] Virtual machine page
+    - [ ] Backend system
 - [ ] Services page
 - [ ] Updates page
-
+- [ ] Installer shell script
 
 ## Code structure
 
@@ -44,24 +65,24 @@ The self-extracting archive code so that the entire server is distributed as one
 
 ## Building
 
+All of these commands assume you're running as root.
+
+summit will likely build & run on other systems, but I haven't tested.
+
 ### Alpine
 
 ```sh
-apk add go make clang binutils libarchive-dev linux-pam-dev git \
+apk add go make clang binutils libarchive-dev linux-pam-dev git openssl \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
-    && make tlskey \
-    && make
+    && make all install
 ```
 
 ### Debian
 
 ```sh
-apt install golang-go make clang binutils libarchive-dev libpam0g-dev git \
+apt install golang-go make clang binutils libarchive-dev libpam0g-dev git openssl \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
-    && make tlskey \
-    && make
+    && make all install
 ```
-
-summit will probably build & run on other distributions, but I haven't tried.

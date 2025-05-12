@@ -28,7 +28,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err := PAMAuth("passwd", r.FormValue("username"), r.FormValue("password")); err != nil {
+		if err := pamAuth("passwd", r.FormValue("username"), r.FormValue("password")); err != nil {
 			http.Redirect(w, r, "/?auth=fail", http.StatusFound)
 			return
 		}

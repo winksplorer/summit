@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -12,7 +14,7 @@ import (
 )
 
 // authenticates user with pam
-func PAMAuth(serviceName, userName, passwd string) error {
+func pamAuth(serviceName, userName, passwd string) error {
 	t, err := pam.StartFunc(serviceName, userName, func(s pam.Style, msg string) (string, error) {
 		switch s {
 		case pam.PromptEchoOff:
@@ -62,6 +64,41 @@ func randomBase64String(length int) (string, error) {
 		return "", err
 	}
 	return base64.RawURLEncoding.EncodeToString(randomBytes)[:length], nil
+}
+
+func execCmd(args ...string) error {
+	if len(args) == 0 {
+		return fmt.Errorf("no command provided")
+	}
+
+	// Extract the command name and arguments
+	cmdName := args[0]
+	cmdArgs := args[1:]
+
+	// Create the command with the provided arguments
+	cmd := exec.Command(cmdName, cmdArgs...)
+
+	// Run the command and capture the combined output
+	var stdout bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stdout
+
+	err := cmd.Run()
+	output := stdout.String()
+	if output != "" {
+		fmt.Println(output)
+	}
+
+	if err != nil {
+		lines := strings.Split(strings.TrimSpace(output), "\n")
+		if len(lines) > 0 {
+			lastLine := lines[len(lines)-1]
+			return fmt.Errorf("%v: command execution failed: %v - last line: %v", strings.Join(args, " "), err, lastLine)
+		}
+		return fmt.Errorf("command execution failed: %v", err)
+	}
+
+	return nil
 }
 
 type logWriter struct{}

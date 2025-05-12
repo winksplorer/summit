@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/tls"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -50,9 +51,43 @@ func main() {
 	log.SetFlags(0)
 	log.SetOutput(new(logWriter))
 
+	_, err := os.Stat("/etc/ssl/private/summit.key")
+	_, err2 := os.Stat("/etc/ssl/certs/summit.crt")
+	if os.IsNotExist(err) || os.IsNotExist(err2) {
+		log.Println("generating TLS certificates")
+		// get hostname
+		hostname, err := os.Hostname()
+		if err != nil {
+			log.Println("couldn't get hostname:", err)
+			hostname = "undefined"
+		}
+
+		// generate tls cert
+		if err := execCmd(
+			"openssl",
+			"req",
+			"-x509",
+			"-nodes",
+			"-days", "365",
+			"-newkey", "rsa:2048",
+			"-keyout", "/etc/ssl/private/summit.key",
+			"-out", "/etc/ssl/certs/summit.crt",
+			"-subj", fmt.Sprintf("/C=US/ST=Washington/O=winksplorer & contributors/CN=summit (%s)", hostname),
+		); err != nil {
+			log.Println("couldn't generate certificate:", err)
+			return
+		}
+
+		// change permissions
+		if err := os.Chmod("/etc/ssl/private/summit.key", 0700); err != nil {
+			log.Println("couldn't change private key permissions:", err)
+			return
+		}
+	}
+
 	log.Printf("summit on port %s\n", port)
 
-	if err := srv.ListenAndServeTLS("/tmp/summit/summit.crt", "/tmp/summit/summit.key"); err != nil {
+	if err := srv.ListenAndServeTLS("/etc/ssl/certs/summit.crt", "/etc/ssl/private/summit.key"); err != nil {
 		log.Println("error:", err)
 	}
 }
