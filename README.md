@@ -10,7 +10,6 @@ And yes, I'm aware that the code is awful.
 ## Features
 - All of summit is distributed as one file
 - Portable (I think)
-- Simple, understandable code (I hope)
 - Simple, understandable user experience (I also hope)
 - As of May 12th, 2025, the entire final executable is 3.1 MB
 - PAM-based login system
