@@ -1,6 +1,33 @@
 # summit
 summit is an "all-in-one" web UI intended for managing Alpine Linux servers (but supports other, untested distributions).
 
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/winksplorer/summit)
+
+## TODO
+
+- [X] SEA
+- [X] HTTP/2
+- [X] TLS
+- [X] Login
+    - [X] PAM
+    - [X] Login page
+    - [X] Cookies
+    - [X] Admin system
+    - [ ] Slight refactoring (use yawst login code instead)
+- [ ] Stats
+    - [X] Basic numerical stats
+    - [ ] Graphing
+- [X] WebSocket terminal
+- [ ] Settings
+    - [ ] Settings page
+    - [ ] Settings system
+- [ ] Logging page
+- [ ] Storage page
+- [ ] Networking page
+- [ ] Services page
+- [ ] Updates page
+
+
 ## Code structure
 
 ### backend
