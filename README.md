@@ -40,6 +40,8 @@ And yes, I'm aware that the code is awful.
 - [ ] Settings
     - [ ] Settings page
     - [ ] Settings system
+- [ ] Work on frontend design
+    - [ ] Add some sort of theme system
 - [ ] Logging page
 - [ ] Storage page
 - [ ] Networking page
