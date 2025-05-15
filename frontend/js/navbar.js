@@ -1,6 +1,7 @@
 // summit frontend/js/navbar.js - handles navbar, and is sort of the main js code
 
-import { fetchDataForElementText, fetchDataForElementHtml } from './modules/helpers.js';
+import { fetchDataForElementText } from './modules/helpers.js';
+import { dispatchMessage } from './modules/message.js';
 
 // redirect to login page if unauthorized
 fetch('/api/am-i-authed').then(res => { if (!res.ok) window.location.replace('/') })
@@ -21,7 +22,7 @@ function updateStats() {
             document.getElementById("stats-memrest").textContent = `${data.memoryUsageUnit}/${data.memoryTotal}`;
         })
         .catch(err => {
-            console.error(`failed to fetch ${endpoint} (was going to use as text for #${elementId}):`, err);
+            console.error(`failed to fetch /api/stats (was going to use for navbar stats):`, err);
             dispatchMessage("failed to contact server", "this may be due to the server shutting down or restarting. check the browser console for more info.");
         });
 }
