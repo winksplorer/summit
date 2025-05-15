@@ -31,13 +31,13 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uc, err := r.Cookie("u")
+	sc, err := r.Cookie("s")
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	u, err := user.Lookup(uc.Value)
+	u, err := user.Lookup(sc.Value[32:])
 	if err != nil {
 		log.Println("couldn't lookup username:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -77,10 +77,10 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 	cmd := exec.Command(shell)
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.SysProcAttr.Credential = &syscall.Credential{Uid: uint32(uid), Gid: uint32(gid)}
-	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=/home/%s", uc.Value))
-	cmd.Env = append(cmd.Env, fmt.Sprintf("USER=%s", uc.Value))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=/home/%s", sc.Value[32:]))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("USER=%s", sc.Value[32:]))
 	cmd.Env = append(cmd.Env, "TERM=xterm-256color")
-	cmd.Dir = fmt.Sprintf("/home/%s", uc.Value)
+	cmd.Dir = fmt.Sprintf("/home/%s", sc.Value[32:])
 
 	// start shell with pty
 	ptmx, err := pty.Start(cmd)

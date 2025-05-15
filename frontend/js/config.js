@@ -6,6 +6,9 @@ function compactui(enabled) {
 }
 function segmentstats(enabled) {
     document.getElementById('stats').style.fontFamily = enabled ? '"Seven Segment", sans-serif' : '"Helvetica Neue Condensed", sans-serif';
+    document.getElementById('stats').style.background = enabled ? "black" : "transparent";
+    document.getElementById('stats').style.color = enabled ? "green" : "black";
+    document.getElementById('stats').style.padding = enabled ? "0.15em" : "0";
 }
 
 document.getElementById('compactui').addEventListener('change', function() {

@@ -1,9 +1,6 @@
 // summit frontend/js/login.js - handles automatically redirecting if you are logged in, getting the hostname, or knowing when to show the auth fail message
 
-fetch('/api/am-i-authed')
-    .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))
-    .then(data => window.location.replace(data))
-    .catch(err => console.error('auth call failed, not redirecting:', err));
+fetch('/api/am-i-authed').then(res => { if (res.ok) window.location.replace('/term.html') })
 
 fetch('/api/get-hostname')
         .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))

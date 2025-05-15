@@ -1,7 +1,7 @@
 # summit
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/winksplorer/summit)
 
-summit is an "all-in-one" web UI currrently intended for managing Alpine Linux servers (but supports other, untested systems).
+summit is an "all-in-one" web UI designed to be portable and (somewhat) minimal while still being useful.
 
 Currently, summit is *not* ready for production. Many, *many* things are missing, and there are likely lots of bugs and security issues I've yet to fix.
 
@@ -9,7 +9,7 @@ And yes, I'm aware that the code is awful.
 
 ## Features
 - All of summit is distributed as one file
-- Portable (I think)
+- Portable (Tested with Debian, Alpine, and FreeBSD so far)
 - Simple, understandable code (I hope)
 - Simple, understandable user experience (I also hope)
 - As of May 12th, 2025, the entire final executable is 3.1 MB
@@ -27,9 +27,10 @@ And yes, I'm aware that the code is awful.
     - [X] Login page
     - [X] Cookies
     - [X] Admin system
-    - [ ] Slight refactoring (use my other login impl instead)
+    - [X] Slight refactoring (use my other login impl instead)
 - [ ] Stats
     - [X] Basic numerical stats
+    - [ ] Implement Odometer
     - [ ] Graphing
 - [X] WebSocket terminal with hterm
     - [ ] Firefox compatibility
@@ -84,4 +85,14 @@ apt install golang-go make clang binutils libarchive-dev libpam0g-dev git openss
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
     && make all install
+```
+
+### FreeBSD
+
+```sh
+pkg install go gmake binutils libarchive git openssl \
+    && git clone https://github.com/winksplorer/summit \
+    && cd summit \
+    && gmake all bsdinstall
+    && mkdir -p /etc/ssl/private
 ```

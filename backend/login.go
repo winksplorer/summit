@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -37,29 +36,19 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			id, err := randomBase64String(32)
 			if err != nil {
 				log.Println("error: generate login:", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				return
 			}
 			auths = append(auths, authedUser{id: id, ua: r.UserAgent(), user: r.FormValue("username")})
 
 			http.SetCookie(w, &http.Cookie{
-				Name:  "st",
-				Value: id,
-				//Path:     "/",
-				HttpOnly: true,
+				Name:     "s",
+				Value:    id + r.FormValue("username"),
 				SameSite: http.SameSiteStrictMode,
 				Expires:  time.Now().Add(4 * time.Hour),
 			})
 
-			http.SetCookie(w, &http.Cookie{
-				Name:  "u",
-				Value: r.FormValue("username"),
-				//Path:     "/",
-				HttpOnly: true,
-				SameSite: http.SameSiteStrictMode,
-				Expires:  time.Now().Add(4 * time.Hour),
-			})
-
-			log.Printf("added {%s,%s,%s} to known authed users\n", id, r.UserAgent(), r.FormValue("username"))
+			log.Printf("added {%s%s,%s} to known authed users\n", id, r.FormValue("username"), r.UserAgent())
 		}
 		http.Redirect(w, r, "/term.html", http.StatusFound)
 	}
@@ -69,21 +58,14 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		if authenticated(w, r) {
-			st, err := r.Cookie("st")
+			s, err := r.Cookie("s")
 			if err != nil {
-				log.Println("error: st disappeared:", err)
+				log.Println("error: session disappeared:", err)
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				return
 			}
 
-			u, err := r.Cookie("u")
-			if err != nil {
-				log.Println("error: u disappeared:", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				return
-			}
-
-			auths = removeAuth(auths, authedUser{id: st.Value, ua: r.UserAgent(), user: u.Value})
+			auths = removeAuth(auths, authedUser{id: s.Value[:32], ua: r.UserAgent(), user: s.Value[32:]})
 			deleteAuthCookie(w)
 		}
 		http.Redirect(w, r, "/", http.StatusFound)
@@ -94,7 +76,7 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 func removeAuth(auths []authedUser, userToRemove authedUser) []authedUser {
 	for i, v := range auths {
 		if v == userToRemove {
-			log.Printf("removed {%s,%s} from known authed users\n", v.id, v.ua)
+			log.Printf("removed {%s%s,%s} from known authed users\n", v.id, v.user, v.ua)
 			return append(auths[:i], auths[i+1:]...)
 		}
 	}
@@ -103,17 +85,8 @@ func removeAuth(auths []authedUser, userToRemove authedUser) []authedUser {
 
 func deleteAuthCookie(w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
-		Name:  "st",
-		Value: "",
-		//	Path:    "/",
-		Expires: time.Now().Add(-time.Hour),
-		MaxAge:  -1,
-	})
-
-	http.SetCookie(w, &http.Cookie{
-		Name:  "u",
-		Value: "",
-		//	Path:    "/",
+		Name:    "s",
+		Value:   "",
 		Expires: time.Now().Add(-time.Hour),
 		MaxAge:  -1,
 	})
@@ -121,19 +94,14 @@ func deleteAuthCookie(w http.ResponseWriter) {
 
 // checks if user is authenticated
 func authenticated(w http.ResponseWriter, r *http.Request) bool {
-	st, err := r.Cookie("st")
-	if err != nil {
-		return false
-	}
-
-	u, err := r.Cookie("u")
+	s, err := r.Cookie("s")
 	if err != nil {
 		return false
 	}
 
 	for _, v := range auths {
-		if v.id == st.Value {
-			if v.ua == r.UserAgent() && v.user == u.Value {
+		if v.id == s.Value[:32] {
+			if v.ua == r.UserAgent() && v.user == s.Value[32:] {
 				return true
 			}
 			log.Println("ALERT!! either someone tried to spoof their username, or they tried to login from a different browser using your token. the token has now been marked as invalid.")
@@ -148,10 +116,9 @@ func authenticated(w http.ResponseWriter, r *http.Request) bool {
 func amIAuthedHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		if authenticated(w, r) {
-			w.Header().Set("Content-Type", "text/plain")
-			fmt.Fprintln(w, "/term.html")
+			http.Error(w, "OK", http.StatusOK)
 			return
 		}
-		http.Error(w, "No, you're not authed.", http.StatusUnauthorized)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	}
 }
