@@ -30,7 +30,8 @@ And yes, I'm aware that the code is awful.
     - [X] Slight refactoring (use my other login impl instead)
 - [ ] Stats
     - [X] Basic numerical stats
-    - [ ] Implement Odometer
+    - [X] Implement Odometer
+    - [ ] Make Odometer actually fit in the design
     - [ ] Graphing
 - [X] WebSocket terminal with hterm
     - [ ] Firefox compatibility

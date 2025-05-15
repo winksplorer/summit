@@ -60,8 +60,38 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprintf(w, "<span>mem %s/%s</span> <span>cpu %d%%</span>", humanReadable(virtualMem.Used), humanReadable(virtualMem.Total), int(percentages[0]))
+		var usageValue float64
+		var usageUnit string
+		const (
+			kb = 1024
+			mb = kb * 1024
+			gb = mb * 1024
+		)
+
+		switch {
+		case virtualMem.Used >= gb:
+			usageValue = float64(virtualMem.Used) / float64(gb)
+			usageUnit = "g"
+		case virtualMem.Used >= mb:
+			usageValue = float64(virtualMem.Used) / float64(mb)
+			usageUnit = "m"
+		case virtualMem.Used >= kb:
+			usageValue = float64(virtualMem.Used) / float64(kb)
+			usageUnit = "k"
+		default:
+			usageValue = float64(virtualMem.Used)
+			usageUnit = ""
+		}
+
+		stats := map[string]interface{}{
+			"memoryTotal":     humanReadable(virtualMem.Total),
+			"memoryUsage":     fmt.Sprintf("%.1f", usageValue),
+			"memoryUsageUnit": usageUnit,
+			"processorUsage":  percentages[0],
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(stats)
 	}
 }
 

@@ -60,10 +60,24 @@ a:hover { font-weight: 700; }
 .current { text-decoration: underline; }
 
 #stats {
-    margin-top: -0.2em;
-    margin-bottom: 0.1em;
+    display:flex;
+    flex-direction: row;
     text-align: right;
     color: black;
+}
+
+#stats > p {
+    margin-top: 0.05em;
+    margin-bottom: 0.1em;
+    margin-left: 0.07em;
+}
+
+#stats-memrest {
+    margin-right: 0.45em;
+}
+
+#stats-cpuperc {
+    margin-left:0.02em !important;
 }
 
 span { white-space: nowrap; }

@@ -12,13 +12,22 @@
 
         <!-- Page-specific JS -->
         <script src="js/config.js" defer></script>
+
+        <!-- Odometer -->
+        <link rel="stylesheet" href="odometer-ts.css" />
+        <script src="js/odometer.min.js"></script>
     </head>
     <body>
         <div class="navbar">
             <h1 id="hostname">?</h1>
             <div id="navbar-items"></div>
             <div id="nav-right">
-                <p id="stats"><span>mem ?/?</span> <span>cpu ?%</span></p>
+                <div id="stats">
+                    <div class="odometer" id="stats-memused"></div>
+                    <p id="stats-memrest">g/31.2g</p>
+                    <div class="odometer" id="stats-cpu"></div>
+                    <p id="stats-cpuperc">%</p>
+                </div>
 
                 <div class="quick-actions">
                     <a href="admin.html?operation=reboot">↺</a>

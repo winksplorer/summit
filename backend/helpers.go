@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"math"
 	"os/exec"
 	"strings"
 	"time"
@@ -45,11 +46,11 @@ func humanReadable(bytes uint64) string {
 
 	switch {
 	case bytes >= gb:
-		return fmt.Sprintf("%.1fg", float64(bytes)/float64(gb))
+		return fmt.Sprintf("%dg", int(math.Round(float64(bytes)/float64(gb))))
 	case bytes >= mb:
-		return fmt.Sprintf("%.1fm", float64(bytes)/float64(mb))
+		return fmt.Sprintf("%dm", int(math.Round(float64(bytes)/float64(mb))))
 	case bytes >= kb:
-		return fmt.Sprintf("%.1fk", float64(bytes)/float64(kb))
+		return fmt.Sprintf("%dk", int(math.Round(float64(bytes)/float64(kb))))
 	default:
 		return fmt.Sprintf("%d", bytes)
 	}

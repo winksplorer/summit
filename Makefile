@@ -31,3 +31,6 @@ sea:
 
 install:
 	install -m 755 summit /usr/bin
+
+bsdinstall:
+	install -m 755 summit /usr/local/bin

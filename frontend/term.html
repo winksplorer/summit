@@ -23,7 +23,12 @@
             <h1 id="hostname">?</h1>
             <div id="navbar-items"></div>
             <div id="nav-right">
-                <p id="stats"><span>mem 0/0</span> <span>cpu 0%</span></p>
+                <div id="stats">
+                    <div class="odometer" id="stats-memused"></div>
+                    <span id="stats-memrest">g/31.2g</span>
+                    <div class="odometer" id="stats-cpu"></div>
+                    <span id="stats-cpuperc">%</span>
+                </div>
 
                 <div class="quick-actions">
                     <a href="admin.html?operation=reboot">↺</a>
