@@ -36,7 +36,7 @@ And yes, I'm aware that the code is awful.
 - [X] WebSocket terminal
     - [X] Switch to xterm.js
     - [X] Firefox compatibility
-    - [ ] Fix the fucking thing
+    - [X] Fix the fucking thing
 - [X] UI Notifications
 - [ ] Get rid of the dumb awful edition system
 - [ ] Settings

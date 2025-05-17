@@ -1,8 +1,10 @@
 // summit frontend/js/term.js - handles terminal
 
-const t = new Terminal({
-    fontFamily: '"Iosevka NF", "Courier New", monospace',
+t = window.t = new Terminal({
+    fontFamily: '"Courier New", monospace',
+    fontSize: 14,
     cursorBlink: true,
+    convertEol: true,
     theme: {
         background: '#101010',
         foreground: '#eeeef6'
@@ -25,7 +27,7 @@ socket.onopen = () => {
 };
 
 socket.onmessage = event => {
-    t.write(event.data.replace(/\n/g, '\r\n'));
+    t.write(event.data);
 };
 
 t.onData(data => {
