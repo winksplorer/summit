@@ -37,3 +37,13 @@ t.onData(data => {
 t.onResize(({ cols, rows }) => {
     socket.send(JSON.stringify({ type: "resize", cols, rows }));
 });
+
+const term_resize_ob = new ResizeObserver(function(entries) {
+    try {
+        fit && fit.fit();
+    } catch (err) {
+        console.log(err)
+    }
+})
+
+term_resize_ob.observe(document.getElementById('terminal'))

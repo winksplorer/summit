@@ -35,16 +35,17 @@ a {
     position:relative;
     margin-top: 0.5em;
     width: auto;
-    background-color: #000;
+    background-color: #101010;
     flex-grow: 1;
-    margin-bottom: 0.25em;
+    margin-bottom: 0.125em;
+    min-height: 0;
 }
 
 .main {
     background: #101010;
     flex-grow: 1;
     margin-top: 0.5em;
-    margin-bottom: 0.25em;
+    margin-bottom: 0.125em;
 }
 
 a:hover { font-weight: 700; }
