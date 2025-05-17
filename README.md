@@ -32,11 +32,11 @@ And yes, I'm aware that the code is awful.
     - [X] Basic numerical stats
     - [X] Implement Odometer
     - [ ] Make Odometer actually fit in the design
-    - [ ] Graphing
 - [X] WebSocket terminal
     - [X] Switch to xterm.js
     - [X] Firefox compatibility
     - [X] Fix the fucking thing
+    - [ ] Fix doas
 - [X] UI Notifications
 - [X] Get rid of the dumb awful edition system
 - [ ] Settings

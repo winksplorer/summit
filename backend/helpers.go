@@ -106,7 +106,7 @@ type logWriter struct{}
 
 // logging format
 func (lw *logWriter) Write(bs []byte) (int, error) {
-	if strings.Contains(string(bs), ": remote error: tls: unknown certificate") {
+	if strings.Contains(string(bs), ": remote error: tls: unknown certificate") || strings.Contains(string(bs), "websocket: close 1001 (going away)") {
 		return fmt.Print()
 	}
 	return fmt.Printf("[%s] %s", time.Now().Format(time.RFC1123), string(bs))
