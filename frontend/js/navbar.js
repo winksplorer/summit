@@ -10,7 +10,7 @@ fetch('/api/am-i-authed').then(res => { if (!res.ok) window.location.replace('/'
 fetchDataForElementText('/api/get-hostname', 'hostname');
 
 // build string
-fetchDataForElementText('/api/buildstring', 'footer');
+if (window.location.href.includes("config.html")) fetchDataForElementText('/api/buildstring', 'summit-version');
 
 // stats
 function updateStats() {

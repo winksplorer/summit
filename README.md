@@ -14,7 +14,7 @@ And yes, I'm aware that the code is awful.
 - Simple, understandable user experience (I also hope)
 - As of May 12th, 2025, the entire final executable is 3.1 MB
 - PAM-based login system
-- hterm-based terminal
+- xterm.js-based terminal
 - HTTP/2 & HTTPS
 
 ## TODO
@@ -38,7 +38,7 @@ And yes, I'm aware that the code is awful.
     - [X] Firefox compatibility
     - [X] Fix the fucking thing
 - [X] UI Notifications
-- [ ] Get rid of the dumb awful edition system
+- [X] Get rid of the dumb awful edition system
 - [ ] Settings
     - [ ] Settings page
     - [ ] Settings system

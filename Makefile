@@ -3,9 +3,6 @@ CC ?= clang
 
 SUMMIT_VERSION = 0.3
 
-# VM = "summit for guests", RH = "summit for hosts"
-EDITION ?= VM
-
 # Alpine is weird and wants us to directly link libarchive in SEA for some reason
 ifneq ($(wildcard /usr/lib/libarchive.so),)
     LIBARCHIVE_FLAGS = /usr/lib/libarchive.so
@@ -21,7 +18,7 @@ clean:
 	rm -f summit-server summit summit.tar.gz summit.tar.gz.o
 
 backend:
-	cd backend && go mod tidy && $(GO) build -o ../summit-server -ldflags "-X main.BuildDate=$(shell date +%Y-%b-%d) -X main.Version=$(SUMMIT_VERSION) -X main.Edition=$(EDITION)"
+	cd backend && go mod tidy && $(GO) build -o ../summit-server -ldflags "-X main.BuildDate=$(shell date +%Y-%b-%d) -X main.Version=$(SUMMIT_VERSION)"
 	strip summit-server
 
 sea:

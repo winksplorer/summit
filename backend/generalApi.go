@@ -103,29 +103,15 @@ func serverPagesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodGet {
-		var dict [][2]string
-
-		if Edition == "RH" {
-			dict = [][2]string{
-				{"term.html", "terminal"},
-				{"log.html", "logging"},
-				{"stor.html", "storage"},
-				{"net.html", "networking"},
-				{"vm.html", "virtual machines"},
-				{"services.html", "services"},
-				{"updates.html", "updates"},
-				{"config.html", "settings"},
-			}
-		} else {
-			dict = [][2]string{
-				{"term.html", "terminal"},
-				{"log.html", "logging"},
-				{"stor.html", "storage"},
-				{"net.html", "networking"},
-				{"services.html", "services"},
-				{"updates.html", "updates"},
-				{"config.html", "settings"},
-			}
+		dict := [][2]string{
+			{"term.html", "terminal"},
+			{"log.html", "logging"},
+			{"stor.html", "storage"},
+			{"net.html", "networking"},
+			{"vm.html", "virtual machines"},
+			{"services.html", "services"},
+			{"updates.html", "updates"},
+			{"config.html", "settings"},
 		}
 
 		jsonData, err := json.Marshal(dict)
@@ -148,12 +134,7 @@ func buildstringHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodGet {
-		var editionName = "guests"
-		if Edition == "RH" {
-			editionName = "hosts"
-		}
-
-		fmt.Fprintf(w, "summit for %s v%s (built on %s)", editionName, Version, BuildDate)
+		fmt.Fprintf(w, "summit v%s (built on %s)", Version, BuildDate)
 	}
 }
 

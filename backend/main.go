@@ -13,7 +13,6 @@ import (
 
 var BuildDate string = "undefined"
 var Version string = "undefined"
-var Edition string = "undefined"
 
 func main() {
 	port := ":7070"
