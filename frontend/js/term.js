@@ -1,19 +1,37 @@
 // summit frontend/js/term.js - handles terminal
 
-import { hterm } from './modules/hterm.min.js';
+const t = new Terminal({
+    fontFamily: '"Iosevka NF", "Courier New", monospace',
+    cursorBlink: true,
+    theme: {
+        background: '#101010',
+        foreground: '#eeeef6'
+    }
+});
 
-const t = new hterm.Terminal();
+const fit = new FitAddon.FitAddon();
+t.loadAddon(fit);
 
-t.onTerminalReady = function() {
-    const io = t.io.push()
-    const socket = new WebSocket("wss://" + location.host + "/api/pty");
-    socket.onopen = (event) => socket.send(JSON.stringify({ type: "resize", cols: t.screenSize.width, rows: t.screenSize.height }));
+t.open(document.getElementById('terminal'));
+fit.fit();
+const socket = new WebSocket("wss://" + location.host + "/api/pty");
 
-    socket.onmessage = (event) => t.io.print(event.data.replace(/\n/g, "\r\n"));
-    io.onVTKeystroke = (str) => socket.send(str);
-    io.sendString = (str) => socket.send(str);
-    io.onTerminalResize = (columns, rows) => socket.send(JSON.stringify({ type: "resize", cols: columns, rows: rows }));
+socket.onopen = () => {
+    socket.send(JSON.stringify({
+        type: "resize",
+        cols: t.cols,
+        rows: t.rows
+    }));
 };
 
-t.decorate(document.getElementById('terminal'));
-t.installKeyboard();
+socket.onmessage = event => {
+    t.write(event.data.replace(/\n/g, '\r\n'));
+};
+
+t.onData(data => {
+    socket.send(data);
+});
+
+t.onResize(({ cols, rows }) => {
+    socket.send(JSON.stringify({ type: "resize", cols, rows }));
+});

@@ -33,8 +33,10 @@ And yes, I'm aware that the code is awful.
     - [X] Implement Odometer
     - [ ] Make Odometer actually fit in the design
     - [ ] Graphing
-- [X] WebSocket terminal with hterm
-    - [ ] Firefox compatibility
+- [X] WebSocket terminal
+    - [X] Switch to xterm.js
+    - [X] Firefox compatibility
+    - [ ] Fix the fucking thing
 - [X] UI Notifications
 - [ ] Get rid of the dumb awful edition system
 - [ ] Settings
