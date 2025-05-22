@@ -31,19 +31,25 @@ And yes, I'm aware that the code is awful.
 - [ ] Stats
     - [X] Basic numerical stats
     - [X] Implement Odometer
-    - [ ] Make Odometer actually fit in the design
-- [X] WebSocket terminal
+    - [ ] Make Odometer actually fit in the design (requires themes system)
+- [ ] WebSocket terminal
     - [X] Switch to xterm.js
     - [X] Firefox compatibility
     - [X] Fix the fucking thing
     - [ ] Fix doas
 - [X] UI Notifications
 - [X] Get rid of the dumb awful edition system
+- [ ] Implement templates
+- [ ] Simplify entire frontend
+    - [ ] Simplify HTML using templates
+    - [ ] Simplify JS
+        - [ ] Use `window._`
+        - [ ] Bundling
+        - [ ] Minification
+    - [ ] Simplify CSS
 - [ ] Settings
     - [ ] Settings page
     - [ ] Settings system
-- [ ] Work on frontend design
-    - [ ] Add some sort of theme system
 - [ ] Logging page
 - [ ] Storage page
 - [ ] Networking page
@@ -52,6 +58,8 @@ And yes, I'm aware that the code is awful.
     - [ ] Backend system
 - [ ] Services page
 - [ ] Updates page
+- [ ] Work on frontend design
+    - [ ] Add some sort of theme system
 - [ ] Installer shell script
 
 ## Code structure
