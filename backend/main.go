@@ -19,18 +19,17 @@ var frontendDir string
 var port string = ":7070"
 
 func init() {
+	// custom logging
 	log.SetFlags(0)
 	log.SetOutput(new(logWriter))
 
+	// select where the frontend is
+	// SEA passes the first arg, so "summit dev" = "/tmp/summit/summit-server dev"
 	if len(os.Args) > 1 && os.Args[1] == "dev" {
 		frontendDir = "frontend"
 	} else {
 		frontendDir = "/tmp/summit/frontend"
 	}
-}
-
-type PageData struct {
-	Title string
 }
 
 func main() {
@@ -116,20 +115,15 @@ func templater(w http.ResponseWriter, r *http.Request) {
 
 	pageName := strings.TrimSuffix(path, ".html")
 
-	tmplFiles := []string{
-		fmt.Sprintf("%s/template/base.html", frontendDir),
-		fmt.Sprintf("%s/template/%s.html", frontendDir, pageName),
-	}
-
-	tmpl, err := template.ParseFiles(tmplFiles...)
+	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/template/base.html", frontendDir), fmt.Sprintf("%s/template/%s.html", frontendDir, pageName))
 	if err != nil {
 		log.Printf("template parse error for %s: %v", path, err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	err = tmpl.ExecuteTemplate(w, pageName, PageData{
-		Title: pageName,
+	err = tmpl.ExecuteTemplate(w, pageName, map[string]interface{}{
+		"Title": pageName,
 	})
 	if err != nil {
 		log.Printf("template exec error for %s: %v", path, err)

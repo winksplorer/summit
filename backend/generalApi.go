@@ -108,7 +108,7 @@ func serverPagesHandler(w http.ResponseWriter, r *http.Request) {
 			{"log.html", "logging"},
 			{"stor.html", "storage"},
 			{"net.html", "networking"},
-			{"vm.html", "virtual machines"},
+			{"container.html", "containers"},
 			{"services.html", "services"},
 			{"updates.html", "updates"},
 			{"config.html", "settings"},

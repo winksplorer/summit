@@ -85,8 +85,10 @@ summit will likely build & run on other systems, but I haven't tested.
 
 ### Alpine
 
+> Make sure you have the community repo enabled.
+
 ```sh
-apk add go make clang binutils libarchive-dev linux-pam-dev git openssl \
+apk add go make clang binutils libarchive-dev linux-pam-dev git openssl minify \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
     && make all install
@@ -95,7 +97,7 @@ apk add go make clang binutils libarchive-dev linux-pam-dev git openssl \
 ### Debian
 
 ```sh
-apt install golang-go make clang binutils libarchive-dev libpam0g-dev git openssl \
+apt install golang-go make clang binutils libarchive-dev libpam0g-dev git openssl minify \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
     && make all install
@@ -104,7 +106,7 @@ apt install golang-go make clang binutils libarchive-dev libpam0g-dev git openss
 ### FreeBSD
 
 ```sh
-pkg install go gmake binutils libarchive git openssl \
+pkg install go gmake binutils libarchive git openssl minify \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
     && gmake all bsdinstall
