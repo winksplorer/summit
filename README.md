@@ -39,7 +39,8 @@ And yes, I'm aware that the code is awful.
     - [ ] Fix doas
 - [X] UI Notifications
 - [X] Get rid of the dumb awful edition system
-- [ ] Implement templates
+- [X] Implement templates
+- [ ] We need code comments :sob:
 - [ ] Simplify entire frontend
     - [ ] Simplify HTML using templates
     - [ ] Simplify JS

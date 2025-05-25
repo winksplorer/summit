@@ -3,9 +3,11 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/bddjr/hlfhr"
 	"golang.org/x/net/http2"
@@ -13,18 +15,26 @@ import (
 
 var BuildDate string = "undefined"
 var Version string = "undefined"
+var frontendDir string
+var port string = ":7070"
 
-func main() {
-	port := ":7070"
+func init() {
+	log.SetFlags(0)
+	log.SetOutput(new(logWriter))
 
-	var frontendDir string
 	if len(os.Args) > 1 && os.Args[1] == "dev" {
-		frontendDir = "./frontend"
+		frontendDir = "frontend"
 	} else {
 		frontendDir = "/tmp/summit/frontend"
 	}
+}
 
-	http.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir(frontendDir))))
+type PageData struct {
+	Title string
+}
+
+func main() {
+	http.HandleFunc("/", templater)
 	http.HandleFunc("/api/login", loginHandler)
 	http.HandleFunc("/api/logout", logoutHandler)
 	http.HandleFunc("/api/get-hostname", getHostnameHandler)
@@ -46,9 +56,6 @@ func main() {
 	srv.HttpOnHttpsPortErrorHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		hlfhr.RedirectToHttps(w, r, 308)
 	})
-
-	log.SetFlags(0)
-	log.SetOutput(new(logWriter))
 
 	_, err := os.Stat("/etc/ssl/private/summit.key")
 	_, err2 := os.Stat("/etc/ssl/certs/summit.crt")
@@ -88,5 +95,44 @@ func main() {
 
 	if err := srv.ListenAndServeTLS("/etc/ssl/certs/summit.crt", "/etc/ssl/private/summit.key"); err != nil {
 		log.Println("error:", err)
+	}
+}
+
+func templater(w http.ResponseWriter, r *http.Request) {
+	path := strings.TrimPrefix(r.URL.Path, "/")
+
+	if path == "" {
+		if authenticated(w, r) {
+			path = "term"
+		} else {
+			path = "index.html"
+		}
+	}
+
+	if !strings.HasSuffix(path, ".html") || path == "index.html" || path == "admin.html" {
+		http.FileServer(http.Dir(frontendDir)).ServeHTTP(w, r)
+		return
+	}
+
+	pageName := strings.TrimSuffix(path, ".html")
+
+	tmplFiles := []string{
+		fmt.Sprintf("%s/template/base.html", frontendDir),
+		fmt.Sprintf("%s/template/%s.html", frontendDir, pageName),
+	}
+
+	tmpl, err := template.ParseFiles(tmplFiles...)
+	if err != nil {
+		log.Printf("template parse error for %s: %v", path, err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.ExecuteTemplate(w, pageName, PageData{
+		Title: pageName,
+	})
+	if err != nil {
+		log.Printf("template exec error for %s: %v", path, err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }

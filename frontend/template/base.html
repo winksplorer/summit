@@ -1,20 +1,18 @@
+{{define "base"}}
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <link rel="stylesheet" href="typography.css" type="text/css">
         <link rel="stylesheet" href="style.css" type="text/css">
-        <link rel="stylesheet" href="js/modules/xterm.css" type="text/css"/>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>terminal</title>
+        <title>{{.Title}}</title>
 
         <!-- General JS -->
         <script type="module" src="js/navbar.js" defer></script>
 
-        <!-- Page-specific JS -->
-        <script src="js/modules/xterm.min.js" defer></script>
-        <script type="module" src="js/modules/xterm-addon-fit.min.js" defer></script>
-        <script type="module" src="js/term.js" defer></script>
+        <!-- Page-specific JS/CSS -->
+        {{template "head" .}}
 
         <!-- Odometer -->
         <link rel="stylesheet" href="odometer-ts.css" />
@@ -46,6 +44,7 @@
             <button id="messageDismiss">x</button>
         </div>
 
-        <div id="terminal"></div>
+        {{template "main" .}}
     </body>
 </html>
+{{end}}
