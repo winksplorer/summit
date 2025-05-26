@@ -5,8 +5,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-extern const char _binary_summit_tar_gz_start[];
-extern const char _binary_summit_tar_gz_end[];
+extern const char _binary_summit_tar_xz_start[];
+extern const char _binary_summit_tar_xz_end[];
 
 void extract_mem(const void *data, size_t data_size, const char *output_dir) {
     struct archive *archive = archive_read_new(), *disk = archive_write_disk_new();
@@ -44,10 +44,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    printf("summit SEA (%s %s)\narchive size = %.2f MB\n", __DATE__, __TIME__, (double)(_binary_summit_tar_gz_end - _binary_summit_tar_gz_start)/1000000);
+    printf("summit SEA (%s %s)\narchive size = %.2f MB\n", __DATE__, __TIME__, (double)(_binary_summit_tar_xz_end - _binary_summit_tar_xz_start)/1000000);
     struct stat st;
     if (stat("/tmp/summit", &st) == 0 && S_ISDIR(st.st_mode)) rmdir("/tmp/summit");
-    extract_mem(_binary_summit_tar_gz_start, _binary_summit_tar_gz_end - _binary_summit_tar_gz_start, "/tmp/summit");
+    extract_mem(_binary_summit_tar_xz_start, _binary_summit_tar_xz_end - _binary_summit_tar_xz_start, "/tmp/summit");
 
     if (argc == 1) execv("/tmp/summit/summit-server", (char *[]){"/tmp/summit/summit-server", NULL});
     else execv("/tmp/summit/summit-server", (char *[]){"/tmp/summit/summit-server", argv[1], NULL});

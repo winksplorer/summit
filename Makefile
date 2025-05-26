@@ -15,16 +15,16 @@ endif
 all: backend sea
 
 clean:
-	rm -f summit-server summit summit.tar.gz summit.tar.gz.o
+	rm -f summit-server summit summit.tar.xz summit.tar.xz.o
 
 backend:
 	cd backend && go mod tidy && $(GO) build -o ../summit-server -ldflags "-X main.BuildDate=$(shell date +%Y-%b-%d) -X main.Version=$(SUMMIT_VERSION)"
 	strip summit-server
 
 sea:
-	tar -cJf summit.tar.gz summit-server frontend
-	ld -r -b binary -o summit.tar.gz.o summit.tar.gz
-	clang -larchive -o summit sea.c summit.tar.gz.o $(LIBARCHIVE_FLAGS)
+	tar -cJf summit.tar.xz summit-server frontend
+	ld -r -b binary -o summit.tar.xz.o summit.tar.xz
+	clang -larchive -o summit sea.c summit.tar.xz.o $(LIBARCHIVE_FLAGS)
 
 install:
 	install -m 755 summit /usr/bin
