@@ -12,7 +12,7 @@ And yes, I'm aware that the code is awful.
 - Portable (Tested with Debian, Alpine, and FreeBSD so far)
 - Simple, understandable code (I hope)
 - Simple, understandable user experience (I also hope)
-- As of May 12th, 2025, the entire final executable is 3.1 MB
+- As of May 25th, 2025, the entire final executable is 2.9 MB
 - PAM-based login system
 - xterm.js-based terminal
 - HTTP/2 & HTTPS

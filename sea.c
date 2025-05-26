@@ -14,7 +14,7 @@ void extract_mem(const void *data, size_t data_size, const char *output_dir) {
     int r;
 
     archive_read_support_format_tar(archive);
-    archive_read_support_filter_gzip(archive);
+    archive_read_support_filter_xz(archive);
     archive_read_open_memory(archive, data, data_size);
     archive_write_disk_set_options(disk, ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_PERM | ARCHIVE_EXTRACT_ACL | ARCHIVE_EXTRACT_FFLAGS);
 

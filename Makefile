@@ -22,7 +22,7 @@ backend:
 	strip summit-server
 
 sea:
-	tar -czf summit.tar.gz summit-server frontend
+	tar -cJf summit.tar.gz summit-server frontend
 	ld -r -b binary -o summit.tar.gz.o summit.tar.gz
 	clang -larchive -o summit sea.c summit.tar.gz.o $(LIBARCHIVE_FLAGS)
 
