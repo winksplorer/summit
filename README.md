@@ -40,7 +40,6 @@ And yes, I'm aware that the code is awful.
 - [X] UI Notifications
 - [X] Get rid of the dumb awful edition system
 - [X] Implement templates
-- [ ] We need code comments :sob:
 - [ ] Simplify entire frontend
     - [ ] Simplify HTML using templates
     - [ ] Simplify JS
@@ -48,6 +47,10 @@ And yes, I'm aware that the code is awful.
         - [ ] Bundling
         - [ ] Minification
     - [ ] Simplify CSS
+- [ ] We need code comments :sob:
+    - [X] SEA
+    - [ ] Backend
+    - [ ] Frontend
 - [ ] Settings
     - [ ] Settings page
     - [ ] Settings system
