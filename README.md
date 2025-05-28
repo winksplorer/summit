@@ -41,7 +41,7 @@ And yes, I'm aware that the code is awful.
 - [X] Get rid of the dumb awful edition system
 - [X] Implement templates
 - [ ] Simplify entire frontend
-    - [ ] Simplify HTML using templates
+    - [X] Simplify HTML using templates
     - [ ] Simplify JS
         - [ ] Use `window._`
         - [ ] Bundling
@@ -54,14 +54,32 @@ And yes, I'm aware that the code is awful.
 - [ ] Settings
     - [ ] Settings page
     - [ ] Settings system
-- [ ] Logging page
+- [ ] Logging
+    - [ ] Backend
+        - [ ] Application-specific logs?
+        - [ ] Init system logs
+        - [ ] Kernel logs
+    - [ ] Logging page
 - [ ] Storage page
 - [ ] Networking page
-- [ ] Virtual machines
-    - [ ] Virtual machine page
-    - [ ] Backend system
-- [ ] Services page
-- [ ] Updates page
+- [ ] Containers
+    - [ ] Backend
+        - [ ] Podman support
+        - [ ] Docker support
+    - [ ] Container page
+- [ ] Services
+    - [ ] Backend
+        - [ ] OpenRC support
+        - [ ] systemd support
+        - [ ] other init systems
+    - [ ] Services page
+- [ ] Updates
+    - [ ] Backend
+        - [ ] apt support
+        - [ ] apk support
+        - [ ] pkg support
+        - [ ] other package managers
+    - [ ] Updates page
 - [ ] Work on frontend design
     - [ ] Add some sort of theme system
 - [ ] Installer shell script
