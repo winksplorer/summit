@@ -40,6 +40,7 @@ And yes, I'm aware that the code is awful.
 - [X] UI Notifications
 - [X] Get rid of the dumb awful edition system
 - [X] Implement templates
+- [ ] Use a WebSocket connection instead of HTTP endpoints
 - [ ] Simplify entire frontend
     - [X] Simplify HTML using templates
     - [ ] Simplify JS

@@ -18,8 +18,7 @@ clean:
 	rm -f summit-server summit summit.tar.xz summit.tar.xz.o
 
 backend:
-	cd backend && go mod tidy && $(GO) build -o ../summit-server -ldflags "-X main.BuildDate=$(shell date +%Y-%b-%d) -X main.Version=$(SUMMIT_VERSION)"
-	strip summit-server
+	cd backend && go mod tidy && $(GO) build -o ../summit-server -ldflags="-s -w -X main.BuildDate=$(shell date +%Y-%b-%d) -X main.Version=$(SUMMIT_VERSION)"
 
 sea:
 	tar -cJf summit.tar.xz summit-server frontend
