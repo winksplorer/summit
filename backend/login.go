@@ -50,7 +50,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 			log.Printf("added {%s%s,%s} to known authed users\n", id, r.FormValue("username"), r.UserAgent())
 		}
-		http.Redirect(w, r, "/term.html", http.StatusFound)
+		http.Redirect(w, r, "/terminal.html", http.StatusFound)
 	}
 }
 

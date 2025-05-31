@@ -1,20 +1,20 @@
 @font-face {
     font-family: 'Helvetica Neue Condensed';
-    src: url('assets/HelveticaNeue-Condensed.otf') format('opentype');
+    src: url('../assets/HelveticaNeue-Condensed.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Helvetica Neue Condensed';
-    src: url('assets/HelveticaNeue-BoldCondObl.otf') format('opentype');
+    src: url('../assets/HelveticaNeue-BoldCondObl.otf') format('opentype');
     font-weight: bold;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Seven Segment';
-    src: url('assets/SevenSegment.ttf') format('truetype');
+    src: url('../assets/SevenSegment.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }

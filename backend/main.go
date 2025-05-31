@@ -15,8 +15,10 @@ import (
 
 var BuildDate string = "undefined"
 var Version string = "undefined"
-var frontendDir string
+var frontendDir string = "/tmp/summit/frontend"
 var port string = ":7070"
+
+var hostname string = "undefined"
 
 func init() {
 	// custom logging
@@ -27,9 +29,15 @@ func init() {
 	// SEA passes the first arg, so "summit dev" = "/tmp/summit/summit-server dev"
 	if len(os.Args) > 1 && os.Args[1] == "dev" {
 		frontendDir = "frontend"
-	} else {
-		frontendDir = "/tmp/summit/frontend"
 	}
+
+	// get the hostname
+	localHostname, err := os.Hostname()
+	if err != nil {
+		log.Println("couldn't get hostname:", err)
+	}
+
+	hostname = localHostname
 }
 
 func main() {
@@ -99,13 +107,8 @@ func main() {
 
 func templater(w http.ResponseWriter, r *http.Request) {
 	path := strings.TrimPrefix(r.URL.Path, "/")
-
 	if path == "" {
-		if authenticated(w, r) {
-			path = "term"
-		} else {
-			path = "index.html"
-		}
+		path = "index.html"
 	}
 
 	if !strings.HasSuffix(path, ".html") || path == "index.html" || path == "admin.html" {
@@ -123,7 +126,7 @@ func templater(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = tmpl.ExecuteTemplate(w, pageName, map[string]interface{}{
-		"Title": pageName,
+		"Title": pageName + " - " + hostname,
 	})
 	if err != nil {
 		log.Printf("template exec error for %s: %v", path, err)

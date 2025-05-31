@@ -104,14 +104,14 @@ func serverPagesHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 		dict := [][2]string{
-			{"term.html", "terminal"},
-			{"log.html", "logging"},
-			{"stor.html", "storage"},
-			{"net.html", "networking"},
-			{"container.html", "containers"},
+			{"terminal.html", "terminal"},
+			{"logging.html", "logging"},
+			{"storage.html", "storage"},
+			{"networking.html", "networking"},
+			{"containers.html", "containers"},
 			{"services.html", "services"},
 			{"updates.html", "updates"},
-			{"config.html", "settings"},
+			{"settings.html", "settings"},
 		}
 
 		jsonData, err := json.Marshal(dict)

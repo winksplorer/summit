@@ -1,7 +1,7 @@
 // summit frontend/js/navbar.js - handles navbar, and is sort of the main js code
 
-import { fetchDataForElementText } from './modules/helpers.js';
-import { dispatchMessage } from './modules/message.js';
+import { fetchDataForElementText } from './helpers.js';
+import { dispatchMessage } from './message.js';
 
 // redirect to login page if unauthorized
 fetch('/api/am-i-authed').then(res => { if (!res.ok) window.location.replace('/') })
@@ -10,7 +10,7 @@ fetch('/api/am-i-authed').then(res => { if (!res.ok) window.location.replace('/'
 fetchDataForElementText('/api/get-hostname', 'hostname');
 
 // build string
-if (window.location.href.includes("config.html")) fetchDataForElementText('/api/buildstring', 'summit-version');
+if (window.location.href.includes("settings.html")) fetchDataForElementText('/api/buildstring', 'summit-version');
 
 // stats
 function updateStats() {
