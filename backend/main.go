@@ -51,6 +51,7 @@ func main() {
 	http.HandleFunc("/api/buildstring", buildstringHandler)
 	http.HandleFunc("/api/sudo", sudoHandler)
 	http.HandleFunc("/api/pty", ptyHandler)
+	http.HandleFunc("/api/comm", commHandler)
 
 	srv := hlfhr.New(&http.Server{
 		Addr: port,

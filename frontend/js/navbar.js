@@ -27,8 +27,8 @@ function updateStats() {
         });
 }
 
-updateStats();
-setInterval(() => updateStats(), 5000);
+// updateStats();
+// setInterval(() => updateStats(), 5000);
 
 // add navbar items
 fetch("/api/server-pages")
