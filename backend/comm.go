@@ -1,10 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -27,11 +27,12 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
+	ctx, cancel := context.WithCancel(context.Background())
+
 	// send to frontend
-	go func() {
-		socketErrCount := 1
+	go func(ctx context.Context) {
 		for {
-			// stats
+			// ---- do the work first ----
 			percentages, err := cpu.Percent(0, false)
 			if err != nil {
 				log.Println("couldn't get cpu info:", err)
@@ -46,28 +47,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			var usageValue float64
-			var usageUnit string
-			const (
-				kb = 1024
-				mb = kb * 1024
-				gb = mb * 1024
-			)
-
-			switch {
-			case virtualMem.Used >= gb:
-				usageValue = float64(virtualMem.Used) / float64(gb)
-				usageUnit = "g"
-			case virtualMem.Used >= mb:
-				usageValue = float64(virtualMem.Used) / float64(mb)
-				usageUnit = "m"
-			case virtualMem.Used >= kb:
-				usageValue = float64(virtualMem.Used) / float64(kb)
-				usageUnit = "k"
-			default:
-				usageValue = float64(virtualMem.Used)
-				usageUnit = ""
-			}
+			usageValue, usageUnit := humanReadableSplit(virtualMem.Used)
 
 			stats := map[string]interface{}{
 				"t": "stat.basic",
@@ -79,24 +59,34 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				},
 			}
 			if err := commSend(stats, conn); err != nil {
-				log.Printf("comm: %d/2 websocket send errors until terminating\n", socketErrCount)
-				if strings.Contains(err.Error(), "websocket:") {
-					socketErrCount++
-				}
+				return
 			}
 
-			if socketErrCount > 2 {
-				break
+			// ---- wait for next round ----
+			delay := time.NewTimer(5 * time.Second)
+
+			select {
+			case <-ctx.Done():
+				if !delay.Stop() {
+					<-delay.C
+				}
+				return
+
+			case <-delay.C:
+				// loop back and do again
 			}
-			time.Sleep(time.Second * 2)
 		}
-	}()
+	}(ctx)
 
 	// read from frontend
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
 			log.Println("couldn't read from websockets:", err)
+			if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
+				log.Println("comm: websocket closed, terminating now")
+			}
+			cancel()
 			break
 		}
 
@@ -105,6 +95,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 
 		data := map[string]interface{}{
 			"t":    decoded["t"],
+			"id":   decoded["id"],
 			"data": nil,
 		}
 

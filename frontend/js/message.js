@@ -1,11 +1,13 @@
-// summit frontend/js/modules/message.js - handles ui messages
+// summit frontend/js/message.js - handles ui messages
 
-export function dispatchMessage(title, subtitle) {
+_.ui.dispatchMsg = function(title, subtitle) {
     document.getElementById('messageTitle').textContent = title;
     document.getElementById('messageSubtitle').textContent = subtitle;
     document.getElementById('message').style.display = 'flex';
 }
 
-document.getElementById('messageDismiss').addEventListener('click', function() {
-    document.getElementById('message').style.display = 'none';
-});
+_.onReady(function(){
+    document.getElementById('messageDismiss').addEventListener('click', function() {
+        document.getElementById('message').style.display = 'none';
+    });
+})

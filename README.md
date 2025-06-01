@@ -32,6 +32,7 @@ And yes, I'm aware that the code is awful.
     - [X] Basic numerical stats
     - [X] Implement Odometer
     - [ ] Make Odometer actually fit in the design (requires themes system)
+    - [ ] Make stat values persist across pages
 - [ ] WebSocket terminal
     - [X] Switch to xterm.js
     - [X] Firefox compatibility
@@ -46,7 +47,7 @@ And yes, I'm aware that the code is awful.
 - [ ] Simplify entire frontend
     - [X] Simplify HTML using templates
     - [ ] Simplify JS
-        - [ ] Use `window._`
+        - [X] Use `window._`
         - [ ] Bundling
         - [ ] Minification
     - [ ] Simplify CSS

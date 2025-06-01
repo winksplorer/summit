@@ -1,17 +1,17 @@
 // summit frontend/js/comm.js - handles communication
 
-window.comm = comm = new WebSocket("wss://" + location.host + "/api/comm");
+_.comm.socket = new WebSocket("wss://" + location.host + "/api/comm");
 
-comm.onopen = () => {
+_.comm.socket.onopen = () => {
     var sourceData = {
         t: "info.hostname"
     };
 
     var bytes = msgpack.serialize(sourceData);
-    comm.send(bytes)
+    _.comm.socket.send(bytes)
 };
 
-comm.onmessage = async event => {
+_.comm.socket.onmessage = async event => {
     let arrayBuffer;
 
     if (event.data instanceof Blob) arrayBuffer = await event.data.arrayBuffer();

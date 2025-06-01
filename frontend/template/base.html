@@ -8,17 +8,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{{.Title}}</title>
 
-        <!-- General JS -->
-        <script type="module" src="js/navbar.js" defer></script>
+        <!-- General libraries -->
         <script src="js/lib/msgpack.min.js"></script>
-        <script src="js/comm.js" defer></script>
+        <link rel="stylesheet" href="css/lib/odometer-ts.css" />
+        <script src="js/lib/odometer.min.js"></script>
+
+        <!-- General JS -->
+        <script src="js/core.js"></script>
+        <script src="js/message.js"></script>
+        <script src="js/helpers.js"></script>
+        <script src="js/navbar.js"></script>
+        <script src="js/comm.js"></script>
 
         <!-- Page-specific JS/CSS -->
         {{template "head" .}}
-
-        <!-- Odometer -->
-        <link rel="stylesheet" href="css/lib/odometer-ts.css" />
-        <script src="js/lib/odometer.min.js"></script>
     </head>
     <body>
         <div class="navbar">
@@ -47,6 +50,8 @@
         </div>
 
         {{template "main" .}}
+
+        <script>_.init();</script>
     </body>
 </html>
 {{end}}

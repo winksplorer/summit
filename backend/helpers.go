@@ -56,6 +56,26 @@ func humanReadable(bytes uint64) string {
 	}
 }
 
+// human readable byte sizes, split unit and value
+func humanReadableSplit(bytes uint64) (float64, string) {
+	const (
+		kb = 1024
+		mb = kb * 1024
+		gb = mb * 1024
+	)
+
+	switch {
+	case bytes >= gb:
+		return float64(bytes) / float64(gb), "g"
+	case bytes >= mb:
+		return float64(bytes) / float64(mb), "m"
+	case bytes >= kb:
+		return float64(bytes) / float64(kb), "k"
+	default:
+		return float64(bytes), "b"
+	}
+}
+
 // generate random b64 str
 func randomBase64String(length int) (string, error) {
 	numBytes := (length * 3) / 4
