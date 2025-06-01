@@ -1,10 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -29,6 +29,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 
 	// send to frontend
 	go func() {
+		socketErrCount := 1
 		for {
 			// stats
 			percentages, err := cpu.Percent(0, false)
@@ -77,17 +78,17 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 					"cpuUsage":     float64(int(percentages[0]*100)) / 100,
 				},
 			}
-			encodedStats, err := msgpack.Marshal(stats)
-			if err != nil {
-				log.Println("couldn't format with mspack:", err)
-				return
+			if err := commSend(stats, conn); err != nil {
+				log.Printf("comm: %d/2 websocket send errors until terminating\n", socketErrCount)
+				if strings.Contains(err.Error(), "websocket:") {
+					socketErrCount++
+				}
 			}
 
-			if err := conn.WriteMessage(websocket.BinaryMessage, encodedStats); err != nil {
-				log.Println("couldn't send to websockets:", err)
-				return
+			if socketErrCount > 2 {
+				break
 			}
-			time.Sleep(time.Second * 5)
+			time.Sleep(time.Second * 2)
 		}
 	}()
 
@@ -98,10 +99,38 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("couldn't read from websockets:", err)
 			break
 		}
-		log.Println("websocket message:", msg)
+
 		var decoded map[string]interface{}
 		_ = msgpack.Unmarshal(msg, &decoded)
-		jsonBytes, _ := json.Marshal(decoded)
-		fmt.Println(string(jsonBytes))
+
+		data := map[string]interface{}{
+			"t":    decoded["t"],
+			"data": nil,
+		}
+
+		switch decoded["t"] {
+		case "info.hostname":
+			data["data"] = map[string]interface{}{
+				"hostname": hostname,
+			}
+		}
+
+		if err := commSend(data, conn); err != nil {
+			log.Panicln("could not send data for", decoded["t"])
+		}
 	}
+}
+
+func commSend(data map[string]interface{}, connection *websocket.Conn) error {
+	encodedData, err := msgpack.Marshal(data)
+	if err != nil {
+		log.Println("couldn't format with mspack:", err)
+		return err
+	}
+
+	if err := connection.WriteMessage(websocket.BinaryMessage, encodedData); err != nil {
+		log.Println("couldn't send to websockets:", err)
+		return err
+	}
+	return nil
 }

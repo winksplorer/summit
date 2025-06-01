@@ -4,13 +4,7 @@ window.comm = comm = new WebSocket("wss://" + location.host + "/api/comm");
 
 comm.onopen = () => {
     var sourceData = {
-        number: 123,
-        number2: -0.129,
-        text: "A",
-        flag: true,
-        list: [ 1, 2, 3 ],
-        obj: { a: 1, b: "2", c: false, d: { a: 0, b: -1 } },
-        time: Date.now()
+        t: "info.hostname"
     };
 
     var bytes = msgpack.serialize(sourceData);
@@ -20,11 +14,9 @@ comm.onopen = () => {
 comm.onmessage = async event => {
     let arrayBuffer;
 
-    if (event.data instanceof Blob) {
-        arrayBuffer = await event.data.arrayBuffer();
-    } else if (event.data instanceof ArrayBuffer) {
-        arrayBuffer = event.data;
-    } else {
+    if (event.data instanceof Blob) arrayBuffer = await event.data.arrayBuffer();
+    else if (event.data instanceof ArrayBuffer) arrayBuffer = event.data;
+    else {
         console.error('Unexpected data type:', typeof event.data);
         return;
     }
@@ -36,6 +28,9 @@ comm.onmessage = async event => {
             document.getElementById("stats-cpu").textContent = Math.round(msg.data.cpuUsage);
             document.getElementById("stats-memused").textContent = Math.round(msg.data.memUsage);
             document.getElementById("stats-memrest").textContent = `${msg.data.memUsageUnit}/${msg.data.memTotal}`;
+            break;
+        case "info.hostname":
+            console.log(msg.data.hostname);
             break;
     }
 };
