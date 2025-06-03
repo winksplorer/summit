@@ -2,5 +2,6 @@ summit
 summit-server
 summit.tar.xz
 summit.tar.xz.o
+frontend-dist
 .idea
 .fleet

@@ -15,7 +15,7 @@ import (
 
 var BuildDate string = "undefined"
 var Version string = "undefined"
-var frontendDir string = "/tmp/summit/frontend"
+var frontendDir string = "/tmp/summit/frontend-dist"
 var port string = ":7070"
 
 var hostname string = "undefined"

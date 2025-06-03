@@ -8,9 +8,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{{.Title}}</title>
 
+        <link rel="stylesheet" href="css/lib/odometer-ts.css" />
+
+        <!-- JS_BUNDLE_START -->
         <!-- General libraries -->
         <script src="js/lib/msgpack.min.js"></script>
-        <link rel="stylesheet" href="css/lib/odometer-ts.css" />
         <script src="js/lib/odometer.min.js"></script>
 
         <!-- General JS -->
@@ -19,6 +21,7 @@
         <script src="js/helpers.js"></script>
         <script src="js/navbar.js"></script>
         <script src="js/comm.js"></script>
+        <!-- JS_BUNDLE_END -->
 
         <!-- Page-specific JS/CSS -->
         {{template "head" .}}

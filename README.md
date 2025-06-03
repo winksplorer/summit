@@ -46,10 +46,10 @@ And yes, I'm aware that the code is awful.
     - [ ] Fully switch to WebSockets
 - [ ] Simplify entire frontend
     - [X] Simplify HTML using templates
-    - [ ] Simplify JS
+    - [X] Simplify JS
         - [X] Use `window._`
-        - [ ] Bundling
-        - [ ] Minification
+        - [X] Bundling
+        - [X] Minification
     - [ ] Simplify CSS
 - [ ] We need code comments :sob:
     - [X] SEA
@@ -134,6 +134,6 @@ apt install golang-go make clang binutils libarchive-dev libpam0g-dev git openss
 pkg install go gmake binutils libarchive git openssl minify \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
-    && gmake all bsdinstall
+    && gmake all install PREFIX=/usr/local
     && mkdir -p /etc/ssl/private
 ```
