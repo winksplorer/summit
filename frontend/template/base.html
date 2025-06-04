@@ -16,18 +16,18 @@
         <script src="js/lib/odometer.min.js"></script>
 
         <!-- General JS -->
-        <script src="js/core.js"></script>
-        <script src="js/message.js"></script>
-        <script src="js/helpers.js"></script>
-        <script src="js/navbar.js"></script>
-        <script src="js/comm.js"></script>
+        <script src="js/main/core.js"></script>
+        <script src="js/main/message.js"></script>
+        <script src="js/main/helpers.js"></script>
+        <script src="js/main/navbar.js"></script>
+        <script src="js/main/comm.js"></script>
         <!-- JS_BUNDLE_END -->
 
         <!-- Page-specific JS/CSS -->
         {{template "head" .}}
     </head>
     <body>
-        <div class="navbar">
+        <div class="filled-container navbar">
             <h1 id="hostname">?</h1>
             <div id="navbar-items"></div>
             <div id="nav-right">
@@ -38,7 +38,7 @@
                     <span id="stats-cpuperc">%</span>
                 </div>
 
-                <div class="quick-actions">
+                <div id="quick-actions">
                     <a href="admin.html?operation=reboot">↺</a>
                     <a href="admin.html?operation=poweroff">⏻</a>
                     <a href="/api/logout">⇒</a>
@@ -46,7 +46,7 @@
             </div>
         </div>
 
-        <div id="message">
+        <div class="filled-container" id="message">
             <h3 id="messageTitle"></h3>
             <p id="messageSubtitle"></p>
             <button id="messageDismiss">x</button>
