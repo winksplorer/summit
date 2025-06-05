@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"time"
 
@@ -53,9 +54,9 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				"t": "stat.basic",
 				"data": map[string]interface{}{
 					"memTotal":     humanReadable(virtualMem.Total),
-					"memUsage":     fmt.Sprintf("%.1f", usageValue),
+					"memUsage":     math.Round(usageValue),
 					"memUsageUnit": usageUnit,
-					"cpuUsage":     float64(int(percentages[0]*100)) / 100,
+					"cpuUsage":     math.Round(percentages[0]),
 				},
 			}
 			if err := commSend(stats, conn); err != nil {
@@ -94,15 +95,23 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		_ = msgpack.Unmarshal(msg, &decoded)
 
 		data := map[string]interface{}{
-			"t":    decoded["t"],
-			"id":   decoded["id"],
-			"data": nil,
+			"t":  decoded["t"],
+			"id": decoded["id"],
 		}
 
 		switch decoded["t"] {
 		case "info.hostname":
 			data["data"] = map[string]interface{}{
 				"hostname": hostname,
+			}
+		case "info.buildString":
+			data["data"] = map[string]interface{}{
+				"buildString": fmt.Sprintf("summit v%s (built on %s)", Version, BuildDate),
+			}
+		default:
+			data["error"] = map[string]interface{}{
+				"code": 404,
+				"msg":  "unknown type",
 			}
 		}
 
