@@ -24,3 +24,7 @@ _.ui = _.ui || {}; // user interface shit, like messages
         callbacks = null;
     };
 })();
+
+_.onReady(function() {
+    for (let el of document.querySelectorAll('[data-t]')) _.comm.request(el.dataset.t).then(data => el.textContent = data[el.dataset.key]);
+});

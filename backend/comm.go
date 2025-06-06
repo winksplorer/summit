@@ -92,7 +92,10 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var decoded map[string]interface{}
-		_ = msgpack.Unmarshal(msg, &decoded)
+		if err := msgpack.Unmarshal(msg, &decoded); err != nil {
+			log.Println("could not read data")
+			continue
+		}
 
 		data := map[string]interface{}{
 			"t":  decoded["t"],
@@ -116,7 +119,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := commSend(data, conn); err != nil {
-			log.Panicln("could not send data for", decoded["t"])
+			log.Println("could not send data for", decoded["t"])
 		}
 	}
 }

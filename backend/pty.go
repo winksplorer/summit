@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,16 +12,11 @@ import (
 
 	"github.com/creack/pty"
 	"github.com/gorilla/websocket"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
-}
-
-type termMessage struct {
-	Type string `json:"type"`
-	Cols int    `json:"cols"`
-	Rows int    `json:"rows"`
 }
 
 func ptyHandler(w http.ResponseWriter, r *http.Request) {
@@ -37,12 +31,16 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, err := user.Lookup(sc.Value[32:])
+	username := auths[sc.Value].user
+
+	authsMu.RLock()
+	u, err := user.Lookup(username)
 	if err != nil {
 		log.Println("couldn't lookup username:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+	authsMu.RUnlock()
 
 	uid, err := strconv.ParseInt(u.Uid, 10, 32)
 	if err != nil {
@@ -77,10 +75,10 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 	cmd := exec.Command(shell)
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.SysProcAttr.Credential = &syscall.Credential{Uid: uint32(uid), Gid: uint32(gid)}
-	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=/home/%s", sc.Value[32:]))
-	cmd.Env = append(cmd.Env, fmt.Sprintf("USER=%s", sc.Value[32:]))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=/home/%s", username))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("USER=%s", username))
 	cmd.Env = append(cmd.Env, "TERM=xterm-256color")
-	cmd.Dir = fmt.Sprintf("/home/%s", sc.Value[32:])
+	cmd.Dir = fmt.Sprintf("/home/%s", username)
 
 	// start shell with pty
 	ptmx, err := pty.Start(cmd)
@@ -118,9 +116,10 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Try to parse resize message
-		var resize termMessage
-		if err := json.Unmarshal(msg, &resize); err == nil && resize.Type == "resize" {
-			pty.Setsize(ptmx, &pty.Winsize{Cols: uint16(resize.Cols), Rows: uint16(resize.Rows)})
+		var decoded map[string]interface{}
+
+		if err := msgpack.Unmarshal(msg, &decoded); err == nil && decoded["type"] == "resize" {
+			pty.Setsize(ptmx, &pty.Winsize{Cols: asUint16(decoded["cols"]), Rows: asUint16(decoded["rows"])})
 			continue
 		}
 

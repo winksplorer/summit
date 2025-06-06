@@ -4,12 +4,6 @@
 fetch('/api/am-i-authed').then(res => { if (!res.ok) window.location.replace('/') })
 
 _.onReady(function(){
-    // hostname
-    _.helpers.fetchForElementText('/api/get-hostname', 'hostname');
-
-    // build string
-    if (window.location.href.includes("settings.html")) _.helpers.fetchForElementText('/api/buildstring', 'summit-version');
-
     // add navbar items
     fetch("/api/server-pages")
         .then(res => res.json())

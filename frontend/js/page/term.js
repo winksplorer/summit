@@ -15,7 +15,7 @@
     
     _.page.fit = fit = new FitAddon.FitAddon();
     
-    _.page.terminalResizeOberserver = terminalResizeOberserver = new ResizeObserver(function(entries) {
+    _.page.terminalResizeObserver = terminalResizeObserver = new ResizeObserver(function(entries) {
         try {
             fit && fit.fit();
         } catch (err) {
@@ -29,26 +29,25 @@
         fit.fit();
         const socket = new WebSocket("wss://" + location.host + "/api/pty");
     
-        socket.onopen = () => {
-            socket.send(JSON.stringify({
+        socket.onopen = () =>
+            socket.send(msgpack.serialize({
                 type: "resize",
                 cols: t.cols,
                 rows: t.rows
             }));
-        };
     
-        socket.onmessage = event => {
-            t.write(event.data);
-        };
+        socket.onmessage = event => t.write(event.data);
     
-        t.onData(data => {
-            socket.send(data);
-        });
+        t.onData(data => socket.send(data));
     
         t.onResize(({ cols, rows }) => {
-            socket.send(JSON.stringify({ type: "resize", cols, rows }));
+            socket.send(msgpack.serialize({
+                type: "resize",
+                cols: cols,
+                rows: rows
+            }));
         });
-    
-        terminalResizeOberserver.observe(document.getElementById('terminal'))
+        
+        terminalResizeObserver.observe(document.getElementById('terminal'))
     });
 })();

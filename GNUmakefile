@@ -29,11 +29,11 @@ backend:
 frontend:
 	@echo "  MKDIR frontend-dist/js"
 	@mkdir -p frontend-dist/js
-	@echo " BUNDLE frontend/js/*.js (exclude js/page & js/independent) -> frontend-dist/js/bundle.js"
+	@echo " MINIFY frontend/js/*.js (exclude js/page & js/independent) -> frontend-dist/js/bundle.min.js"
 	@(printf 'frontend/js/main/core.js\0'; find frontend/js -name '*.js' \
 		! -path 'frontend/js/page/*' \
 		! -path 'frontend/js/independent/*' \
-		! -path 'frontend/js/main/core.js' -print0) | xargs -0 cat | minify --type=application/javascript > frontend-dist/js/bundle.min.js
+		! -path 'frontend/js/main/core.js' -print0) | xargs -0 cat | $(MINIFIER) --type=application/javascript > frontend-dist/js/bundle.min.js
 	@echo "   COPY frontend (exclude js/main & js/lib) -> frontend-dist"
 	@cd frontend && find . -type f ! -path './js/main*' ! -path './js/lib*' -exec cp --parents {} ../frontend-dist/ \;
 	@echo " MINIFY frontend-dist/css"

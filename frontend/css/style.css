@@ -43,7 +43,7 @@ body {
 }
 
 a:hover { font-weight: 700; }
-.current { text-decoration: underline; }
+.current { text-decoration: underline !important; /* ???????????? */ }
 
 .main {
     background: #101010;
@@ -78,7 +78,7 @@ a:hover { font-weight: 700; }
 
 #quick-actions { margin-left: 0.5em; }
 
-#hostname { 
+.hostname { 
     margin-top: -0.3em;
     margin-bottom: -0.2em;
     margin-right: 0.4em;

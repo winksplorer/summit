@@ -45,13 +45,12 @@ func main() {
 	http.HandleFunc("/api/login", loginHandler)
 	http.HandleFunc("/api/logout", logoutHandler)
 	http.HandleFunc("/api/get-hostname", getHostnameHandler)
-	http.HandleFunc("/api/stats", statsHandler)
 	http.HandleFunc("/api/am-i-authed", amIAuthedHandler)
 	http.HandleFunc("/api/server-pages", serverPagesHandler)
-	http.HandleFunc("/api/buildstring", buildstringHandler)
 	http.HandleFunc("/api/sudo", sudoHandler)
 	http.HandleFunc("/api/pty", ptyHandler)
 	http.HandleFunc("/api/comm", commHandler)
+	log.Println("successfully registered handlers")
 
 	srv := hlfhr.New(&http.Server{
 		Addr: port,
@@ -98,6 +97,9 @@ func main() {
 			return
 		}
 	}
+
+	log.Println("starting login auto-remove task")
+	go removeOldSessions()
 
 	log.Printf("summit on port %s\n", port)
 

@@ -7,12 +7,12 @@ _.comm.socketReady = null;
 
 _.comm.socketWait = function() {
     if (_.comm.socket.readyState === WebSocket.OPEN) return Promise.resolve()
-    if (socketReady) return socketReady
+    if (_.comm.socketReady) return _.comm.socketReady
   
-    socketReady = new Promise(resolve => {
+    _.comm.socketReady = new Promise(resolve => {
       _.comm.socket.addEventListener('open', () => resolve(), { once: true })
     })
-    return socketReady
+    return _.comm.socketReady
   }
 
 _.comm.socket.onmessage = async event => {
@@ -42,6 +42,11 @@ _.comm.socket.onmessage = async event => {
             document.getElementById("stats-memrest").textContent = `${msg.data.memUsageUnit}/${msg.data.memTotal}`;
             return;
     }
+}
+
+_.comm.socket.onerror = async err => {
+    for (const id in _.comm.pending) _.comm.pending[id].reject(err);
+    Object.keys(_.comm.pending).forEach(id => delete _.comm.pending[id]);
 }
 
 _.comm.request = function(t) {

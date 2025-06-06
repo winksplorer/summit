@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"net/http"
 	"os/exec"
 	"strings"
 	"time"
@@ -130,4 +131,23 @@ func (lw *logWriter) Write(bs []byte) (int, error) {
 		return fmt.Print()
 	}
 	return fmt.Printf("[%s] %s", time.Now().Format(time.RFC1123), string(bs))
+}
+
+// gets user ip
+func clientIP(r *http.Request) string {
+	return strings.Split(r.RemoteAddr, ":")[0]
+}
+
+// why god
+func asUint16(v any) uint16 {
+	if f, ok := v.(float64); ok {
+		return uint16(f)
+	}
+	if i, ok := v.(int64); ok {
+		return uint16(i)
+	}
+	if u, ok := v.(uint64); ok {
+		return uint16(u)
+	}
+	return 0
 }
