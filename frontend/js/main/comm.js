@@ -28,7 +28,10 @@ _.comm.socket.onmessage = async event => {
     const msg = msgpack.deserialize(new Uint8Array(arrayBuffer));
 
     if (msg.id && _.comm.pending[msg.id]) {
-        if (msg.error) _.comm.pending[msg.id].reject(`error ${msg.error.code}: ${msg.error.msg}`);
+        if (msg.error) {
+            _.comm.pending[msg.id].reject(`error ${msg.error.code}: ${msg.error.msg}`);
+            _.ui.dispatchMsg("error while contacting server", `asked for "${msg.t}," but server responded with "error ${msg.error.code}: ${msg.error.msg}"`);
+        }
 
         _.comm.pending[msg.id].resolve(msg.data);
         delete _.comm.pending[msg.id];
@@ -45,6 +48,7 @@ _.comm.socket.onmessage = async event => {
 }
 
 _.comm.socket.onerror = async err => {
+    _.ui.dispatchMsg("error while contacting server", `a serious error has occurred. all communication has been halted. error: "${err}"`);
     for (const id in _.comm.pending) _.comm.pending[id].reject(err);
     Object.keys(_.comm.pending).forEach(id => delete _.comm.pending[id]);
 }
@@ -54,7 +58,6 @@ _.comm.request = function(t) {
         return new Promise((resolve, reject) => {
             const id = Math.floor(Math.random() * 2**32);
             _.comm.pending[id] = { resolve, reject };
-    
             _.comm.socket.send(msgpack.serialize({ t, id }));
         });
     })

@@ -37,15 +37,11 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 			percentages, err := cpu.Percent(0, false)
 			if err != nil {
 				log.Println("couldn't get cpu info:", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				return
 			}
 
 			virtualMem, err := mem.VirtualMemory()
 			if err != nil {
 				log.Println("couldn't get memory info:", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				return
 			}
 
 			usageValue, usageUnit := humanReadableSplit(virtualMem.Used)
@@ -60,7 +56,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				},
 			}
 			if err := commSend(stats, conn); err != nil {
-				return
+				log.Println("couldn't send stats:", err)
 			}
 
 			// ---- wait for next round ----

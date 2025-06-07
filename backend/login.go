@@ -130,10 +130,13 @@ func authenticated(w http.ResponseWriter, r *http.Request) bool {
 	}
 
 	authsMu.RLock()
-	defer authsMu.RUnlock()
-
 	v, ok := auths[s.Value]
+	authsMu.RUnlock()
+
 	if !ok || v.ua != r.UserAgent() || v.ip != clientIP(r) || v.expires.Before(time.Now()) || len(s.Value) != 32 {
+		authsMu.Lock()
+		delete(auths, s.Value)
+		authsMu.Unlock()
 		deleteAuthCookie(w)
 		return false
 	}

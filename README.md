@@ -44,13 +44,13 @@ And yes, I'm aware that the code is awful.
 - [ ] Use a WebSocket connection instead of HTTP endpoints
     - [X] Proof of concept (Stats test)
     - [ ] Fully switch to WebSockets
-- [ ] Simplify entire frontend
+- [X] Simplify entire frontend
     - [X] Simplify HTML using templates
     - [X] Simplify JS
         - [X] Use `window._`
         - [X] Bundling
         - [X] Minification
-    - [ ] Simplify CSS
+    - [X] Simplify CSS
 - [ ] We need code comments :sob:
     - [X] SEA
     - [ ] Backend
@@ -58,6 +58,8 @@ And yes, I'm aware that the code is awful.
 - [ ] Settings
     - [ ] Settings page
     - [ ] Settings system
+- [ ] Work on frontend design
+    - [ ] Add some sort of theme system
 - [ ] Logging
     - [ ] Backend
         - [ ] Application-specific logs?
@@ -84,8 +86,6 @@ And yes, I'm aware that the code is awful.
         - [ ] pkg support
         - [ ] other package managers
     - [ ] Updates page
-- [ ] Work on frontend design
-    - [ ] Add some sort of theme system
 - [ ] Installer shell script
 
 ## Code structure
