@@ -22,7 +22,12 @@ all: backend frontend sea
 clean:
 	rm -rf summit-server summit summit.tar.xz summit.tar.xz.o frontend-dist
 
-backend:
+check_panic:
+	@echo "  CHECK .panic"
+	@! grep -rIi '\.panic' backend/ || (echo 'learn to read your code!!' && exit 1)
+
+
+backend: check_panic
 	@echo "     GO backend -> summit-server"
 	@cd backend && $(GO) mod tidy && $(GO) build -o ../summit-server -ldflags="-s -w -X main.BuildDate=$(shell date +%Y-%b-%d) -X main.Version=$(SUMMIT_VERSION)"
 
