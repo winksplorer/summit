@@ -1,3 +1,5 @@
+/* summit frontend/css/typography.css - where fonts are defined */
+
 @font-face {
     font-family: 'Helvetica Neue Condensed';
     src: url('../assets/HelveticaNeue-Condensed.woff2') format('woff2');

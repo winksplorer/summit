@@ -1,3 +1,5 @@
+// summit backend/login.go - handles login
+
 package main
 
 import (
@@ -23,27 +25,32 @@ var (
 
 // handles /api/login
 func loginHandler(w http.ResponseWriter, r *http.Request) {
+	// only allow post
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
+	// get login data
 	if err := r.ParseForm(); err != nil {
 		log.Println("error: failed to parse login:", err)
 		return
 	}
 
+	// disallow root
 	if r.FormValue("username") == "root" {
 		http.Redirect(w, r, "/?auth=rootfail", http.StatusFound)
 		return
 	}
 
+	// log in with PAM
 	if err := pamAuth("passwd", r.FormValue("username"), r.FormValue("password")); err != nil {
 		http.Redirect(w, r, "/?auth=fail", http.StatusFound)
 		return
 	}
 
 	if !authenticated(w, r) {
+		// generate id & expire time
 		id, err := randomBase64String(32)
 		if err != nil {
 			log.Println("error: generate login:", err)
@@ -53,6 +60,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 		expires := time.Now().Add(authExpireTime)
 
+		// create auth, server-side
 		authsMu.Lock()
 		auths[id] = authedUser{
 			ua:      r.UserAgent(),
@@ -62,6 +70,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		authsMu.Unlock()
 
+		// create auth, browser-side
 		http.SetCookie(w, &http.Cookie{
 			Name:     "s",
 			Value:    id,
@@ -76,6 +85,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 // handles /api/logout
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	// only allow get
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
@@ -89,17 +99,19 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		authsMu.Lock()
-		delete(auths, s.Value)
-		authsMu.Unlock()
-
-		deleteAuthCookie(w)
+		deleteAuth(s.Value, w)
 	}
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-// deletes s.
-func deleteAuthCookie(w http.ResponseWriter) {
+// deletes authentication, both server and browser side.
+func deleteAuth(id string, w http.ResponseWriter) {
+	// server-side
+	authsMu.Lock()
+	delete(auths, id)
+	authsMu.Unlock()
+
+	// browser-side
 	http.SetCookie(w, &http.Cookie{
 		Name:     "s",
 		Value:    "",
@@ -109,6 +121,7 @@ func deleteAuthCookie(w http.ResponseWriter) {
 	})
 }
 
+// deletes expired sessions every 10 minutes
 func removeOldSessions() {
 	for {
 		time.Sleep(10 * time.Minute)
@@ -134,10 +147,7 @@ func authenticated(w http.ResponseWriter, r *http.Request) bool {
 	authsMu.RUnlock()
 
 	if !ok || !userAgentMatches(v.ua, r.UserAgent()) || v.ip != clientIP(r) || v.expires.Before(time.Now()) || len(s.Value) != 32 {
-		authsMu.Lock()
-		delete(auths, s.Value)
-		authsMu.Unlock()
-		deleteAuthCookie(w)
+		deleteAuth(s.Value, w)
 		return false
 	}
 	return true

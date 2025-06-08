@@ -1,3 +1,5 @@
+// summit backend/generalApi.go - http endpoint shit
+
 package main
 
 import (
@@ -45,6 +47,7 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// basic security checks
 	if !authenticated(w, r) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -55,7 +58,8 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse the JSON request body
+	// parse json
+	// todo: replace with msgpack
 	var req SudoRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		log.Println("error: failed to parse /api/sudo JSON:", err)

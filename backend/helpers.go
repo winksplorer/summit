@@ -1,3 +1,5 @@
+// summit backend/helpers.go - helper functions
+
 package main
 
 import (
@@ -16,6 +18,7 @@ import (
 	"github.com/msteinert/pam"
 )
 
+// used for humanReadable functions
 const (
 	kb = 1024
 	mb = kb * 1024
@@ -89,23 +92,24 @@ func randomBase64String(length int) (string, error) {
 	return base64.RawURLEncoding.EncodeToString(randomBytes)[:length], nil
 }
 
+// executes a command and prints output
 func execCmd(args ...string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("no command provided")
 	}
 
-	// Extract the command name and arguments
+	// extract the command name and arguments
 	cmdName := args[0]
 	cmdArgs := args[1:]
 
-	// Create the command with the provided arguments
+	// create the command
 	cmd := exec.Command(cmdName, cmdArgs...)
 
-	// Run the command and capture the combined output
 	var stdout bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stdout
 
+	// run the command and capture the combined output
 	err := cmd.Run()
 	output := stdout.String()
 	if output != "" {

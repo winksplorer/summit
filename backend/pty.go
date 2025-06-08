@@ -1,3 +1,5 @@
+// summit backend/pty.go - handles websocket terminal
+
 package main
 
 import (
@@ -31,17 +33,19 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username := auths[sc.Value].user
-
 	authsMu.RLock()
+	username := auths[sc.Value].user
+	authsMu.RUnlock()
+
+	// find unix gid & uid
 	u, err := user.Lookup(username)
 	if err != nil {
 		log.Println("couldn't lookup username:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	authsMu.RUnlock()
 
+	// get uid
 	uid, err := strconv.ParseInt(u.Uid, 10, 32)
 	if err != nil {
 		log.Println("couldn't parse uid:", err)
@@ -49,6 +53,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// get gid
 	gid, err := strconv.ParseInt(u.Gid, 10, 32)
 	if err != nil {
 		log.Println("couldn't parse gid:", err)
@@ -75,6 +80,8 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 	cmd := exec.Command(shell)
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.SysProcAttr.Credential = &syscall.Credential{Uid: uint32(uid), Gid: uint32(gid)}
+
+	// env variables & directory
 	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=/home/%s", username))
 	cmd.Env = append(cmd.Env, fmt.Sprintf("USER=%s", username))
 	cmd.Env = append(cmd.Env, "TERM=xterm-256color")
@@ -115,7 +122,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		// Try to parse resize message
+		// try to parse resize message
 		var decoded map[string]interface{}
 
 		if err := msgpack.Unmarshal(msg, &decoded); err == nil && decoded["type"] == "resize" {

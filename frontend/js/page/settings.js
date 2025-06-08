@@ -15,17 +15,11 @@
 
     _.onReady(function () {
         document.getElementById('compactui').addEventListener('change', function () {
-            const data = {
-                checked: this.checked
-            };
-            _.page.compactui(data.checked)
+            _.page.compactui(this.checked)
         });
 
         document.getElementById('segmentstats').addEventListener('change', function () {
-            const data = {
-                checked: this.checked
-            };
-            _.page.segmentstats(data.checked)
+            _.page.segmentstats(this.checked)
         });
     });
 })();

@@ -1,7 +1,7 @@
 # summit
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/winksplorer/summit)
 
-summit is an "all-in-one" web UI designed to be portable and (somewhat) minimal while still being useful.
+summit is an "all-in-one" server management web UI for *nix systems designed to be portable and (somewhat) minimal while still being useful.
 
 Currently, summit is *not* ready for production. Many, *many* things are missing, and there are likely lots of bugs and security issues I've yet to fix.
 
@@ -10,9 +10,8 @@ And yes, I'm aware that the code is awful.
 ## Features
 - All of summit is distributed as one file
 - Portable (Tested with Debian, Alpine, and FreeBSD so far)
-- Simple, understandable code (I hope)
 - Simple, understandable user experience (I also hope)
-- As of May 25th, 2025, the entire final executable is 2.9 MB
+- As of June 8th, 2025, the entire final executable is ~3.0 MB
 - PAM-based login system
 - xterm.js-based terminal
 - HTTP/2 & HTTPS
@@ -51,14 +50,16 @@ And yes, I'm aware that the code is awful.
         - [X] Bundling
         - [X] Minification
     - [X] Simplify CSS
-- [ ] We need code comments :sob:
+- [X] We need code comments :sob:
     - [X] SEA
-    - [ ] Backend
-    - [ ] Frontend
+    - [X] Backend
+    - [X] Frontend
+- [ ] Use MessagePack for /api/sudo
 - [ ] Settings
     - [ ] Settings page
     - [ ] Settings system
 - [ ] Work on frontend design
+    - [ ] Hamburger menu navbar
     - [ ] Add some sort of theme system
 - [ ] Logging
     - [ ] Backend

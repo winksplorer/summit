@@ -1,3 +1,5 @@
+/* summit frontend/css/style.css - main stylesheet */
+
 :root {
     --page-bg: #222;
     --main-bg: #101010;
@@ -12,6 +14,7 @@
     --font: 'Helvetica Neue Condensed';
 }
 
+    /* very generic shit */
 body {
     background: var(--page-bg);
     color: var(--text);
@@ -26,6 +29,14 @@ body {
     font-family: var(--font), sans-serif;
 }
 
+a:hover { font-weight: 700; }
+
+button {
+    font-size: 0.7em;
+    font-family: var(--font), sans-serif;
+}
+
+    /* generic "ui elements" */
 .filled-container {
     background: var(--filled-container-bg);
     color: var(--filled-container-text);
@@ -35,71 +46,6 @@ body {
     flex-direction: row;
     align-items: center;
 }
-
-.navbar { padding: 0.6em; }
-
-#navbar-items > a, #quick-actions > a {
-    color: var(--filled-container-text);
-    text-decoration: none;
-}
-
-a:hover { font-weight: 700; }
-.current { text-decoration: underline !important; /* ???????????? */ }
-
-.main {
-    background: #101010;
-    flex-grow: 1;
-    margin-top: 0.5em;
-    margin-bottom: 0.25em;
-    overflow: auto;
-}
-
-#navbar-items { 
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5em;
-    white-space: nowrap;
- }
-
-#stats > span {
-    margin-top: -0.3em;
-    margin-bottom: 0.1em;
-    margin-left: -0.1em;
-}
-
-#stats-memrest {
-    margin-right: 0.5em;
-}
-
-#nav-right { 
-    margin-left: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-#quick-actions { margin-left: 0.5em; }
-
-.hostname { 
-    margin-top: -0.3em;
-    margin-bottom: -0.2em;
-    margin-right: 0.4em;
-}
-
-button {
-    font-size: 0.7em;
-    font-family: var(--font), sans-serif;
-}
-
-#message {
-    margin-top: 0.4em;
-    display: none;
-}
-#message > h3 { color: var(--msg-error-color); }
-#message > button { margin-left: auto; margin-right: 1em; font-size: 0.8em; }
-#message > * { margin: 0.5em; }
-
-/* settings page */
 
 .container {
     border: 1px solid var(--filled-container-bg);
@@ -120,4 +66,79 @@ button {
 .container > p {
     margin-top:0;
     margin-bottom:0.2em;
+}
+
+    /* navbar + layout + hostname + nav items */
+.navbar { padding: 0.6em; }
+
+/* push nav-right to the right of the navbar (shocking) */
+#nav-right { 
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* hostname text */
+.hostname { 
+    margin-top: -0.3em;
+    margin-bottom: -0.2em;
+    margin-right: 0.4em;
+}
+
+/* navbar item links */
+#navbar-items > a, #quick-actions > a {
+    color: var(--filled-container-text);
+    text-decoration: none;
+}
+
+/* navbar item group */
+#navbar-items { 
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    white-space: nowrap;
+}
+
+.current { text-decoration: underline !important; /* ???????????? */ }
+
+    /* the right side of the navbar (stats, quick actions, etc) */
+
+/* all non-animated text in stats */
+#stats > span {
+    margin-top: -0.3em;
+    margin-bottom: 0.1em;
+    margin-left: -0.1em;
+}
+
+/* the "g/31g" text */
+#stats-memrest {
+    margin-right: 0.5em;
+}
+
+/* the tiny icons for reboot, shutdown, logout, etc */
+#quick-actions { margin-left: 0.5em; }
+
+    /* messages */
+
+/* message box */
+#message {
+    margin-top: 0.4em;
+    display: none;
+}
+
+/* message box */
+#message > h3 { color: var(--msg-error-color); }
+#message > button { margin-left: auto; margin-right: 1em; font-size: 0.8em; }
+#message > * { margin: 0.5em; }
+
+    /* misc */
+
+/* the main part of each page, for example, the terminal on terminal.html */
+.main {
+    background: #101010;
+    flex-grow: 1;
+    margin-top: 0.5em;
+    margin-bottom: 0.25em;
+    overflow: auto;
 }

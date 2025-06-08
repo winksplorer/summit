@@ -1,4 +1,4 @@
-// summit frontend/js/core.js - sets up namespaces
+// summit frontend/js/main/core.js - sets up namespaces
 
 window._ = window._ || {}; // global _ object
 _.helpers = _.helpers || {}; // helpers.js, helper functions
@@ -13,5 +13,6 @@ _.onReady = cb => {
 };
 
 _.onReady(function() {
+    // data-t is what type to request from server, and data-key is what part of the response should be used for element text
     for (let el of document.querySelectorAll('[data-t]')) _.comm.request(el.dataset.t).then(data => el.textContent = data[el.dataset.key]);
 });

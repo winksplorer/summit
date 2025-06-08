@@ -90,9 +90,6 @@
   *vertical-align: auto;
   *zoom: 1;
   *display: inline;
-  /* -moz-border-radius: 0.1em;
-  -webkit-border-radius: 0.1em;
-  border-radius: 0.1em; */
   background-size: 100%;
   background-image: linear-gradient(to bottom, #ffffff 0%, #f2f2fa 35%, #ccccdd 55%, #f2f2fa 55%, #ffffff 100%);
 

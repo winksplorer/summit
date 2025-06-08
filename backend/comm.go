@@ -1,3 +1,5 @@
+// summit backend/comm.go - handles communication (server-side)
+
 package main
 
 import (
@@ -23,7 +25,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	// handle auth
+	// if not authed, then say so, and close connection
 	if !authenticated(w, r) {
 		data := map[string]interface{}{
 			"t": "auth.status",
@@ -44,7 +46,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 	// send to frontend
 	go func(ctx context.Context) {
 		for {
-			// ---- do the work first ----
+			// calculate stats
 			percentages, err := cpu.Percent(0, false)
 			if err != nil {
 				log.Println("couldn't get cpu info:", err)
@@ -57,6 +59,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 
 			usageValue, usageUnit := humanReadableSplit(virtualMem.Used)
 
+			// assemble stats into a comm object
 			stats := map[string]interface{}{
 				"t": "stat.basic",
 				"data": map[string]interface{}{
@@ -70,7 +73,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				log.Println("couldn't send stats:", err)
 			}
 
-			// ---- wait for next round ----
+			// wait for next round
 			delay := time.NewTimer(5 * time.Second)
 
 			select {
@@ -98,17 +101,20 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
+		// decode comm object
 		var decoded map[string]interface{}
 		if err := msgpack.Unmarshal(msg, &decoded); err != nil {
 			log.Println("could not read data")
 			continue
 		}
 
+		// pre-assemble our response data
 		data := map[string]interface{}{
 			"t":  decoded["t"],
 			"id": decoded["id"],
 		}
 
+		// choose data based on t
 		switch decoded["t"] {
 		case "info.hostname":
 			data["data"] = map[string]interface{}{
@@ -124,6 +130,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				"containers", "services", "updates", "settings",
 			}
 		default:
+			// if t is not recognized, then throw error
 			data["error"] = map[string]interface{}{
 				"code": 404,
 				"msg":  "unknown type",
@@ -137,12 +144,14 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func commSend(data map[string]interface{}, connection *websocket.Conn) error {
+	// encode
 	encodedData, err := msgpack.Marshal(data)
 	if err != nil {
 		log.Println("couldn't format with mspack:", err)
 		return err
 	}
 
+	// send
 	if err := connection.WriteMessage(websocket.BinaryMessage, encodedData); err != nil {
 		log.Println("couldn't send to websockets:", err)
 		return err

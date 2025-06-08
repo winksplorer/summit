@@ -1,3 +1,5 @@
+// summit backend/main.go - backend entry point + templating logic
+
 package main
 
 import (
@@ -42,6 +44,7 @@ func init() {
 }
 
 func main() {
+	// configure endpoints
 	http.HandleFunc("/", templater)
 	http.HandleFunc("/api/login", loginHandler)
 	http.HandleFunc("/api/logout", logoutHandler)
@@ -52,6 +55,7 @@ func main() {
 	http.HandleFunc("/api/comm", commHandler)
 	log.Println("successfully registered handlers")
 
+	// configure server (hlfhr is used to redirect http to https)
 	srv := hlfhr.New(&http.Server{
 		Addr:    port,
 		Handler: gziphandler.GzipHandler(http.DefaultServeMux),
@@ -65,6 +69,7 @@ func main() {
 		hlfhr.RedirectToHttps(w, r, 308)
 	})
 
+	// check if TLS shit exists
 	_, err := os.Stat("/etc/ssl/private/summit.key")
 	_, err2 := os.Stat("/etc/ssl/certs/summit.crt")
 	if os.IsNotExist(err) || os.IsNotExist(err2) {
@@ -76,7 +81,7 @@ func main() {
 			hostname = "undefined"
 		}
 
-		// generate tls cert
+		// generate tls cert & key
 		if err := execCmd(
 			"openssl",
 			"req",
@@ -110,11 +115,13 @@ func main() {
 }
 
 func templater(w http.ResponseWriter, r *http.Request) {
+	// only get filename
 	path := strings.TrimPrefix(r.URL.Path, "/")
 	if path == "" {
 		path = "index.html"
 	}
 
+	// if it doesn't need templating, then directly serve it
 	if !strings.HasSuffix(path, ".html") || path == "index.html" || path == "admin.html" {
 		http.FileServer(http.Dir(frontendDir)).ServeHTTP(w, r)
 		return
@@ -122,6 +129,7 @@ func templater(w http.ResponseWriter, r *http.Request) {
 
 	pageName := strings.TrimSuffix(path, ".html")
 
+	// template together base + the page
 	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/template/base.html", frontendDir), fmt.Sprintf("%s/template/%s.html", frontendDir, pageName))
 	if err != nil {
 		log.Printf("template parse error for %s: %v", path, err)

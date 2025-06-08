@@ -62,4 +62,4 @@ The frontend (and backend, if it ever requests data from the frontend) will alwa
 - `stat.basic`: Basic numerical stats. Backend pushes to the frontend every 5 seconds. Data is in form of `{'memTotal': '31g', 'memUsage': 4.6, 'memUsageUnit': 'g', 'cpuUsage': 13}`.
 - `info.hostname`: Server hostname. Frontend request to the backend. Response data is in form of `{'hostname': 'puter'}`.
 - `info.buildString`: Server build string. Frontend request to the backend. Response data is in form of `{'buildString': 'summit v0.3 (built on 2025-May-30)'}`.
-- `info.pages`: Page list with navbar names. Frontend request to the backend. Response data is in form of `{'terminal': 'terminal.html', 'logging': 'logging.html', 'storage': 'storage.html'}`.
+- `info.pages`: Page list with navbar names. Frontend request to the backend. Response data is in form of `{'terminal', 'logging', 'storage', 'networking', 'containers', 'services', 'updates', 'settings'}`.

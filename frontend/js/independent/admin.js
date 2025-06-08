@@ -1,26 +1,32 @@
-// summit frontend/js/admin.js - handles admin.html root login page
+// summit frontend/js/independent/admin.js - handles admin.html root login page
 
+// set hostname element
 fetch('/api/get-hostname')
     .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))
     .then(data => document.getElementById('hostname').textContent = data)
     .catch(err => console.error('failed to fetch hostname:', err));
 
+// elements
 const msgEl = document.getElementById('msg')
 const opEl = document.getElementById('operation')
 const buttonEl = document.querySelector('input[type="submit"]')
+
+// url parameters (?operation)
 const urlParams = new URLSearchParams(window.location.search);
 
-// handles operation
+// handles operation text
 switch (urlParams.get('operation')) {
     case 'reboot':
         opEl.textContent = 'reboot the server'; break;
     case 'poweroff':
         opEl.textContent = 'power off the server'; break;
 }
+
 // handles the form submit
 document.getElementById('authform').addEventListener('submit', function(e) {
     e.preventDefault();
 
+    // visual feedback that something is happening
     buttonEl.disabled = true;
     var msgEl = document.getElementById('msg');
     msgEl.style.display = 'block';
@@ -33,7 +39,7 @@ document.getElementById('authform').addEventListener('submit', function(e) {
         operation: urlParams.get('operation'),
     };
 
-    // send it
+    // send our data
     fetch('/api/sudo', {
         method: 'POST',
         headers: {

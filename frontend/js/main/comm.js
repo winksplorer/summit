@@ -1,34 +1,28 @@
-// summit frontend/js/comm.js - handles communication
+// summit frontend/js/main/comm.js - handles communication (browser-side)
 
-_.comm.socket = new WebSocket("wss://" + location.host + "/api/comm");
-_.comm.pending = {};
+// variables
+_.comm.socket = new WebSocket("wss://" + location.host + "/api/comm"); // actual websocket connection
+_.comm.pending = {}; // pending requests
+_.comm.socketReady = null; // if the socket is ready for data or not
 
-_.comm.socketReady = null;
-
+// wait for the socket to be open
 _.comm.socketWait = function() {
     if (_.comm.socket.readyState === WebSocket.OPEN) return Promise.resolve()
     if (_.comm.socketReady) return _.comm.socketReady
-  
+
     _.comm.socketReady = new Promise(resolve => {
-      _.comm.socket.addEventListener('open', () => resolve(), { once: true })
+        _.comm.socket.addEventListener('open', () => resolve(), { once: true })
     })
     return _.comm.socketReady
-  }
+}
 
 _.comm.socket.onmessage = async event => {
-    let arrayBuffer;
+    // get data in the form of whatever js can understand
+    const msg = msgpack.deserialize(new Uint8Array(await event.data.arrayBuffer()));
 
-    if (event.data instanceof Blob) arrayBuffer = await event.data.arrayBuffer();
-    else if (event.data instanceof ArrayBuffer) arrayBuffer = event.data;
-    else {
-        console.error('Unexpected data type:', typeof event.data);
-        return;
-    }
-
-    const msg = msgpack.deserialize(new Uint8Array(arrayBuffer));
-
+    // attempt to match id with any pending requests
     if (msg.id && _.comm.pending[msg.id]) {
-        if (msg.error) {
+        if (msg.error) { // if server returned error
             _.comm.pending[msg.id].reject(`error ${msg.error.code}: ${msg.error.msg}`);
             _.ui.dispatchMsg("error while contacting server", `asked for "${msg.t}," but server responded with "error ${msg.error.code}: ${msg.error.msg}"`);
         }
@@ -59,6 +53,7 @@ _.comm.socket.onerror = async err => {
 }
 
 _.comm.request = function(t) {
+    // wait for socket to be open then send data
     return _.comm.socketWait().then(() => {
         return new Promise((resolve, reject) => {
             const id = Math.floor(Math.random() * 2**32);
