@@ -36,20 +36,30 @@ How the frontend and backend would understand what data is for what, is through 
 Every 5 seconds, the server can unexpectedly just send the stats to the frontend, and the frontend would handle it.
 
 1. Frontend: (no data)
-2. Backend: `{"t": "stat.basic", "data": {"memTotal": "31g", "memUsage": 4.6, "memUsageUnit": "g", "cpuUsage": 13}}`
+2. Backend: `{'t': 'stat.basic', 'data': {'memTotal': '31g', 'memUsage': 4.6, 'memUsageUnit': 'g', 'cpuUsage': 13}}`
 
 ### Requesting buildstring
 
 The frontend can send a request, by just filling out the `t` (type) and nothing else. The server will respond with `t` and the requested information.
 
-1. Frontend: `{"t": "info.buildString", "id": 123}`
-2. Backend: `{"t": "info.buildString", "id": 123, "data": {"buildString": "summit v0.3 (built on 2025-May-30)"}}`
+1. Frontend: `{'t': 'info.buildString', 'id': 123}`
+2. Backend: `{'t': 'info.buildString', 'id': 123, 'data': {'buildString': 'summit v0.3 (built on 2025-May-30)'}}`
 
 ### Errors
 
 Let's say that the frontend somehow manages to request with a type that doesn't exist. Here's how that would go:
 
-1. Frontend: `{"t": "foo.bar", "id": 456}`
-2. Backend: `{"t": "foo.bar", "id": 456, "error": {"code": 404, "msg": "unknown type"}}`
+1. Frontend: `{'t': 'foo.bar', 'id': 456}`
+2. Backend: `{'t': 'foo.bar', 'id': 456, 'error': {'code': 404, 'msg': 'unknown type'}}`
 
 The frontend (and backend, if it ever requests data from the frontend) will always check every server response for any `error` data, and if it does it will do the appropriate handling.
+
+## Currently implemented types
+
+> All representations will be in JSON, however the actual communication would be done in MessagePack.
+
+- `auth.status`: Authentication status. Backend pushes whenever it changes or on connection open. Data is in form of `{'authed': true}`.
+- `stat.basic`: Basic numerical stats. Backend pushes to the frontend every 5 seconds. Data is in form of `{'memTotal': '31g', 'memUsage': 4.6, 'memUsageUnit': 'g', 'cpuUsage': 13}`.
+- `info.hostname`: Server hostname. Frontend request to the backend. Response data is in form of `{'hostname': 'puter'}`.
+- `info.buildString`: Server build string. Frontend request to the backend. Response data is in form of `{'buildString': 'summit v0.3 (built on 2025-May-30)'}`.
+- `info.pages`: Page list with navbar names. Frontend request to the backend. Response data is in form of `{'terminal': 'terminal.html', 'logging': 'logging.html', 'storage': 'storage.html'}`.

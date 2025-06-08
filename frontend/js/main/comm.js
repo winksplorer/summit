@@ -39,16 +39,21 @@ _.comm.socket.onmessage = async event => {
 
     // handle unsolicited messages
     switch (msg.t) {
+        case "auth.status":
+            if (!msg.data.authed) window.location.replace('/');
+            return;
         case "stat.basic":
-            document.getElementById("stats-cpu").textContent = msg.data.cpuUsage;
-            document.getElementById("stats-memused").textContent = msg.data.memUsage;
-            document.getElementById("stats-memrest").textContent = `${msg.data.memUsageUnit}/${msg.data.memTotal}`;
+            _.onReady(function () {
+                document.getElementById("stats-cpu").textContent = msg.data.cpuUsage;
+                document.getElementById("stats-memused").textContent = msg.data.memUsage;
+                document.getElementById("stats-memrest").textContent = `${msg.data.memUsageUnit}/${msg.data.memTotal}`;
+            });
             return;
     }
 }
 
 _.comm.socket.onerror = async err => {
-    _.ui.dispatchMsg("error while contacting server", `a serious error has occurred. all communication has been halted. error: "${err}"`);
+    _.ui.dispatchMsg("error while contacting server", `a serious error has occurred. all communication has been halted. check devtools for more info.`);
     for (const id in _.comm.pending) _.comm.pending[id].reject(err);
     Object.keys(_.comm.pending).forEach(id => delete _.comm.pending[id]);
 }

@@ -9,10 +9,18 @@ import (
 	"math"
 	"net/http"
 	"os/exec"
+	"regexp"
 	"strings"
 	"time"
 
 	"github.com/msteinert/pam"
+)
+
+const (
+	kb = 1024
+	mb = kb * 1024
+	gb = mb * 1024
+	tb = gb * 1024
 )
 
 // authenticates user with pam
@@ -39,13 +47,9 @@ func pamAuth(serviceName, userName, passwd string) error {
 
 // human readable byte sizes
 func humanReadable(bytes uint64) string {
-	const (
-		kb = 1024
-		mb = kb * 1024
-		gb = mb * 1024
-	)
-
 	switch {
+	case bytes >= tb:
+		return fmt.Sprintf("%dt", int(math.Round(float64(bytes)/float64(tb))))
 	case bytes >= gb:
 		return fmt.Sprintf("%dg", int(math.Round(float64(bytes)/float64(gb))))
 	case bytes >= mb:
@@ -59,13 +63,10 @@ func humanReadable(bytes uint64) string {
 
 // human readable byte sizes, split unit and value
 func humanReadableSplit(bytes uint64) (float64, string) {
-	const (
-		kb = 1024
-		mb = kb * 1024
-		gb = mb * 1024
-	)
 
 	switch {
+	case bytes >= tb:
+		return float64(bytes) / float64(tb), "t"
 	case bytes >= gb:
 		return float64(bytes) / float64(gb), "g"
 	case bytes >= mb:
@@ -150,4 +151,25 @@ func asUint16(v any) uint16 {
 		return uint16(u)
 	}
 	return 0
+}
+
+// allows for slight differences if Lighthouse is involved
+func userAgentMatches(storedUA, currentUA string) bool {
+	if storedUA == currentUA {
+		return true
+	}
+	if strings.Contains(currentUA, "Chrome-Lighthouse") {
+		return extractAppleWebKitVersion(storedUA) == extractAppleWebKitVersion(currentUA)
+	}
+	return false
+}
+
+// returns the AppleWebKit version from a UA string
+func extractAppleWebKitVersion(ua string) string {
+	re := regexp.MustCompile(`AppleWebKit/([\d\.]+)`)
+	match := re.FindStringSubmatch(ua)
+	if len(match) > 1 {
+		return match[1]
+	}
+	return ""
 }

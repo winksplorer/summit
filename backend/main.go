@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/NYTimes/gziphandler"
 	"github.com/bddjr/hlfhr"
 	"golang.org/x/net/http2"
 )
@@ -46,14 +47,14 @@ func main() {
 	http.HandleFunc("/api/logout", logoutHandler)
 	http.HandleFunc("/api/get-hostname", getHostnameHandler)
 	http.HandleFunc("/api/am-i-authed", amIAuthedHandler)
-	http.HandleFunc("/api/server-pages", serverPagesHandler)
 	http.HandleFunc("/api/sudo", sudoHandler)
 	http.HandleFunc("/api/pty", ptyHandler)
 	http.HandleFunc("/api/comm", commHandler)
 	log.Println("successfully registered handlers")
 
 	srv := hlfhr.New(&http.Server{
-		Addr: port,
+		Addr:    port,
+		Handler: gziphandler.GzipHandler(http.DefaultServeMux),
 		TLSConfig: &tls.Config{
 			MinVersion: tls.VersionTLS13,
 		},

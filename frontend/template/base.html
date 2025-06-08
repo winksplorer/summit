@@ -11,16 +11,14 @@
         <link rel="stylesheet" href="css/lib/odometer-ts.css" />
 
         <!-- JS_BUNDLE_START -->
-        <!-- General libraries -->
-        <script src="js/lib/msgpack.min.js"></script>
-        <script src="js/lib/odometer.min.js"></script>
-
         <!-- General JS -->
-        <script src="js/main/core.js"></script>
-        <script src="js/main/message.js"></script>
-        <script src="js/main/helpers.js"></script>
-        <script src="js/main/navbar.js"></script>
-        <script src="js/main/comm.js"></script>
+        <script src="js/main/core.js" defer></script>
+        <script src="js/main/ui.js" defer></script>
+        <script src="js/main/comm.js" defer></script>
+
+        <!-- General libraries -->
+        <script src="js/lib/msgpack.min.js" defer></script>
+        <script src="js/lib/odometer.min.js" defer></script>
         <!-- JS_BUNDLE_END -->
 
         <!-- Page-specific JS/CSS -->
@@ -53,8 +51,6 @@
         </div>
 
         {{template "main" .}}
-
-        <script>_.init();</script>
     </body>
 </html>
 {{end}}

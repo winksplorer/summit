@@ -41,9 +41,9 @@ And yes, I'm aware that the code is awful.
 - [X] UI Notifications
 - [X] Get rid of the dumb awful edition system
 - [X] Implement templates
-- [ ] Use a WebSocket connection instead of HTTP endpoints
+- [X] Use a WebSocket connection instead of HTTP endpoints
     - [X] Proof of concept (Stats test)
-    - [ ] Fully switch to WebSockets
+    - [X] Fully switch to WebSockets
 - [X] Simplify entire frontend
     - [X] Simplify HTML using templates
     - [X] Simplify JS

@@ -15,11 +15,6 @@ import (
 )
 
 func commHandler(w http.ResponseWriter, r *http.Request) {
-	if !authenticated(w, r) {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
 	// upgrade to ws
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -27,6 +22,22 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer conn.Close()
+
+	// handle auth
+	if !authenticated(w, r) {
+		data := map[string]interface{}{
+			"t": "auth.status",
+			"data": map[string]interface{}{
+				"authed": false,
+			},
+		}
+
+		if err := commSend(data, conn); err != nil {
+			log.Println("couldn't send auth reject message:", err)
+		}
+
+		return
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -106,6 +117,20 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		case "info.buildString":
 			data["data"] = map[string]interface{}{
 				"buildString": fmt.Sprintf("summit v%s (built on %s)", Version, BuildDate),
+			}
+		case "info.pages":
+			data["data"] = map[string]interface{}{
+				"order": []int{6, 1, 5, 2, 0, 3, 7, 4},
+				"pages": map[string]string{
+					"containers": "containers.html",
+					"logging":    "logging.html",
+					"networking": "networking.html",
+					"services":   "services.html",
+					"settings":   "settings.html",
+					"storage":    "storage.html",
+					"terminal":   "terminal.html",
+					"updates":    "updates.html",
+				},
 			}
 		default:
 			data["error"] = map[string]interface{}{

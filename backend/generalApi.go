@@ -38,40 +38,6 @@ func getHostnameHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, hostname)
 }
 
-// handles /api/server-pages
-func serverPagesHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	if !authenticated(w, r) {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	dict := [][2]string{
-		{"terminal.html", "terminal"},
-		{"logging.html", "logging"},
-		{"storage.html", "storage"},
-		{"networking.html", "networking"},
-		{"containers.html", "containers"},
-		{"services.html", "services"},
-		{"updates.html", "updates"},
-		{"settings.html", "settings"},
-	}
-
-	jsonData, err := json.Marshal(dict)
-	if err != nil {
-		log.Println("couldn't format json:", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(jsonData))
-}
-
 // handles /api/sudo
 func sudoHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {

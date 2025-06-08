@@ -34,19 +34,22 @@ backend: check_panic
 frontend:
 	@echo "  MKDIR frontend-dist/js"
 	@mkdir -p frontend-dist/js
-	@echo " MINIFY frontend/js/*.js (exclude js/page & js/independent) -> frontend-dist/js/bundle.min.js"
+	@echo " MINIFY frontend/js/*.js (exclude js/page, js/lib/page & js/independent) -> frontend-dist/js/bundle.min.js"
 	@(printf 'frontend/js/main/core.js\0'; find frontend/js -name '*.js' \
 		! -path 'frontend/js/page/*' \
+		! -path 'frontend/js/lib/page/*' \
 		! -path 'frontend/js/independent/*' \
 		! -path 'frontend/js/main/core.js' -print0) | xargs -0 cat | $(MINIFIER) --type=application/javascript > frontend-dist/js/bundle.min.js
-	@echo "   COPY frontend (exclude js/main & js/lib) -> frontend-dist"
-	@cd frontend && find . -type f ! -path './js/main*' ! -path './js/lib*' -exec cp --parents {} ../frontend-dist/ \;
+	@echo "   COPY frontend (exclude js/main & js/lib, BUT include js/lib/page) -> frontend-dist"
+	@cd frontend && find . -type f \
+		\( -path './js/main*' -o -path './js/lib*' \) \
+		! -path './js/lib/page*' -prune -o -type f -exec cp --parents {} ../frontend-dist/ \;
 	@echo " MINIFY frontend-dist/css"
 	@find frontend-dist/css -type f -name "*.css" -exec $(MINIFIER) --type=css {} -o {} \;
 	@echo " MINIFY frontend-dist/js"
 	@find frontend-dist/js -type f ! -name "*.min.js" -exec $(MINIFIER) --type=js {} -o {} \;
 	@echo "REPLACE js_bundle markers"
-	@sed -i '/<!-- JS_BUNDLE_START -->/,/<!-- JS_BUNDLE_END -->/c\<script src="js/bundle.min.js"></script>' frontend-dist/template/base.html
+	@sed -i '/<!-- JS_BUNDLE_START -->/,/<!-- JS_BUNDLE_END -->/c\<script src="js/bundle.min.js" defer></script>' frontend-dist/template/base.html
 	@echo "REPLACE remove markers"
 	@find frontend-dist/template -type f ! -name "base.html" -exec sed -i '/<!-- REMOVE_MARKER_START -->/,/<!-- REMOVE_MARKER_END -->/d' {} +
 

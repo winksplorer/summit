@@ -48,6 +48,6 @@
             }));
         });
         
-        terminalResizeObserver.observe(document.getElementById('terminal'))
+        terminalResizeObserver.observe(document.getElementById('terminal'));
     });
 })();
