@@ -119,18 +119,9 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				"buildString": fmt.Sprintf("summit v%s (built on %s)", Version, BuildDate),
 			}
 		case "info.pages":
-			data["data"] = map[string]interface{}{
-				"order": []int{6, 1, 5, 2, 0, 3, 7, 4},
-				"pages": map[string]string{
-					"containers": "containers.html",
-					"logging":    "logging.html",
-					"networking": "networking.html",
-					"services":   "services.html",
-					"settings":   "settings.html",
-					"storage":    "storage.html",
-					"terminal":   "terminal.html",
-					"updates":    "updates.html",
-				},
+			data["data"] = []string{
+				"terminal", "logging", "storage", "networking",
+				"containers", "services", "updates", "settings",
 			}
 		default:
 			data["error"] = map[string]interface{}{
