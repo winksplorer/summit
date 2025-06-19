@@ -10,11 +10,24 @@
 <div class="main">
     <div class="container">
         <h3>appearance</h3>
-        <input type="checkbox" id="compactui">
-        <label for="compactui">compact navbar</label>
+        <div class="input-pair">
+            <label for="compactui">compact navbar</label>
+            <input type="checkbox" id="compactui">
+        </div>
 
-        <input type="checkbox" id="segmentstats">
-        <label for="segmentstats">navbar stats in seven segment font</label>
+        <hr>
+
+        <div class="input-pair">
+            <label for="scale">ui scale</label>
+            <div class="range-wrapper">
+                <input type="range" id="scale" min="1" max="3" step="0.25" value="1.5">
+                <div class="range-labels">
+                    <span>1x</span>
+                    <span>2x</span>
+                    <span>3x</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="container">

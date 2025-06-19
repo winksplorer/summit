@@ -5,6 +5,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -58,23 +59,30 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// parse json
-	// todo: replace with msgpack
-	var req SudoRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		log.Println("error: failed to parse /api/sudo JSON:", err)
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Println("error: failed to read /api/sudo data:", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	defer r.Body.Close()
+
+	// parse
+	var decoded map[string]string
+	if err := json.Unmarshal(body, &decoded); err != nil {
+		log.Println("error: failed to parse /api/sudo data:", err)
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
 
 	// authenticate as root with PAM
-	if err := pamAuth("passwd", "root", req.Password); err != nil {
+	if err := pamAuth("passwd", "root", decoded["password"]); err != nil {
 		http.Redirect(w, r, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
 	// see what command we need
-	cmdStr, ok := allowedSudoCommands[req.Operation]
+	cmdStr, ok := allowedSudoCommands[decoded["operation"]]
 	if !ok {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
@@ -82,7 +90,7 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 
 	// execute command
 	cmd := exec.Command(cmdStr)
-	err := cmd.Run()
+	err = cmd.Run()
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}

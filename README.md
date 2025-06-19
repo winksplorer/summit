@@ -54,7 +54,6 @@ And yes, I'm aware that the code is awful.
     - [X] SEA
     - [X] Backend
     - [X] Frontend
-- [ ] Use MessagePack for /api/sudo
 - [ ] Settings
     - [ ] Settings page
     - [ ] Settings system

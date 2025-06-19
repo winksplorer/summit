@@ -7,7 +7,7 @@
 
     --filled-container-bg: #eeeef6;
     --filled-container-text: black;
-    --radius: 0.225vh;
+    --radius: 0.225em;
 
     --msg-error-color: orangered;
 
@@ -29,13 +29,6 @@ body {
     font-family: var(--font), sans-serif;
 }
 
-a:hover { font-weight: 700; }
-
-button {
-    font-size: 0.7em;
-    font-family: var(--font), sans-serif;
-}
-
     /* generic "ui elements" */
 .filled-container {
     background: var(--filled-container-bg);
@@ -48,7 +41,7 @@ button {
 }
 
 .container {
-    border: 1px solid var(--filled-container-bg);
+    border: 0.05em solid var(--filled-container-bg);
     padding: 1em;
     position: relative;
     margin: 1em;
@@ -66,6 +59,34 @@ button {
 .container > p {
     margin-top:0;
     margin-bottom:0.2em;
+}
+
+
+    /* inputs */
+button {
+    font-size: 0.85em;
+    font-family: var(--font), sans-serif;
+}
+
+.input-pair {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.range-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85em;
+    padding: 0 2px;
+    margin-top: 0.25em;
 }
 
     /* navbar + layout + hostname + nav items */
@@ -141,4 +162,7 @@ button {
     margin-top: 0.5em;
     margin-bottom: 0.25em;
     overflow: auto;
+    border-radius: var(--radius);
 }
+
+a:hover { font-weight: 700; }

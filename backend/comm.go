@@ -94,9 +94,6 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
 			log.Println("couldn't read from websockets:", err)
-			if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
-				log.Println("comm: websocket closed, terminating now")
-			}
 			cancel()
 			break
 		}

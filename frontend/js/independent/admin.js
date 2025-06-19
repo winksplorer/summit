@@ -33,19 +33,14 @@ document.getElementById('authform').addEventListener('submit', function(e) {
     msgEl.style.color = 'black';
     msgEl.textContent = 'authenticating';
 
-    // construct our data
-    const data = {
-        password: document.getElementById('password').value,
-        operation: urlParams.get('operation'),
-    };
-
     // send our data
     fetch('/api/sudo', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            password: document.getElementById('password').value,
+            operation: urlParams.get('operation')
+        }),
     })
     .then(res => res.ok ? res.ok : Promise.reject(`HTTP ${res.status}`))
     .then(() => { // if we don't fail
