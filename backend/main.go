@@ -27,6 +27,7 @@ func init() {
 	// custom logging
 	log.SetFlags(0)
 	log.SetOutput(new(logWriter))
+	log.Printf("summit v%s (built on %s).\n", Version, BuildDate)
 
 	// select where the frontend is
 	// SEA passes the first arg, so "summit dev" = "/tmp/summit/summit-server dev"

@@ -61,7 +61,8 @@ int extract_mem(const void *data, size_t data_size, const char *output_dir) {
 int main(int argc, char* argv[]) {
     // root check + printing basic info
     if (geteuid() != 0) return fprintf(stderr, "summit requires root permissions to work correctly.\n"), 1;
-    printf("summit SEA (%s %s)\narchive size = %.2f MB\n", __DATE__, __TIME__, (double)(_binary_summit_tar_xz_end - _binary_summit_tar_xz_start)/1000000);
+    printf("summit SEA (%s %s).\nsummit and its SEA are licensed under the GNU GPL v2. copyright (c) 2025 winksplorer et al.\narchive size = %.2f MB\n",
+        __DATE__, __TIME__, (double)(_binary_summit_tar_xz_end - _binary_summit_tar_xz_start)/1000000);
 
     // extract the embedded summit.tar.xz into /tmp/summit
     if (extract_mem(_binary_summit_tar_xz_start, _binary_summit_tar_xz_end - _binary_summit_tar_xz_start, "/tmp/summit") == -1)
