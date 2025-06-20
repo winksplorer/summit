@@ -36,11 +36,12 @@ frontend:
 	@echo "  MKDIR (mkdir) frontend-dist/js"
 	@mkdir -p frontend-dist/js
 	@echo " MINIFY ($(MINIFIER)) frontend/js/*.js (exclude js/page, js/lib/page & js/independent) -> frontend-dist/js/bundle.min.js"
-	@(printf 'frontend/js/main/core.js\0'; find frontend/js -name '*.js' \
+	@(printf 'frontend/js/main/core.js\0'; \
+		find frontend/js -name '*.js' \
 		! -path 'frontend/js/page/*' \
 		! -path 'frontend/js/lib/page/*' \
 		! -path 'frontend/js/independent/*' \
-		! -path 'frontend/js/main/core.js' -print0) | xargs -0 cat | $(MINIFIER) --type=application/javascript > frontend-dist/js/bundle.min.js
+		! -path 'frontend/js/main/core.js' -print0 | sort -z) | xargs -0 cat | $(MINIFIER) --type=application/javascript > frontend-dist/js/bundle.min.js
 	@echo "   COPY ($(TAR)) frontend (exclude js/main & js/lib, BUT include js/lib/page) -> frontend-dist"
 	@cd frontend && find . -type f \
 		\( -path './js/main*' -o -path './js/lib*' \) \
