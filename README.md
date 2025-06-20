@@ -131,9 +131,9 @@ apt install golang-go make clang binutils libarchive-dev libpam0g-dev git openss
 ### FreeBSD
 
 ```sh
-pkg install go gmake binutils libarchive git openssl minify \
+pkg install go gmake binutils libarchive git openssl minify gsed \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
-    && gmake all install PREFIX=/usr/local
+    && gmake all install PREFIX=/usr/local LD=ld.gold SED=gsed \
     && mkdir -p /etc/ssl/private
 ```

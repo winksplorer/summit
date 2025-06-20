@@ -52,13 +52,13 @@ _.comm.socket.onerror = async err => {
     Object.keys(_.comm.pending).forEach(id => delete _.comm.pending[id]);
 }
 
-_.comm.request = function(t) {
+_.comm.request = function(t, data) {
     // wait for socket to be open then send data
     return _.comm.socketWait().then(() => {
         return new Promise((resolve, reject) => {
             const id = Math.floor(Math.random() * 2**32);
             _.comm.pending[id] = { resolve, reject };
-            _.comm.socket.send(msgpack.serialize({ t, id }));
+            _.comm.socket.send(msgpack.serialize({ id, t, data }));
         });
     })
 }
