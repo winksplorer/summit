@@ -113,7 +113,7 @@ summit will likely build & run on other systems, but I haven't tested.
 > Make sure you have the community repo enabled.
 
 ```sh
-apk add go make clang binutils libarchive-dev linux-pam-dev git openssl minify \
+apk add go make clang binutils libarchive-dev linux-pam-dev git openssl minify xz \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
     && make all install

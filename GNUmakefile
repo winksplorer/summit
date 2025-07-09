@@ -7,13 +7,6 @@ MINIFIER ?= minify
 
 PREFIX ?= /usr
 
-# Alpine is weird and wants us to directly link libarchive in SEA for some reason
-ifneq ($(wildcard /usr/lib/libarchive.so),)
-    LIBARCHIVE_FLAGS = /usr/lib/libarchive.so
-else
-    LIBARCHIVE_FLAGS =
-endif
-
 .PHONY: backend frontend all sea clean install
 
 all: backend frontend sea
@@ -63,7 +56,7 @@ sea:
 	@echo "     LD ($(LD)) summit.tar.xz -> summit.tar.xz.o"
 	@$(LD) -r -b binary -o summit.tar.xz.o summit.tar.xz
 	@echo "     CC ($(CC)) sea.c + summit.tar.xz.o -> summit"
-	@$(CC) -o summit sea.c summit.tar.xz.o $(LIBARCHIVE_FLAGS) -larchive
+	@$(CC) -o summit sea.c summit.tar.xz.o -larchive
 
 install:
 	install -m 755 summit $(PREFIX)/bin
