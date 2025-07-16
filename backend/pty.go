@@ -76,15 +76,38 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		shell = strings.Split(strings.TrimSuffix(string(out), "\n"), ":")[6]
 	}
 
+	// get group ids
+	groupIDs, err := u.GroupIds()
+	if err != nil {
+		log.Println("couldn't get group ids:", err)
+		return
+	}
+
 	// prepare shell
 	cmd := exec.Command(shell)
-	cmd.SysProcAttr = &syscall.SysProcAttr{}
-	cmd.SysProcAttr.Credential = &syscall.Credential{Uid: uint32(uid), Gid: uint32(gid)}
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Credential: &syscall.Credential{
+			Uid:    uint32(uid),
+			Gid:    uint32(gid),
+			Groups: make([]uint32, len(groupIDs)),
+		},
+	}
+
+	// copy group ids
+	for i, gidStr := range groupIDs {
+		gidInt, _ := strconv.Atoi(gidStr)
+		cmd.SysProcAttr.Credential.Groups[i] = uint32(gidInt)
+	}
 
 	// env variables & directory
-	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=/home/%s", username))
-	cmd.Env = append(cmd.Env, fmt.Sprintf("USER=%s", username))
-	cmd.Env = append(cmd.Env, "TERM=xterm-256color")
+	cmd.Env = append(cmd.Env,
+		fmt.Sprintf("HOME=/home/%s", username),
+		fmt.Sprintf("USER=%s", username),
+		fmt.Sprintf("LOGNAME=%s", username),
+		fmt.Sprintf("SHELL=%s", shell),
+		"TERM=xterm-256color",
+	)
+
 	cmd.Dir = fmt.Sprintf("/home/%s", username)
 
 	// start shell with pty
@@ -126,7 +149,20 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		var decoded map[string]interface{}
 
 		if err := msgpack.Unmarshal(msg, &decoded); err == nil && decoded["type"] == "resize" {
-			pty.Setsize(ptmx, &pty.Winsize{Cols: asUint16(decoded["cols"]), Rows: asUint16(decoded["rows"])})
+			// resize pty
+			if err := pty.Setsize(ptmx, &pty.Winsize{Cols: asUint16(decoded["cols"]), Rows: asUint16(decoded["rows"])}); err != nil {
+				log.Println("couldn't resize pty")
+				ptmx.Close()
+				break
+			}
+
+			// alert the process that the resizing happened
+			err = cmd.Process.Signal(syscall.SIGWINCH)
+			if err != nil {
+				log.Println("couldn't alert pty shell process of a resizing")
+				ptmx.Close()
+				break
+			}
 			continue
 		}
 
