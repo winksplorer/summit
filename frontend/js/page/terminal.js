@@ -16,18 +16,12 @@ _.page.t = new Terminal({
 _.page.fit = new FitAddon.FitAddon();
 
 // init reszie observer
-_.page.terminalResizeObserver = terminalResizeObserver = new ResizeObserver(function(entries) {
-    try {
-        _.page.fit?.fit();
-    } catch (err) {
-        console.log(err);
-    }
-});
+_.page.terminalResizeObserver = new ResizeObserver(() => _.page.fit?.fit());
 
-_.onReady(function(){
+_.onReady(() => {
     // init terminal and websocket connection
     _.page.t.loadAddon(_.page.fit);
-    _.page.t.open(document.getElementById('terminal'));
+    _.page.t.open($('terminal'));
     _.page.fit.fit();
 
     const socket = new WebSocket("wss://" + location.host + "/api/pty");
@@ -41,7 +35,7 @@ _.onReady(function(){
         }));
 
     // pty -> terminal
-    socket.onmessage = event => _.page.t.write(event.data);
+    socket.onmessage = (event) => _.page.t.write(event.data);
 
     // terminal -> pty
     _.page.t.onData(data => socket.send(data));
@@ -55,5 +49,5 @@ _.onReady(function(){
         }));
     });
     
-    terminalResizeObserver.observe(document.getElementById('terminal'));
+    _.page.terminalResizeObserver.observe($('terminal'));
 });

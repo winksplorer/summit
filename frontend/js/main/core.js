@@ -7,12 +7,15 @@ _.comm = _.comm || {}; // backend communication
 _.config = _.config || {}; // configuration
 _.ui = _.ui || {}; // user interface shit, like messages
 
-_.onReady = cb => {
-    if (document.readyState !== 'complete') document.addEventListener("DOMContentLoaded", cb);
-    else cb();
-};
+// mfw jquery wannabe
+window.$ = document.getElementById.bind(document);
 
-_.onReady(function() {
+_.onReady = (cb) => document.readyState !== 'complete'
+    ? document.addEventListener('DOMContentLoaded', cb)
+    : cb();
+
+_.onReady(() => {
     // data-t is what type to request from server, and data-key is what part of the response should be used for element text
-    for (let el of document.querySelectorAll('[data-t]')) _.comm.request(el.dataset.t).then(data => el.textContent = data[el.dataset.key]);
+    for (let el of document.querySelectorAll('[data-t]'))
+        _.comm.request(el.dataset.t).then(data => el.textContent = data[el.dataset.key]);
 });

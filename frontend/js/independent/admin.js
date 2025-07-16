@@ -23,7 +23,7 @@ switch (urlParams.get('operation')) {
 }
 
 // handles the form submit
-document.getElementById('authform').addEventListener('submit', function(e) {
+document.getElementById('authform').addEventListener('submit', (e) => {
     e.preventDefault();
 
     // visual feedback that something is happening
