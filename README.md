@@ -30,13 +30,12 @@ And yes, I'm aware that the code is awful.
 - [ ] Stats
     - [X] Basic numerical stats
     - [X] Implement Odometer
-    - [ ] Make Odometer actually fit in the design (requires themes system)
     - [ ] Make stat values persist across pages
-- [ ] WebSocket terminal
+- [X] WebSocket terminal
     - [X] Switch to xterm.js
     - [X] Firefox compatibility
     - [X] Fix the fucking thing
-    - [ ] Fix doas
+    - [X] Fix doas
 - [X] UI Notifications
 - [X] Get rid of the dumb awful edition system
 - [X] Implement templates
@@ -59,7 +58,7 @@ And yes, I'm aware that the code is awful.
     - [ ] Settings system
 - [ ] Work on frontend design
     - [ ] Hamburger menu navbar
-    - [ ] Add some sort of theme system
+    - [ ] Complete redesign
 - [ ] Logging
     - [ ] Backend
         - [ ] Application-specific logs?
