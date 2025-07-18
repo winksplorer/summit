@@ -86,7 +86,7 @@ The frontend (and backend, if it ever requests data from the frontend) will alwa
 
 - Page list with navbar names.
 - Frontend request to the backend (no data).
-- Response data is in form of `{'terminal', 'logging', 'storage', 'networking', 'containers', 'services', 'updates', 'settings'}`.
+- Response data is in form of `['terminal', 'logging', 'storage', 'networking', 'containers', 'services', 'updates', 'settings']`.
 
 ### `config.set`
 
