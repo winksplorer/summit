@@ -1,4 +1,4 @@
-# Backend <-> Frontend Communication (Concept)
+# Backend <-> Frontend Communication
 
 ## Basic Info
 
@@ -12,7 +12,7 @@
 The backend can either:
 
 - Wait for a valid request from the frontend
-- Send data when it likes, bidirectional
+- Send data whenever it wants
 
 The frontend can either:
 
@@ -23,9 +23,9 @@ The frontend can either:
 
 Again, MessagePack is the data protocol.
 
-How the frontend and backend would understand what data is for what, is through the `t` (type) "variable" that must be in every single message.
+The `t` (type) "variable" must be in every message, and is used to say what the purpose of the message is.
 
-`id` is a random uint32 that must be repeated if it's a response to a request. Not required for unsolicited messages from backend.
+`id` is a random uint32 that must be repeated if it's a response. Not required for unsolicited messages from backend.
 
 ## Example cases
 
@@ -33,26 +33,26 @@ How the frontend and backend would understand what data is for what, is through 
 
 ### Stats
 
-Every 5 seconds, the server can unexpectedly just send the stats to the frontend, and the frontend would handle it.
+Every 5 seconds, the server can unexpectedly send stats to the frontend, and the frontend receive and display them.
 
 1. Frontend: (no data)
 2. Backend: `{'t': 'stat.basic', 'data': {'memTotal': '31g', 'memUsage': 4.6, 'memUsageUnit': 'g', 'cpuUsage': 13}}`
 
 ### Requesting buildstring
 
-The frontend can send a request, by just filling out the `t` (type) and nothing else. The server will respond with `t` and the requested information.
+The frontend can send a request by filling out `t` (type), `id`, and nothing else. The server will respond with the same `t` and `id`, plus the requested information.
 
 1. Frontend: `{'t': 'info.buildString', 'id': 123}`
 2. Backend: `{'t': 'info.buildString', 'id': 123, 'data': {'buildString': 'summit v0.3 (built on 2025-May-30)'}}`
 
 ### Errors
 
-Let's say that the frontend somehow manages to request with a type that doesn't exist. Here's how that would go:
+Let's say that the frontend somehow manages to request a type that doesn't exist. Here's how that would go:
 
 1. Frontend: `{'t': 'foo.bar', 'id': 456}`
 2. Backend: `{'t': 'foo.bar', 'id': 456, 'error': {'code': 404, 'msg': 'unknown type'}}`
 
-The frontend (and backend, if it ever requests data from the frontend) will always check every server response for any `error` data, and if it does it will do the appropriate handling.
+The frontend (and backend, if it ever requests data from the frontend) will always check every response for `error` data and will do the appropriate handling.
 
 ## Currently implemented types
 
