@@ -126,7 +126,7 @@ button {
     /* the right side of the navbar (stats, quick actions, etc) */
 
 /* all non-animated text in stats */
-#stats > span {
+#stats > .normal {
     margin-top: -0.3em;
     margin-bottom: 0.1em;
     margin-left: -0.1em;

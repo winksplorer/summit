@@ -78,10 +78,10 @@ The self-extracting archive code so that the entire server is distributed as one
     - [X] Cookies
     - [X] Admin system
     - [X] Slight refactoring (use my other login impl instead)
-- [ ] Stats
+- [X] Stats
     - [X] Basic numerical stats
     - [X] Implement Odometer
-    - [ ] Make stat values persist across pages
+    - [X] Make stat values persist across pages
 - [X] WebSocket terminal
     - [X] Switch to xterm.js
     - [X] Firefox compatibility

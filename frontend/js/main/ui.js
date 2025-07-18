@@ -25,6 +25,18 @@ _.ui.dispatchMsg = (title, subtitle) => {
     $('message').style.display = 'flex';
 }
 
+// handles stats changes
+_.ui.updateStats = (data) => {
+    if (_.isColdEntry) Odometer.init();
+
+    $('stats-cpu').textContent = data.cpuUsage;
+    $('stats-memused').textContent = data.memUsage;
+    $('stats-memrest').textContent = `${data.memUsageUnit}/${data.memTotal}`;
+
+    if (!_.isColdEntry) Odometer.init();
+}
+
+
 _.onReady(() => {
     // inital navbar fill, and register message dismiss button
     _.ui.updateNavItems()

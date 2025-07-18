@@ -35,11 +35,7 @@ _.comm.socket.onmessage = async (event) => {
             if (!msg.data.authed) window.location.replace('/');
             return;
         case 'stat.basic':
-            _.onReady(() => {
-                $('stats-cpu').textContent = msg.data.cpuUsage;
-                $('stats-memused').textContent = msg.data.memUsage;
-                $('stats-memrest').textContent = `${msg.data.memUsageUnit}/${msg.data.memTotal}`;
-            });
+            _.onReady(() => _.ui.updateStats(msg.data));
             return;
     }
 }
