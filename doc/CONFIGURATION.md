@@ -8,8 +8,8 @@ This uses the existing [comm system](COMMUNICATION.md).
 
 `config.set`:
 
-- Sets a value.
-- Frontend request: `{"key": "ui.scale", "value": 1.75}`
+- Sets values.
+- Frontend request: `{"ui.scale": 1.75, "ui.compactNavbar": false}`
 - Backend response: `{}`
 
 `config.get`:
