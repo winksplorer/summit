@@ -3,8 +3,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os/user"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -12,10 +15,15 @@ import (
 const authExpireTime = 4 * time.Hour
 
 type authedUser struct {
-	user    string
-	ua      string
-	ip      string
-	expires time.Time
+	user     string    // username
+	gid      uint32    // unix gid
+	uid      uint32    // unix uid
+	suppgids []uint32  // supplementary unix gids
+	config   string    // configuration file path
+	homedir  string    // home directory
+	ua       string    // user agent
+	ip       string    // ip
+	expires  time.Time // time when this user's login expires
 }
 
 var (
@@ -60,13 +68,62 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 		expires := time.Now().Add(authExpireTime)
 
+		// lookup user in the system
+		u, err := user.Lookup(r.FormValue("username"))
+		if err != nil {
+			log.Println("couldn't lookup username:", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		// get uid
+		uid, err := strconv.ParseUint(u.Uid, 10, 32)
+		if err != nil {
+			log.Println("couldn't parse uid:", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		// get gid
+		gid, err := strconv.ParseUint(u.Gid, 10, 32)
+		if err != nil {
+			log.Println("couldn't parse gid:", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		// get group ids
+		stringGroups, err := u.GroupIds()
+		if err != nil {
+			log.Println("couldn't get group ids:", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		var groups []uint32 = make([]uint32, len(stringGroups))
+
+		for i, gidStr := range stringGroups {
+			gidInt, err := strconv.Atoi(gidStr)
+			if err != nil {
+				log.Println("couldn't convert group ids:", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+			groups[i] = uint32(gidInt)
+		}
+
 		// create auth, server-side
 		authsMu.Lock()
 		auths[id] = authedUser{
-			ua:      r.UserAgent(),
-			user:    r.FormValue("username"),
-			ip:      clientIP(r),
-			expires: expires,
+			ua:       r.UserAgent(),
+			user:     u.Username,
+			uid:      uint32(uid),
+			gid:      uint32(gid),
+			suppgids: groups,
+			config:   fmt.Sprintf("%s/.config/summit.json", u.HomeDir),
+			homedir:  u.HomeDir,
+			ip:       clientIP(r),
+			expires:  expires,
 		}
 		authsMu.Unlock()
 
