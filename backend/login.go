@@ -44,7 +44,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// get login data
 	if err := r.ParseForm(); err != nil {
-		log.Println("error: failed to parse login:", err)
+		ise(w, "couldn't parse login", err)
 		return
 	}
 
@@ -64,8 +64,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		// generate id & expire time
 		id, err := randomBase64String(32)
 		if err != nil {
-			log.Println("error: generate login:", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			ise(w, "couldn't generate login id", err)
 			return
 		}
 
@@ -74,32 +73,28 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		// lookup user in the system
 		u, err := user.Lookup(r.FormValue("username"))
 		if err != nil {
-			log.Println("couldn't lookup username:", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			ise(w, "couldn't lookup username", err)
 			return
 		}
 
 		// get uid
 		uid, err := strconv.ParseUint(u.Uid, 10, 32)
 		if err != nil {
-			log.Println("couldn't parse uid:", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			ise(w, "couldn't parse uid", err)
 			return
 		}
 
 		// get gid
 		gid, err := strconv.ParseUint(u.Gid, 10, 32)
 		if err != nil {
-			log.Println("couldn't parse gid:", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			ise(w, "couldn't parse gid", err)
 			return
 		}
 
 		// get group ids
 		stringGroups, err := u.GroupIds()
 		if err != nil {
-			log.Println("couldn't get group ids:", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			ise(w, "couldn't get group ids", err)
 			return
 		}
 
@@ -108,8 +103,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		for i, gidStr := range stringGroups {
 			gidInt, err := strconv.Atoi(gidStr)
 			if err != nil {
-				log.Println("couldn't convert group ids:", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				ise(w, "couldn't convert group ids", err)
 				return
 			}
 			groups[i] = uint32(gidInt)
@@ -122,21 +116,18 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		if _, err := os.Stat(configFile); os.IsNotExist(err) {
 			data, err := json.Marshal(map[string]interface{}{})
 			if err != nil {
-				log.Println("couldn't create initial config data:", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				ise(w, "couldn't create initial config data", err)
 				return
 			}
 
 			if err := os.WriteFile(configFile, data, 0700); err != nil {
-				log.Println("couldn't write config file:", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				ise(w, "couldn't write config file", err)
 				return
 			}
 
 			// set permissions
 			if err := os.Chown(configFile, int(uid), int(gid)); err != nil {
-				log.Println("couldn't set permissions of config file:", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				ise(w, "couldn't set permissions of config file", err)
 				return
 			}
 		} else {
@@ -182,8 +173,7 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	if authenticated(w, r) {
 		s, err := r.Cookie("s")
 		if err != nil {
-			log.Println("error: session disappeared:", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			ise(w, "couldn't get session cookie", err)
 			return
 		}
 

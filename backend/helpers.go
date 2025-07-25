@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"log"
 	"math"
 	"net/http"
 	"os/exec"
@@ -25,6 +26,8 @@ const (
 	gb = mb * 1024
 	tb = gb * 1024
 )
+
+type logWriter struct{}
 
 // authenticates user with pam
 func pamAuth(serviceName, userName, passwd string) error {
@@ -48,25 +51,8 @@ func pamAuth(serviceName, userName, passwd string) error {
 	return nil
 }
 
-// human readable byte sizes
-func humanReadable(bytes uint64) string {
-	switch {
-	case bytes >= tb:
-		return fmt.Sprintf("%dt", int(math.Round(float64(bytes)/float64(tb))))
-	case bytes >= gb:
-		return fmt.Sprintf("%dg", int(math.Round(float64(bytes)/float64(gb))))
-	case bytes >= mb:
-		return fmt.Sprintf("%dm", int(math.Round(float64(bytes)/float64(mb))))
-	case bytes >= kb:
-		return fmt.Sprintf("%dk", int(math.Round(float64(bytes)/float64(kb))))
-	default:
-		return fmt.Sprintf("%d", bytes)
-	}
-}
-
 // human readable byte sizes, split unit and value
 func humanReadableSplit(bytes uint64) (float64, string) {
-
 	switch {
 	case bytes >= tb:
 		return float64(bytes) / float64(tb), "t"
@@ -81,7 +67,13 @@ func humanReadableSplit(bytes uint64) (float64, string) {
 	}
 }
 
-// generate random b64 str
+// human readable byte sizes, combined string
+func humanReadable(bytes uint64) string {
+	value, unit := humanReadableSplit(bytes)
+	return fmt.Sprintf("%d%s", int(math.Round(value)), unit)
+}
+
+// generates random b64 str
 func randomBase64String(length int) (string, error) {
 	numBytes := (length * 3) / 4
 	randomBytes := make([]byte, numBytes)
@@ -128,8 +120,6 @@ func execCmd(args ...string) error {
 	return nil
 }
 
-type logWriter struct{}
-
 // logging format
 func (lw *logWriter) Write(bs []byte) (int, error) {
 	if strings.Contains(string(bs), ": remote error: tls: unknown certificate") || strings.Contains(string(bs), "websocket: close 1001 (going away)") {
@@ -173,4 +163,10 @@ func extractAppleWebKitVersion(ua string) string {
 		return match[1]
 	}
 	return ""
+}
+
+// prints "{s}: {err}" to stdout, and gives HTTP 500 to w
+func ise(w http.ResponseWriter, s string, err error) {
+	log.Println(s, err)
+	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 }

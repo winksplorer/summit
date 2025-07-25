@@ -32,8 +32,7 @@ func getHostnameHandler(w http.ResponseWriter, r *http.Request) {
 
 	hostname, err := os.Hostname()
 	if err != nil {
-		log.Println("couldn't get hostname:", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		ise(w, "couldn't get hostname", err)
 		return
 	}
 
@@ -61,8 +60,7 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Println("error: failed to read /api/sudo data:", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		ise(w, "couldn't read /api/sudo data", err)
 		return
 	}
 	defer r.Body.Close()
@@ -92,7 +90,8 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 	cmd := exec.Command(cmdStr)
 	err = cmd.Run()
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		ise(w, "couldn't run command as root", err)
+		return
 	}
 
 	// we good

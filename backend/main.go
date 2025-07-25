@@ -133,8 +133,7 @@ func templater(w http.ResponseWriter, r *http.Request) {
 	// template together base + the page
 	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/template/base.html", frontendDir), fmt.Sprintf("%s/template/%s.html", frontendDir, pageName))
 	if err != nil {
-		log.Printf("template parse error for %s: %v", path, err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		ise(w, fmt.Sprintf("template parse error for %s", path), err)
 		return
 	}
 
@@ -142,7 +141,7 @@ func templater(w http.ResponseWriter, r *http.Request) {
 		"Title": pageName + " - " + hostname,
 	})
 	if err != nil {
-		log.Printf("template exec error for %s: %v", path, err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		ise(w, fmt.Sprintf("template exec error for %s", path), err)
+		return
 	}
 }
