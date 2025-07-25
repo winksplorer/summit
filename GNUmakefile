@@ -1,4 +1,4 @@
-SUMMIT_VERSION = 0.3
+SUMMIT_VERSION = 0.4
 
 GO ?= go
 TAR ?= tar
