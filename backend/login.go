@@ -3,9 +3,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"os/user"
 	"strconv"
 	"sync"
@@ -15,15 +17,16 @@ import (
 const authExpireTime = 4 * time.Hour
 
 type authedUser struct {
-	user     string    // username
-	gid      uint32    // unix gid
-	uid      uint32    // unix uid
-	suppgids []uint32  // supplementary unix gids
-	config   string    // configuration file path
-	homedir  string    // home directory
-	ua       string    // user agent
-	ip       string    // ip
-	expires  time.Time // time when this user's login expires
+	user       string                 // username
+	gid        uint32                 // unix gid
+	uid        uint32                 // unix uid
+	suppgids   []uint32               // supplementary unix gids
+	configFile string                 // configuration file path
+	config     map[string]interface{} // cached config data
+	homedir    string                 // home directory
+	ua         string                 // user agent
+	ip         string                 // ip
+	expires    time.Time              // time when this user's login expires
 }
 
 var (
@@ -112,18 +115,46 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			groups[i] = uint32(gidInt)
 		}
 
+		// config logic
+		configFile := fmt.Sprintf("%s/.config/summit.json", u.HomeDir)
+		configData := map[string]interface{}{}
+
+		if _, err := os.Stat(configFile); os.IsNotExist(err) {
+			data, err := json.Marshal(map[string]interface{}{})
+			if err != nil {
+				log.Println("couldn't create initial config data:", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+
+			if err := os.WriteFile(configFile, data, 0700); err != nil {
+				log.Println("couldn't write config file:", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+
+			// set permissions
+			if err := os.Chown(configFile, int(uid), int(gid)); err != nil {
+				log.Println("couldn't set permissions of config file:", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+		} else {
+		}
+
 		// create auth, server-side
 		authsMu.Lock()
 		auths[id] = authedUser{
-			ua:       r.UserAgent(),
-			user:     u.Username,
-			uid:      uint32(uid),
-			gid:      uint32(gid),
-			suppgids: groups,
-			config:   fmt.Sprintf("%s/.config/summit.json", u.HomeDir),
-			homedir:  u.HomeDir,
-			ip:       clientIP(r),
-			expires:  expires,
+			ua:         r.UserAgent(),
+			user:       u.Username,
+			uid:        uint32(uid),
+			gid:        uint32(gid),
+			suppgids:   groups,
+			configFile: configFile,
+			config:     configData,
+			homedir:    u.HomeDir,
+			ip:         clientIP(r),
+			expires:    expires,
 		}
 		authsMu.Unlock()
 

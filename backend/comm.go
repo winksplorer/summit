@@ -41,11 +41,11 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sc, err := r.Cookie("s")
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
+	// sc, err := r.Cookie("s")
+	// if err != nil {
+	// 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
+	// 	return
+	// }
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -133,7 +133,8 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				"containers", "services", "updates", "settings",
 			}
 		case "config.set":
-			createConfig(sc.Value)
+			data["data"] = map[string]interface{}{}
+		case "config.get":
 			data["data"] = map[string]interface{}{}
 		default:
 			// if t is not recognized, then throw error
