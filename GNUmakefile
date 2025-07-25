@@ -3,7 +3,7 @@ SUMMIT_VERSION = 0.4
 GO ?= go
 TAR ?= tar
 SED ?= sed
-MINIFIER ?= minify
+MINIFIER ?= minify -q
 
 PREFIX ?= /usr
 
