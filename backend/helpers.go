@@ -170,3 +170,20 @@ func ise(w http.ResponseWriter, s string, err error) {
 	log.Println(s, err)
 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 }
+
+// returns a nested value
+func getNested(m map[string]interface{}, keys ...string) (interface{}, error) {
+	var interf interface{} = m
+	for _, key := range keys {
+		nested, ok := interf.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("couldn't find %s", strings.Join(keys, "."))
+		}
+
+		interf, ok = nested[key]
+		if !ok {
+			return nil, fmt.Errorf("couldn't find %s", strings.Join(keys, "."))
+		}
+	}
+	return interf, nil
+}

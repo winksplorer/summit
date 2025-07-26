@@ -1,6 +1,6 @@
 package main
 
-func readConfigValue(userId string, key string) (string, error) {
+func getConfigValue(userId string, key string) (string, error) {
 	return "", nil
 }
 
