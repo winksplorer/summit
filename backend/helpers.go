@@ -188,6 +188,7 @@ func getValue(m map[string]interface{}, key string) (interface{}, error) {
 	return interf, nil
 }
 
+// sets a value in m to val based on key. basically, key="x.y.z" will set m["x"]["y"]["z"] to val.
 func setValue(m map[string]interface{}, key string, val interface{}) error {
 	var interf interface{} = m
 	for i, k := range strings.Split(key, ".") {

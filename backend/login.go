@@ -120,7 +120,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			if err := os.WriteFile(configFile, data, 0700); err != nil {
+			if err := os.WriteFile(configFile, data, 0600); err != nil {
 				ise(w, "couldn't write config file", err)
 				return
 			}
