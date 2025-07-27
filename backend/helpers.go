@@ -187,3 +187,25 @@ func getValue(m map[string]interface{}, key string) (interface{}, error) {
 	}
 	return interf, nil
 }
+
+func setValue(m map[string]interface{}, key string, val interface{}) error {
+	var interf interface{} = m
+	for i, k := range strings.Split(key, ".") {
+		nested, ok := interf.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("not a map at %s", key)
+		}
+
+		if i == len(strings.Split(key, "."))-1 {
+			nested[k] = val
+			return nil
+		}
+
+		if _, ok := nested[k]; !ok {
+			nested[k] = make(map[string]interface{})
+		}
+		interf = nested[k]
+	}
+
+	return nil
+}
