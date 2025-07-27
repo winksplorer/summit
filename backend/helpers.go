@@ -171,18 +171,18 @@ func ise(w http.ResponseWriter, s string, err error) {
 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 }
 
-// returns a nested value
-func getNested(m map[string]interface{}, keys ...string) (interface{}, error) {
+// returns a value in m based on key. basically, key="x.y.z" will return m["x"]["y"]["z"].
+func getValue(m map[string]interface{}, key string) (interface{}, error) {
 	var interf interface{} = m
-	for _, key := range keys {
+	for _, k := range strings.Split(key, ".") {
 		nested, ok := interf.(map[string]interface{})
 		if !ok {
-			return nil, fmt.Errorf("couldn't find %s", strings.Join(keys, "."))
+			return nil, fmt.Errorf("couldn't find %s", key)
 		}
 
-		interf, ok = nested[key]
+		interf, ok = nested[k]
 		if !ok {
-			return nil, fmt.Errorf("couldn't find %s", strings.Join(keys, "."))
+			return nil, fmt.Errorf("couldn't find %s", key)
 		}
 	}
 	return interf, nil
