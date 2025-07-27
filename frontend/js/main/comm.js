@@ -20,11 +20,8 @@ _.comm.socket.onmessage = async (event) => {
 
     // attempt to match id with any pending requests
     if (msg.id && _.comm.pending[msg.id]) {
-        if (msg.error) { // if server returned error
-            _.comm.pending[msg.id].reject(`error ${msg.error.code}: ${msg.error.msg}`);
-            _.ui.dispatchMsg('error while contacting server', `asked for "${msg.t}," but server responded with "error ${msg.error.code}: ${msg.error.msg}"`);
-        }
-
+        if (msg.error) _.comm.pending[msg.id].reject(`error ${msg.error.code}: ${msg.error.msg}`);
+        
         _.comm.pending[msg.id].resolve(msg.data);
         delete _.comm.pending[msg.id];
     }

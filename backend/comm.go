@@ -41,11 +41,11 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// sc, err := r.Cookie("s")
-	// if err != nil {
-	// 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
-	// 	return
-	// }
+	sc, err := r.Cookie("s")
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -56,11 +56,13 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 			percentages, err := cpu.Percent(0, false)
 			if err != nil {
 				log.Println("couldn't get cpu info:", err)
+				return
 			}
 
 			virtualMem, err := mem.VirtualMemory()
 			if err != nil {
 				log.Println("couldn't get memory info:", err)
+				return
 			}
 
 			usageValue, usageUnit := humanReadableSplit(virtualMem.Used)
@@ -77,6 +79,7 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if err := commSend(stats, conn); err != nil {
 				log.Println("couldn't send stats:", err)
+				return
 			}
 
 			// wait for next round
@@ -135,13 +138,26 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		case "config.set":
 			data["data"] = map[string]interface{}{}
 		case "config.get":
-			data["data"] = map[string]interface{}{}
+			key, err := getValue(decoded, "data.key")
+			if err != nil {
+				data["error"] = map[string]interface{}{"code": 500, "msg": err.Error()}
+				log.Println("config.get failed: getValue:", err)
+				break
+			}
+
+			val, err := getConfigValue(sc.Value, key.(string))
+			if err != nil {
+				data["error"] = map[string]interface{}{"code": 500, "msg": err.Error()}
+				log.Println("config.get failed: getConfigValue:", err)
+				break
+			}
+
+			data["data"] = map[string]interface{}{
+				"value": val,
+			}
 		default:
 			// if t is not recognized, then throw error
-			data["error"] = map[string]interface{}{
-				"code": 404,
-				"msg":  "unknown type",
-			}
+			data["error"] = map[string]interface{}{"code": 404, "msg": "unknown type"}
 		}
 
 		if err := commSend(data, conn); err != nil {
