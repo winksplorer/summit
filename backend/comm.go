@@ -136,28 +136,54 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				"containers", "services", "updates", "settings",
 			}
 		case "config.set":
+			keys, ok := decoded["data"].(map[string]interface{})
+			if !ok {
+				commError(data, "config.set", http.StatusBadRequest, "data doesn't exist or isn't an object")
+				break
+			}
+
+			for key, value := range keys {
+				if err := setConfigValue(sc.Value, key, value); err != nil {
+					commError(data, "config.set", http.StatusInternalServerError, err.Error())
+					break
+				}
+			}
+
+			if err := saveConfig(sc.Value); err != nil {
+				commError(data, "config.set", http.StatusInternalServerError, err.Error())
+				break
+			}
+
 			data["data"] = map[string]interface{}{}
 		case "config.get":
+			// get decoded["data"]["key"]
 			key, err := getValue(decoded, "data.key")
 			if err != nil {
-				data["error"] = map[string]interface{}{"code": 500, "msg": err.Error()}
-				log.Println("config.get failed: getValue:", err)
+				commError(data, "config.get", http.StatusBadRequest, err.Error())
 				break
 			}
 
-			val, err := getConfigValue(sc.Value, key.(string))
+			// get its string representation
+			keyStr, ok := key.(string)
+			if !ok {
+				commError(data, "config.get", http.StatusBadRequest, "data.key wasn't a string")
+				break
+			}
+
+			// get the actual value
+			val, err := getConfigValue(sc.Value, keyStr)
 			if err != nil {
-				data["error"] = map[string]interface{}{"code": 500, "msg": err.Error()}
-				log.Println("config.get failed: getConfigValue:", err)
+				commError(data, "config.get", http.StatusInternalServerError, err.Error())
 				break
 			}
 
+			// return it
 			data["data"] = map[string]interface{}{
 				"value": val,
 			}
 		default:
 			// if t is not recognized, then throw error
-			data["error"] = map[string]interface{}{"code": 404, "msg": "unknown type"}
+			data["error"] = map[string]interface{}{"code": http.StatusNotFound, "msg": "unknown type"}
 		}
 
 		if err := commSend(data, conn); err != nil {
@@ -180,4 +206,9 @@ func commSend(data map[string]interface{}, connection *websocket.Conn) error {
 		return err
 	}
 	return nil
+}
+
+func commError(data map[string]interface{}, t string, code int, msg string) {
+	data["error"] = map[string]interface{}{"code": code, "msg": msg}
+	log.Printf("%s failed: %s\n", t, msg)
 }
