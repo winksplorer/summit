@@ -39,7 +39,7 @@ func saveConfig(userId string) error {
 		return fmt.Errorf("user not found: %s", userId)
 	}
 
-	data, err := json.Marshal(u.config)
+	data, err := json.MarshalIndent(u.config, "", "  ")
 	if err != nil {
 		return fmt.Errorf("config serialization error: %s", err)
 	}

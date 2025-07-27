@@ -114,7 +114,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		configData := map[string]interface{}{}
 
 		if _, err := os.Stat(configFile); os.IsNotExist(err) {
-			data, err := json.Marshal(configData)
+			data, err := json.MarshalIndent(configData, "", "  ")
 			if err != nil {
 				ise(w, "couldn't create initial config data", err)
 				return
