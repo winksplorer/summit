@@ -177,7 +177,7 @@ func getValue(m map[string]interface{}, key string) (interface{}, error) {
 	for _, k := range strings.Split(key, ".") {
 		nested, ok := interf.(map[string]interface{})
 		if !ok {
-			return nil, fmt.Errorf("couldn't find %s", key)
+			return nil, fmt.Errorf("not a map at %s", key)
 		}
 
 		interf, ok = nested[k]
