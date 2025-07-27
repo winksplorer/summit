@@ -1,4 +1,4 @@
-# Configuration (Concept)
+# Configuration
 
 ## Implementation Details
 
@@ -24,7 +24,7 @@ This will use JSON. You may hate it (which is understandable, JSON in a daemon i
 
 Simple keys used in communication are converted into the JSON structure by splitting by dot characters. Basically, `ui.scale` turns into `config["ui"]["scale"]` internally.
 
-Each user's config is stored at `~/.config/summit/config.json`.
+Each user's config is stored at `~/.config/summit.json`.
 
 ## Example Configuration File
 
