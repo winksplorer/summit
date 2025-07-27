@@ -136,12 +136,14 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				"containers", "services", "updates", "settings",
 			}
 		case "config.set":
+			// get data
 			keys, ok := decoded["data"].(map[string]interface{})
 			if !ok {
 				commError(data, "config.set", http.StatusBadRequest, "data doesn't exist or isn't an object")
 				break
 			}
 
+			// loop through and set value
 			for key, value := range keys {
 				if err := setConfigValue(sc.Value, key, value); err != nil {
 					commError(data, "config.set", http.StatusInternalServerError, err.Error())
@@ -149,11 +151,13 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+			// save json
 			if err := saveConfig(sc.Value); err != nil {
 				commError(data, "config.set", http.StatusInternalServerError, err.Error())
 				break
 			}
 
+			// return success
 			data["data"] = map[string]interface{}{}
 		case "config.get":
 			// get decoded["data"]["key"]
