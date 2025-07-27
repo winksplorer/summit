@@ -114,7 +114,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		configData := map[string]interface{}{}
 
 		if _, err := os.Stat(configFile); os.IsNotExist(err) {
-			data, err := json.Marshal(map[string]interface{}{})
+			data, err := json.Marshal(configData)
 			if err != nil {
 				ise(w, "couldn't create initial config data", err)
 				return
@@ -131,6 +131,17 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else {
+			config, err := os.ReadFile(configFile)
+			if err != nil {
+				ise(w, "couldn't read config file", err)
+				return
+			}
+
+			err = json.Unmarshal(config, &configData)
+			if err != nil {
+				ise(w, "couldn't parse config file", err)
+				return
+			}
 		}
 
 		// create auth, server-side
