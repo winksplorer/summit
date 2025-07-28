@@ -108,7 +108,7 @@ The self-extracting archive code so that the entire server is distributed as one
     - [X] Settings page
     - [X] Backend settings system
     - [ ] Frontend settings system
-    - [ ] Default config
+    - [X] Default config
 - [ ] Work on frontend design
     - [ ] Hamburger menu navbar
     - [ ] Complete redesign

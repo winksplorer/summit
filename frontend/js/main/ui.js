@@ -43,7 +43,7 @@ _.ui.compactnav = (enabled) => {
 }
 
 _.onReady(() => {
-    // inital navbar fill, and register message dismiss button
+    // inital navbar fill
     _.ui.updateNavItems()
 
     // message dismiss button will close message
