@@ -38,7 +38,7 @@ document.getElementById('authform').addEventListener('submit', (e) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            password: document.getElementById('password').value,
+            password: document.getElementById('apassword').value,
             operation: urlParams.get('operation')
         }),
     })
