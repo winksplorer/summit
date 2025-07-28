@@ -114,20 +114,20 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		configData := map[string]interface{}{}
 
 		if _, err := os.Stat(configFile); os.IsNotExist(err) {
-			data, err := json.MarshalIndent(configData, "", "  ")
-			if err != nil {
-				ise(w, "couldn't create initial config data", err)
-				return
-			}
-
-			if err := os.WriteFile(configFile, data, 0600); err != nil {
-				ise(w, "couldn't write config file", err)
+			// copy the defaults
+			if err = copyFile(fmt.Sprintf("%s/assets/defaultconfig.json", frontendDir), configFile); err != nil {
+				ise(w, "couldn't create configuration file", err)
 				return
 			}
 
 			// set permissions
-			if err := os.Chown(configFile, int(uid), int(gid)); err != nil {
-				ise(w, "couldn't set permissions of config file", err)
+			if err = os.Chmod(configFile, 0600); err != nil {
+				ise(w, "couldn't set permissions of config file (chmod)", err)
+				return
+			}
+
+			if err = os.Chown(configFile, int(uid), int(gid)); err != nil {
+				ise(w, "couldn't set permissions of config file (chown)", err)
 				return
 			}
 		} else {
@@ -146,6 +146,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 		// create auth, server-side
 		authsMu.Lock()
+		defer authsMu.Unlock()
+
 		auths[id] = authedUser{
 			ua:         r.UserAgent(),
 			user:       u.Username,
@@ -158,7 +160,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			ip:         clientIP(r),
 			expires:    expires,
 		}
-		authsMu.Unlock()
 
 		// create auth, browser-side
 		http.SetCookie(w, &http.Cookie{
@@ -197,8 +198,8 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 func deleteAuth(id string, w http.ResponseWriter) {
 	// server-side
 	authsMu.Lock()
+	defer authsMu.Unlock()
 	delete(auths, id)
-	authsMu.Unlock()
 
 	// browser-side
 	http.SetCookie(w, &http.Cookie{
