@@ -25,9 +25,12 @@ h1 { font-size: 3.5vh; }
     align-items: center;
 }
 
-#password { 
-    flex-grow: 1;
+#password, #apassword { 
     margin-right: 5px;
+}
+
+#password {
+    margin-top: 10px;
 }
 
 input { box-sizing: border-box; }
