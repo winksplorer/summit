@@ -242,18 +242,3 @@ func authenticated(w http.ResponseWriter, r *http.Request) bool {
 	}
 	return true
 }
-
-// http wrapper for authenticated(w,r). handles /api/am-i-authed.
-func amIAuthedHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	if authenticated(w, r) {
-		http.Error(w, "OK", http.StatusOK)
-		return
-	}
-
-	http.Error(w, "Unauthorized", http.StatusUnauthorized)
-}

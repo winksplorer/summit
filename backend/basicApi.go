@@ -1,4 +1,4 @@
-// summit backend/generalApi.go - http endpoint shit
+// summit backend/basicApi.go - simple http endpoint shit. more complex actions should be in comm.
 
 package main
 
@@ -17,10 +17,19 @@ var allowedSudoCommands = map[string]string{
 	"poweroff": "/sbin/poweroff",
 }
 
-// struct to sudo request data
-type SudoRequest struct {
-	Password  string `json:"password"`
-	Operation string `json:"operation"`
+// http wrapper for authenticated(w,r). handles /api/am-i-authed.
+func amIAuthedHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if authenticated(w, r) {
+		http.Error(w, "OK", http.StatusOK)
+		return
+	}
+
+	http.Error(w, "Unauthorized", http.StatusUnauthorized)
 }
 
 // handles /api/get-hostname
