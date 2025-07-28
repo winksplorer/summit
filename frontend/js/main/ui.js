@@ -36,6 +36,11 @@ _.ui.updateStats = (data) => {
     if (!_.isColdEntry) Odometer.init();
 }
 
+// toggles compact navbar
+_.ui.compactnav = (enabled) => {
+    $('nav-right').style.flexDirection = enabled ? "row" : "column";
+    document.querySelector('.hostname').style.fontSize = enabled ? "1.5em" : "2em";
+}
 
 _.onReady(() => {
     // inital navbar fill, and register message dismiss button
@@ -43,4 +48,7 @@ _.onReady(() => {
 
     // message dismiss button will close message
     $('messageDismiss').addEventListener('click', () => $('message').style.display = 'none');
+
+    // config shit
+    _.comm.request('config.get', {'key': 'ui.compactNavbar'}).then(v => _.ui.compactnav(v.value || false));
 });
