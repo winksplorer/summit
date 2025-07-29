@@ -35,9 +35,14 @@ _.ui.updateStats = (data) => {
 }
 
 // toggles compact navbar
-_.ui.compactnav = (enabled) => {
+_.ui.compactNav = (enabled) => {
     $('nav-right').style.flexDirection = enabled ? "row" : "column";
     document.querySelector('.hostname').style.fontSize = enabled ? "1.5em" : "2em";
+}
+
+// sets ui scale
+_.ui.setScale = (value) => {
+    document.body.style.fontSize = `${value}em`;
 }
 
 _.onReady(() => {
@@ -48,5 +53,6 @@ _.onReady(() => {
     $('messageDismiss').addEventListener('click', () => $('message').style.display = 'none');
 
     // config shit
-    _.ui.compactnav(_CONFIG.ui?.compactNavbar || false)
+    _.ui.compactNav(_CONFIG.ui?.compactNavbar || false)
+    _.ui.setScale(_CONFIG.ui?.scale || 1.5)
 });
