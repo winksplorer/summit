@@ -110,8 +110,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// config logic
+		var configData map[string]interface{}
 		configFile := fmt.Sprintf("%s/.config/summit.json", u.HomeDir)
-		configData := map[string]interface{}{}
 
 		if _, err := os.Stat(configFile); os.IsNotExist(err) {
 			// copy the defaults
@@ -130,18 +130,18 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 				ise(w, "couldn't set permissions of config file (chown)", err)
 				return
 			}
-		} else {
-			config, err := os.ReadFile(configFile)
-			if err != nil {
-				ise(w, "couldn't read config file", err)
-				return
-			}
+		}
 
-			err = json.Unmarshal(config, &configData)
-			if err != nil {
-				ise(w, "couldn't parse config file", err)
-				return
-			}
+		config, err := os.ReadFile(configFile)
+		if err != nil {
+			ise(w, "couldn't read config file", err)
+			return
+		}
+
+		err = json.Unmarshal(config, &configData)
+		if err != nil {
+			ise(w, "couldn't parse config file", err)
+			return
 		}
 
 		// create auth, server-side
@@ -165,6 +165,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &http.Cookie{
 			Name:     "s",
 			Value:    id,
+			Path:     "/",
 			SameSite: http.SameSiteStrictMode,
 			Expires:  expires,
 		})

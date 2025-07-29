@@ -21,6 +21,10 @@
         <script src="js/lib/odometer.min.js" defer></script>
         <!-- JS_BUNDLE_END -->
 
+        <script>
+            window._CONFIG = {{.Config}};
+        </script>
+
         <!-- Page-specific JS/CSS -->
         {{template "head" .}}
     </head>

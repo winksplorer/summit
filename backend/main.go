@@ -4,6 +4,7 @@ package main
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -137,8 +138,28 @@ func templater(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// get user. if not found then redirect to login
+	sc, err := r.Cookie("s")
+	if err != nil {
+		log.Println(err)
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
+	authsMu.RLock()
+	u := auths[sc.Value]
+	authsMu.RUnlock()
+
+	// create json
+	data, err := json.Marshal(u.config)
+	if err != nil {
+		ise(w, "couldn't represent config as json", err)
+		return
+	}
+
 	err = tmpl.ExecuteTemplate(w, pageName, map[string]interface{}{
-		"Title": pageName + " - " + hostname,
+		"Title":  pageName + " - " + hostname,
+		"Config": template.JS(data),
 	})
 	if err != nil {
 		ise(w, fmt.Sprintf("template exec error for %s", path), err)
