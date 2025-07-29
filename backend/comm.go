@@ -122,10 +122,6 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 
 		// choose data based on t
 		switch decoded["t"] {
-		case "info.hostname":
-			data["data"] = map[string]interface{}{
-				"hostname": hostname,
-			}
 		case "info.buildString":
 			data["data"] = map[string]interface{}{
 				"buildString": fmt.Sprintf("summit v%s (built on %s)", Version, BuildDate),

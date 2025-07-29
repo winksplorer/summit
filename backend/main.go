@@ -140,14 +140,18 @@ func templater(w http.ResponseWriter, r *http.Request) {
 	// get user. if not found then redirect to login
 	sc, err := r.Cookie("s")
 	if err != nil {
-		log.Println(err)
-		http.Redirect(w, r, "/", http.StatusFound)
+		http.Redirect(w, r, "/?err=inv", http.StatusFound)
 		return
 	}
 
 	authsMu.RLock()
-	u := auths[sc.Value]
-	authsMu.RUnlock()
+	defer authsMu.RUnlock()
+
+	u, ok := auths[sc.Value]
+	if !ok {
+		http.Redirect(w, r, "/?err=inv", http.StatusFound)
+		return
+	}
 
 	// create json
 	data, err := json.Marshal(u.config)

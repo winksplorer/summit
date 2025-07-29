@@ -1,5 +1,6 @@
 {
     "ui": {
+        "pages": ["terminal", "logging", "storage", "networking", "containers", "services", "updates", "settings"],
         "compactNavbar": false,
         "scale": 1.5
     }

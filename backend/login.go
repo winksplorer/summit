@@ -50,13 +50,13 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// disallow root
 	if r.FormValue("username") == "root" {
-		http.Redirect(w, r, "/?auth=rootfail", http.StatusFound)
+		http.Redirect(w, r, "/?err=root", http.StatusFound)
 		return
 	}
 
 	// log in with PAM
 	if err := pamAuth("passwd", r.FormValue("username"), r.FormValue("password")); err != nil {
-		http.Redirect(w, r, "/?auth=fail", http.StatusFound)
+		http.Redirect(w, r, "/?err=auth", http.StatusFound)
 		return
 	}
 

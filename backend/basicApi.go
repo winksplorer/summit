@@ -39,12 +39,6 @@ func getHostnameHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hostname, err := os.Hostname()
-	if err != nil {
-		ise(w, "couldn't get hostname", err)
-		return
-	}
-
 	w.Header().Set("Content-Type", "text/plain")
 	fmt.Fprintln(w, hostname)
 }
@@ -84,7 +78,7 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 
 	// authenticate as root with PAM
 	if err := pamAuth("passwd", "root", decoded["password"]); err != nil {
-		http.Redirect(w, r, "Unauthorized", http.StatusUnauthorized)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
