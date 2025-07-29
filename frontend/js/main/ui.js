@@ -50,5 +50,5 @@ _.onReady(() => {
     $('messageDismiss').addEventListener('click', () => $('message').style.display = 'none');
 
     // config shit
-    _.comm.request('config.get', {'key': 'ui.compactNavbar'}).then(v => _.ui.compactnav(v.value || false));
+    // _.comm.request('config.get', {'key': 'ui.compactNavbar'}).then(v => _.ui.compactnav(v.value || false));
 });

@@ -159,32 +159,6 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 
 			// return success
 			data["data"] = map[string]interface{}{}
-		case "config.get":
-			// get decoded["data"]["key"]
-			key, err := getValue(decoded, "data.key")
-			if err != nil {
-				commError(data, "config.get", http.StatusBadRequest, err.Error())
-				break
-			}
-
-			// get its string representation
-			keyStr, ok := key.(string)
-			if !ok {
-				commError(data, "config.get", http.StatusBadRequest, "data.key wasn't a string")
-				break
-			}
-
-			// get the actual value
-			val, err := getConfigValue(sc.Value, keyStr)
-			if err != nil {
-				commError(data, "config.get", http.StatusInternalServerError, err.Error())
-				break
-			}
-
-			// return it
-			data["data"] = map[string]interface{}{
-				"value": val,
-			}
 		default:
 			// if t is not recognized, then throw error
 			data["error"] = map[string]interface{}{"code": http.StatusNotFound, "msg": "unknown type"}

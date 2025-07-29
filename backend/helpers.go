@@ -173,23 +173,6 @@ func ise(w http.ResponseWriter, s string, err error) {
 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 }
 
-// returns a value in m based on key. basically, key="x.y.z" will return m["x"]["y"]["z"].
-func getValue(m map[string]interface{}, key string) (interface{}, error) {
-	var interf interface{} = m
-	for _, k := range strings.Split(key, ".") {
-		nested, ok := interf.(map[string]interface{})
-		if !ok {
-			return nil, fmt.Errorf("not a map at %s", key)
-		}
-
-		interf, ok = nested[k]
-		if !ok {
-			return nil, fmt.Errorf("couldn't find %s", key)
-		}
-	}
-	return interf, nil
-}
-
 // sets a value in m to val based on key. basically, key="x.y.z" will set m["x"]["y"]["z"] to val.
 func setValue(m map[string]interface{}, key string, val interface{}) error {
 	var interf interface{} = m

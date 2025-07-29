@@ -6,18 +6,6 @@ import (
 	"os"
 )
 
-func getConfigValue(userId string, key string) (interface{}, error) {
-	authsMu.RLock()
-	defer authsMu.RUnlock()
-
-	u, ok := auths[userId]
-	if !ok {
-		return nil, fmt.Errorf("user not found: %s", userId)
-	}
-
-	return getValue(u.config, key)
-}
-
 func setConfigValue(userId string, key string, val interface{}) error {
 	authsMu.Lock()
 	defer authsMu.Unlock()
