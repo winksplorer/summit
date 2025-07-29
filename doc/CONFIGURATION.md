@@ -1,22 +1,18 @@
-# Configuration
+# Configuration (Concept)
 
 ## Implementation Details
 
 ### Communication
 
-This uses the existing [comm system](COMMUNICATION.md).
+Value changes use the existing [comm system](COMMUNICATION.md).
 
-`config.set`:
+`config.set`
 
 - Sets values.
 - Frontend request: `{"ui.scale": 1.75, "ui.compactNavbar": false}`
 - Backend response: `{}`
 
-`config.get`:
-
-- Returns a value.
-- Frontend request: `{"key": "ui.scale"}`
-- Backend response: `{"value": 1.75}`
+There is no `config.get` however, as configuration values will simply be injected into the frontend using Go templating, so the frontend can read from a variable like `window._CONFIG` instead of requesting everything individually. This avoids flashing as UI is changed in real-time (though not entirely), and reduces network load.
 
 ### Data Storage
 

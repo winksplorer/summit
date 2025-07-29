@@ -92,9 +92,3 @@ The frontend (and backend, if it ever requests data from the frontend) will alwa
 - Sets configuration values.
 - Request: `{"ui.scale": 1.75, "ui.compactNavbar": false}`
 - Response: `{}`
-
-### `config.get`
-
-- Returns a configuration value.
-- Request: `{"key": "ui.scale"}`
-- Response: `{"value": 1.75}`
