@@ -39,12 +39,12 @@ Every 5 seconds, the server can unexpectedly send stats to the frontend, and the
 1. Frontend: (no data)
 2. Backend: `{"t": "stat.basic", "data": {"memTotal": "31g", "memUsage": 4.6, "memUsageUnit": "g", "cpuUsage": 13}}`
 
-### Requesting buildstring
+### Setting Configuration Values
 
-The frontend can send a request by filling out `t` (type), `id`, and nothing else. The server will respond with the same `t` and `id`, plus the requested information.
+The frontend can send a request by filling out `t` (type), `id`, and nothing else. The server will respond with the same `t` and `id`, plus the requested information. `data` can also be filled out if needed.
 
-1. Frontend: `{"t": "info.buildString", "id": 123}`
-2. Backend: `{"t": "info.buildString", "id": 123, "data": {"buildString": "summit v0.3 (built on 2025-May-30)"}}`
+1. Frontend: `{"t": "config.set", "id": 123, "data": {"ui.scale": 1.75, "ui.compactNavbar": false}}`
+2. Backend: `{"t": "config.set", "id": 123, "data": {}}`
 
 ### Errors
 
@@ -57,35 +57,11 @@ The frontend (and backend, if it ever requests data from the frontend) will alwa
 
 ## Message Types
 
-### `auth.status`
-
-- Authentication status.
-- Backend pushes whenever status changes or on connection open.
-- Data: `{"authed": true}`.
-
 ### `stat.basic`
 
 - Basic numerical stats.
 - Backend pushes to the frontend every 5 seconds.
 - Data: `{"memTotal": "31g", "memUsage": 4.6, "memUsageUnit": "g", "cpuUsage": 13}`.
-
-### `info.hostname`
-
-- Server hostname.
-- Request has no data.
-- Response: `{"hostname": "puter"}`.
-
-### `info.buildString`
-
-- Server build string.
-- Request has no data.
-- Response: `{"buildString": "summit v0.3 (built on 2025-May-30)"}`.
-
-### `info.pages`
-
-- Page list with navbar item names.
-- Request has no data.
-- Response: `["terminal", "logging", "storage", "networking", "containers", "services", "updates", "settings"]`.
 
 ### `config.set`
 

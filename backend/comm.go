@@ -4,7 +4,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"math"
 	"net/http"
@@ -17,27 +16,9 @@ import (
 )
 
 func commHandler(w http.ResponseWriter, r *http.Request) {
-	// upgrade to ws
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("couldn't upgrade to websockets:", err)
-		return
-	}
-	defer conn.Close()
-
-	// if not authed, then say so, and close connection
+	// if not authed, then close connection
 	if !authenticated(w, r) {
-		data := map[string]interface{}{
-			"t": "auth.status",
-			"data": map[string]interface{}{
-				"authed": false,
-			},
-		}
-
-		if err := commSend(data, conn); err != nil {
-			log.Println("couldn't send auth reject message:", err)
-		}
-
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
@@ -46,6 +27,14 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
+
+	// upgrade to ws
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("couldn't upgrade to websockets:", err)
+		return
+	}
+	defer conn.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -122,15 +111,6 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 
 		// choose data based on t
 		switch decoded["t"] {
-		case "info.buildString":
-			data["data"] = map[string]interface{}{
-				"buildString": fmt.Sprintf("summit v%s (built on %s)", Version, BuildDate),
-			}
-		case "info.pages":
-			data["data"] = []string{
-				"terminal", "logging", "storage", "networking",
-				"containers", "services", "updates", "settings",
-			}
 		case "config.set":
 			// get data
 			keys, ok := decoded["data"].(map[string]interface{})

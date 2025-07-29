@@ -22,13 +22,16 @@ var Version string = "undefined"
 var frontendDir string = "/tmp/summit/frontend-dist"
 var port string = ":7070"
 
+var buildString string = "undefined"
 var hostname string = "undefined"
 
 func init() {
+	buildString = fmt.Sprintf("summit v%s (built on %s)", Version, BuildDate)
+
 	// custom logging
 	log.SetFlags(0)
 	log.SetOutput(new(logWriter))
-	log.Printf("summit v%s (built on %s).\n", Version, BuildDate)
+	log.Println(buildString)
 
 	// select where the frontend is
 	// SEA passes the first arg, so "summit dev" = "/tmp/summit/summit-server dev"
@@ -164,6 +167,9 @@ func templater(w http.ResponseWriter, r *http.Request) {
 		"Title":    pageName + " - " + hostname,
 		"Config":   template.JS(data),
 		"Hostname": hostname,
+
+		// page specific shit
+		"BuildString": buildString,
 	})
 	if err != nil {
 		ise(w, fmt.Sprintf("template exec error for %s", path), err)

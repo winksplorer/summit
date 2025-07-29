@@ -23,10 +23,3 @@ _.onReady = (cb) => document.readyState !== 'complete'
 // true if we just logged in or if we came here directly from another site (no reloads, no same-domain pages except login & admin)
 _.isColdEntry = performance.getEntriesByType("navigation")[0]?.type !== 'reload'
                 && ['', location.origin, location.origin + '/'].includes(document.referrer);
-
-
-_.onReady(() => {
-    // data-t is what type to request from server, and data-key is what part of the response should be used for element text
-    for (let el of document.querySelectorAll('[data-t]'))
-        _.comm.request(el.dataset.t).then(data => el.textContent = data[el.dataset.key]);
-});

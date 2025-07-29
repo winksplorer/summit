@@ -7,15 +7,13 @@ _.ui.updateNavItems = () => {
     navItemsEl.innerHTML = '';
     
     // request via comm, and go through the response list
-    _.comm.request("info.pages").then(data => {
-        for(const page of data) {
-            navItemsEl.appendChild(Object.assign(document.createElement("a"), {
-                href: `${page}.html`,
-                textContent: page,
-                className: location.pathname.split("/").pop() === `${page}.html` ? "current" : "" // if entry is the current page then highlight it
-            }));
-        };
-    });
+    for(const page of _CONFIG.ui?.pages || []) {
+        navItemsEl.appendChild(Object.assign(document.createElement("a"), {
+            href: `${page}.html`,
+            textContent: page,
+            className: location.pathname.split("/").pop() === `${page}.html` ? "current" : "" // if entry is the current page then highlight it
+        }));
+    };
 }
 
 // dispatches ui message
