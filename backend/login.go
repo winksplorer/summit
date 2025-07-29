@@ -114,6 +114,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		configFile := fmt.Sprintf("%s/.config/summit.json", u.HomeDir)
 
 		if _, err := os.Stat(configFile); os.IsNotExist(err) {
+			log.Println("creating new configuration at", configFile)
+
 			// copy the defaults
 			if err = copyFile(fmt.Sprintf("%s/assets/defaultconfig.json", frontendDir), configFile); err != nil {
 				ise(w, "couldn't create configuration file", err)
