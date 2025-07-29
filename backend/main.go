@@ -37,12 +37,11 @@ func init() {
 	}
 
 	// get the hostname
-	localHostname, err := os.Hostname()
+	var err error
+	hostname, err = os.Hostname()
 	if err != nil {
 		log.Println("couldn't get hostname:", err)
 	}
-
-	hostname = localHostname
 }
 
 func main() {
@@ -158,8 +157,9 @@ func templater(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = tmpl.ExecuteTemplate(w, pageName, map[string]interface{}{
-		"Title":  pageName + " - " + hostname,
-		"Config": template.JS(data),
+		"Title":    pageName + " - " + hostname,
+		"Config":   template.JS(data),
+		"Hostname": hostname,
 	})
 	if err != nil {
 		ise(w, fmt.Sprintf("template exec error for %s", path), err)
