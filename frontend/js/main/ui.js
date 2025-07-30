@@ -25,13 +25,14 @@ _.ui.dispatchMsg = (title, subtitle) => {
 
 // handles stats changes
 _.ui.updateStats = (data) => {
-    if (_.isColdEntry) Odometer.init();
+    if (_.isColdEntry && !_.ui.odometerInitialized) Odometer.init();
 
     $('stats-cpu').textContent = data.cpuUsage;
     $('stats-memused').textContent = data.memUsage;
     $('stats-memrest').textContent = `${data.memUsageUnit}/${data.memTotal}`;
 
-    if (!_.isColdEntry) Odometer.init();
+    if (!_.isColdEntry && !_.ui.odometerInitialized) Odometer.init();
+    if (!_.ui.odometerInitialized) _.ui.odometerInitialized = true;
 }
 
 // toggles compact navbar

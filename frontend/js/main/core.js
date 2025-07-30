@@ -16,7 +16,7 @@ window.odometerOptions = {
 window.$ = document.getElementById.bind(document);
 
 // runs callback only when page is fully loaded
-_.onReady = (cb) => document.readyState !== 'complete'
+_.onReady = (cb) => document.readyState === 'loading'
     ? document.addEventListener('DOMContentLoaded', cb)
     : cb();
 
