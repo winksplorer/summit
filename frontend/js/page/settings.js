@@ -9,18 +9,20 @@ _.page.saveSettings = () => {
 
 _.onReady(() => {
     for (const setting of document.querySelectorAll('[data-key]')) {
-        _.helpers.setInputValue(setting, _.helpers.getObjectValue(_CONFIG, setting.dataset.key))
+        const key = setting.dataset.key;
+        const og = _.helpers.getObjectValue(_CONFIG, key);
+
+        _.helpers.setInputValue(setting, og)
 
         setting.addEventListener('change', e => {
-            const key = e.target.dataset.key;
-            const val = _.helpers.getInputValue(e.target)
+            const val = _.helpers.getInputValue(e.target);
 
-            if (key in _.page.changedSettings && _.helpers.getObjectValue(_CONFIG, key) === val) {
+            if (key in _.page.changedSettings && og === val)
                 delete _.page.changedSettings[key];
-                return;
-            }
+            else
+                _.page.changedSettings[key] = val;
 
-            _.page.changedSettings[key] = val;
+            $('save-button').disabled = !Object.keys(_.page.changedSettings).length;
         });
     }
 });
