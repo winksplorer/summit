@@ -12,6 +12,7 @@
     --msg-error-color: orangered;
 
     --font: 'Archivo Narrow';
+    --icons-font: 'summit Icons';
 }
 
     /* very generic shit */
@@ -138,7 +139,11 @@ button {
 }
 
 /* the tiny icons for reboot, shutdown, logout, etc */
-#quick-actions { margin-left: 0.5em; }
+#quick-actions { 
+    margin-left: 0.5em;
+    font-family: var(--icons-font);
+    font-size: 1.1em;
+}
 
     /* messages */
 
