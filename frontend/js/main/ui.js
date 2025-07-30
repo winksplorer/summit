@@ -6,7 +6,7 @@ _.ui.updateNavItems = () => {
     navItemsEl = $('navbar-items')
     navItemsEl.innerHTML = '';
     
-    // request via comm, and go through the response list
+    // then add pages
     for(const page of _CONFIG.ui?.pages || []) {
         navItemsEl.appendChild(Object.assign(document.createElement("a"), {
             href: `${page}.html`,

@@ -45,8 +45,7 @@ body {
     border: 0.05em solid var(--filled-container-bg);
     padding: 1em;
     position: relative;
-    margin: 1em;
-    margin-bottom: 1.5em;
+    margin: 0 1em;
 }
 
 .container > h3 {
@@ -62,6 +61,15 @@ body {
     margin-bottom:0.2em;
 }
 
+.sticky-footer {
+    position: sticky;
+    bottom:0;
+    margin-top: auto;
+    padding: 0.5em 1em;
+
+    background: var(--main-bg);
+    border-top: 0.05em solid var(--filled-container-bg);
+}
 
     /* inputs */
 button {
@@ -160,14 +168,22 @@ button {
 
     /* misc */
 
-/* the main part of each page, for example, the terminal on terminal.html */
+/* the main part of each page */
 .main {
-    background: #101010;
+    background: var(--main-bg);
     flex-grow: 1;
     margin-top: 0.5em;
-    margin-bottom: 0.25em;
+    margin-bottom: 0.4em;
     overflow: auto;
     border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+    padding-top: 1em;
+}
+
+.nopadding {
+    padding: 0;
 }
 
 a:hover { font-weight: 700; }

@@ -1,16 +1,26 @@
-// summit frontend/js/page/config.js - handles the config page
+// summit frontend/js/page/settings.js - handles the settings page
 
-// this is placeholder code, do not add to it
+_.page.changedSettings = {};
 
-_.page.compactui = (enabled) => {
-    $('nav-right').style.flexDirection = enabled ? "row" : "column";
-    document.querySelector('.hostname').style.fontSize = enabled ? "1.5em" : "2em";
-}
-_.page.scale = (value) => {
-    document.body.style.fontSize = `${value}em`;
+_.page.saveSettings = () => {
+    _.comm.request('config.set', _.page.changedSettings);
+    location.reload();
 }
 
 _.onReady(() => {
-    $('compactui').addEventListener('change', e => _.page.compactui(e.target.checked));
-    $('scale').addEventListener('change',  e => _.page.scale(e.target.value));
+    for (const setting of document.querySelectorAll('[data-key]')) {
+        _.helpers.setInputValue(setting, _.helpers.getObjectValue(_CONFIG, setting.dataset.key))
+
+        setting.addEventListener('change', e => {
+            const key = e.target.dataset.key;
+            const val = _.helpers.getInputValue(e.target)
+
+            if (key in _.page.changedSettings && _.helpers.getObjectValue(_CONFIG, key) === val) {
+                delete _.page.changedSettings[key];
+                return;
+            }
+
+            _.page.changedSettings[key] = val;
+        });
+    }
 });
