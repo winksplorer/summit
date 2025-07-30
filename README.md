@@ -11,7 +11,7 @@ And yes, I'm aware that the code is awful.
 - All of summit is distributed as one file
 - Portable (Tested with Debian, Alpine, and FreeBSD so far)
 - Simple, understandable user experience (I also hope)
-- As of July 18th, 2025, the entire final executable is ~3.0 MB
+- As of July 29th, 2025, the entire final executable is ~3.0 MB
 - PAM-based login system
 - xterm.js-based terminal
 - HTTP/2 & HTTPS
