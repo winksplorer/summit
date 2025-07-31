@@ -173,7 +173,7 @@ button {
     background: var(--main-bg);
     flex-grow: 1;
     margin-top: 0.5em;
-    margin-bottom: 0.4em;
+    margin-bottom: 0.166em;
     overflow: auto;
     border-radius: var(--radius);
     display: flex;
