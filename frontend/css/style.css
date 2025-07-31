@@ -99,7 +99,7 @@ button {
 }
 
     /* navbar + layout + hostname + nav items */
-.navbar { padding: 0.6em; }
+.navbar { padding: 0.35em 0.6em; }
 
 /* push nav-right to the right of the navbar (shocking) */
 #nav-right { 
