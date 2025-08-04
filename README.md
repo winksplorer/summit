@@ -109,9 +109,17 @@ The self-extracting archive code so that the entire server is distributed as one
     - [X] Backend settings system
     - [X] Frontend settings system
     - [X] Default config
-- [ ] Work on frontend design
-    - [ ] Hamburger menu navbar
-    - [ ] Complete redesign
+- [ ] Complete frontend redesign
+    - [ ] Independent pages
+        - [X] Login prototype
+        - [ ] Input styles
+        - [ ] Responsiveness
+        - [ ] Admin page
+        - [ ] Cleanup
+    - [ ] Main UI
+        - [ ] Colors
+        - [ ] Navbar/sidebar
+        - [ ] Main page content
 - [ ] Logging
     - [ ] Backend
         - [ ] Application-specific logs?

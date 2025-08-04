@@ -23,13 +23,13 @@ fetch('/api/get-hostname')
 const authParam = new URLSearchParams(window.location.search).get('err');
 
 // if the server says we did something wrong, then unhide the error message element and show message
-msgEl.style.display = Object.keys(failCodes).includes(authParam) ? 'block' : 'none';
-msgEl.textContent = failCodes[authParam] || '';
+msgEl.style.visibility = Object.keys(failCodes).includes(authParam) ? 'visible' : 'hidden';
+msgEl.textContent = failCodes[authParam] || 'a';
 
 // visual feedback that something is happening
 document.querySelector('form').addEventListener('submit', (e) => {
     document.querySelector('input[type="submit"]').disabled = true;
-    msgEl.style.display = 'block';
-    msgEl.style.color = 'black';
+    msgEl.style.visibility = 'visible';
+    msgEl.style.color = 'white';
     msgEl.textContent = 'logging in';
 })

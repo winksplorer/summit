@@ -1,27 +1,47 @@
 /* summit frontend/css/login.css - styles for login & admin page */
 
+:root {
+    /* --s0: #004d40;
+    --s1: #00695c;
+    --s2: #00796b;
+    --s3: #00897b;
+    --s4: #009688; */
+    --s0: #070707;
+    --s1: #101010;
+    --s2: #202020;
+    --s3: #303030;
+    --s4: #404040;
+}
+
 * {
     font-family: 'Archivo Narrow', sans-serif;
+    box-sizing: border-box;
 }
 
 body {
-    background: black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 90vh;
+    color:white;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
 }
 
 h1 { 
-    font-size: 2.8em;
+    font-size: 5vh;
     margin-bottom: 0.5em;
     margin-top: 0.4em;
 }
 
 .login-container {
-    background: #eeeef6;
-    padding: 7px;
-    border-radius: 3px;
+    background: var(--s0);
+    padding: 1.62vh 2.24vw;
+    display: flex;
+    flex-direction: column;
+
+    position: absolute;
+    top: 33.33%;
+    left: 33.33%;
+    width: 33.33%;
+    height: 33.33%;
 }
 
 #authform {
@@ -29,14 +49,62 @@ h1 {
     align-items: center;
 }
 
-#password, #apassword { margin-right: 5px; }
-#password { margin-top: 10px; }
-input { box-sizing: border-box; }
-p, input { font-size: 1.4em; }
+form[method="POST"] {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-right: 6.72vw;
+}
+
+#password, #username { width: 100%; }
+#password { margin-top: 1em; }
+p, input {
+    font-size: 1.4em;
+    border: none;
+}
+
+input[type="submit"] {
+    margin-top: 2em;
+    width: 6vw;
+}
 
 #msg {
     color: #9f0000;
-    display: none;
+    visibility: hidden;
     margin-bottom: 0.3em;
     margin-top: 0.5em;
+}
+
+.block {
+    position: absolute;
+}
+
+.tl {
+    top: 0;
+    left: 0;
+    width: 33.33%;
+    height: 66.66%;
+    background: var(--s2);
+}
+.tr {
+    top: 0;
+    left: 33.33%;
+    width: 67%;
+    height: 33.33%;
+    background: var(--s3);
+}
+.bl {
+    top: 66.66%;
+    left: 0;
+    width: 66.66%;
+    height: 34%;
+    background: var(--s1);
+}
+.br {
+    top: 33.33%;
+    left: 66.66%;
+    width: 34%;
+    height: 67%;
+    background: var(--s4);
 }
