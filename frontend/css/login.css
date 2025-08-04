@@ -1,16 +1,12 @@
 /* summit frontend/css/login.css - styles for login & admin page */
 
 :root {
-    /* --s0: #004d40;
-    --s1: #00695c;
-    --s2: #00796b;
-    --s3: #00897b;
-    --s4: #009688; */
     --s0: #070707;
     --s1: #101010;
     --s2: #202020;
     --s3: #303030;
     --s4: #404040;
+    --error: #ce0000;
 }
 
 * {
@@ -27,8 +23,7 @@ body {
 
 h1 { 
     font-size: 5vh;
-    margin-bottom: 0.5em;
-    margin-top: 0.4em;
+    margin: 0;
 }
 
 .login-container {
@@ -44,12 +39,7 @@ h1 {
     height: 33.33%;
 }
 
-#authform {
-    display: flex;
-    align-items: center;
-}
-
-form[method="POST"] {
+form[method="POST"], #authform {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -57,7 +47,7 @@ form[method="POST"] {
     margin-right: 6.72vw;
 }
 
-#password, #username { width: 100%; }
+#password, #username, #apassword { width: 100%; }
 #password { margin-top: 1em; }
 p, input {
     font-size: 1.4em;
@@ -69,7 +59,7 @@ input[type="submit"] {
 }
 
 #msg {
-    color: #ce0000;
+    color: var(--error);
     visibility: hidden;
     margin-left: 0.5em;
 }

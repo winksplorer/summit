@@ -113,7 +113,7 @@ The self-extracting archive code so that the entire server is distributed as one
     - [ ] Independent pages
         - [X] Login prototype
         - [ ] Responsiveness
-        - [ ] Admin page
+        - [X] Admin page
         - [ ] Cleanup
     - [ ] Main UI
         - [ ] Colors

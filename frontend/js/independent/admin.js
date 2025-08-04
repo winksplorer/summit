@@ -29,8 +29,8 @@ document.getElementById('authform').addEventListener('submit', (e) => {
     // visual feedback that something is happening
     buttonEl.disabled = true;
     var msgEl = document.getElementById('msg');
-    msgEl.style.display = 'block';
-    msgEl.style.color = 'black';
+    msgEl.style.visibility = 'visible';
+    msgEl.style.color = 'white';
     msgEl.textContent = 'authenticating';
 
     // send our data
@@ -45,15 +45,12 @@ document.getElementById('authform').addEventListener('submit', (e) => {
     .then(res => res.ok ? res.ok : Promise.reject(`HTTP ${res.status}`))
     .then(() => { // if we don't fail
         msgEl.innerHTML = 'operation completed. <a href="/">return</a>';
-        msgEl.style.color = '#006b0c';
-        msgEl.style.display = 'block';
         buttonEl.disabled = false;
     })
     .catch(err => { // if we fail
         console.error('failed to send form data:', err);
-        msgEl.innerHTML = err === 'HTTP 401' ? 'authentication failed <a href="/">return</a>' : `operation failed (${err}). <a href="/">return</a>`; // print special message for 401, otherwise just a generic message
-        msgEl.style.color = '#9f0000';
-        msgEl.style.display = 'block';
+        msgEl.innerHTML = err === 'HTTP 401' ? 'authentication failed. <a href="/">return</a>' : `operation failed (${err}). <a href="/">return</a>`; // print special message for 401, otherwise just a generic message
+        msgEl.style.color = 'var(--error)';
         buttonEl.disabled = false;
     });
 });
