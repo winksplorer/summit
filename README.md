@@ -110,9 +110,9 @@ The self-extracting archive code so that the entire server is distributed as one
     - [X] Frontend settings system
     - [X] Default config
 - [ ] Complete frontend redesign
-    - [ ] Independent pages
+    - [X] Independent pages
         - [X] Login prototype
-        - [ ] Responsiveness
+        - [X] Responsiveness
         - [X] Admin page
         - [X] Cleanup
     - [ ] Main UI
