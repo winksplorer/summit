@@ -10,20 +10,18 @@
         <script src="js/independent/login.js" defer></script>
     </head>
     <body>
-        <div class="login-container">
-            <form action="/api/login" method="POST" class="space-around">
-                <h1 id="hostname">?</h1>
-                <div>
-                    <input type="text" id="username" name="username" placeholder="username" required>
-                    <br>
-                    <input type="password" id="password" name="password" placeholder="password" required>
-                </div>
-                <div class="inline">
-                    <input type="submit" value="login">
-                    <p id="msg">a</p>
-                </div>
-            </form>
-        </div>
+        <form action="/api/login" method="POST" class="block">
+            <h1 id="hostname">?</h1>
+            <div>
+                <input type="text" id="username" name="username" placeholder="username" required>
+                <br>
+                <input type="password" id="password" name="password" placeholder="password" required>
+            </div>
+            <div class="inline">
+                <input type="submit" value="login">
+                <p id="msg">a</p>
+            </div>
+        </form>
         <div class="block br"></div>
         <div class="block bl"></div>
         <div class="block tl"></div>

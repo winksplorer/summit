@@ -114,7 +114,7 @@ The self-extracting archive code so that the entire server is distributed as one
         - [X] Login prototype
         - [ ] Responsiveness
         - [X] Admin page
-        - [ ] Cleanup
+        - [X] Cleanup
     - [ ] Main UI
         - [ ] Colors
         - [ ] Navbar/sidebar

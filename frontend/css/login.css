@@ -17,59 +17,43 @@
 body {
     color:white;
     height: 100vh;
-    margin: 0;
     overflow: hidden;
 }
 
-h1 { 
-    font-size: 5vh;
-    margin: 0;
-}
-
-.login-container {
+form {
     background: var(--s0);
     padding: 1.62vh 2.24vw;
-    display: flex;
-    flex-direction: column;
 
-    position: absolute;
     top: 33.33%;
     left: 33.33%;
     width: 33.33%;
     height: 33.33%;
-}
 
-form[method="POST"], #authform {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    margin-right: 6.72vw;
 }
 
-#password, #username, #apassword { width: 100%; }
+body, h1 { margin: 0; }
+h1 { font-size: clamp(1.4em, 5vh, 5em); }
+input[type="submit"] { width: 6vw; }
+
+.inline > * { display: inline-block; }
+.block { position: absolute; }
+
+#password, #username, #apassword { width: 80%; }
 #password { margin-top: 1em; }
-p, input {
-    font-size: 1.4em;
-    border: none;
-}
 
-input[type="submit"] {
-    width: 6vw;
+p, input {
+    font-size: clamp(1em, 2vh, 1.6em);
+    border: none;
 }
 
 #msg {
     color: var(--error);
     visibility: hidden;
     margin-left: 0.5em;
-}
-
-.inline > * {
-    display: inline-block;
-}
-
-.block {
-    position: absolute;
 }
 
 .tl {
