@@ -112,7 +112,6 @@ The self-extracting archive code so that the entire server is distributed as one
 - [ ] Complete frontend redesign
     - [ ] Independent pages
         - [X] Login prototype
-        - [ ] Input styles
         - [ ] Responsiveness
         - [ ] Admin page
         - [ ] Cleanup

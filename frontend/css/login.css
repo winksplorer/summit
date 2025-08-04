@@ -65,15 +65,17 @@ p, input {
 }
 
 input[type="submit"] {
-    margin-top: 2em;
     width: 6vw;
 }
 
 #msg {
-    color: #9f0000;
+    color: #ce0000;
     visibility: hidden;
-    margin-bottom: 0.3em;
-    margin-top: 0.5em;
+    margin-left: 0.5em;
+}
+
+.inline > * {
+    display: inline-block;
 }
 
 .block {
