@@ -22,9 +22,9 @@ body {
     grid-template-columns: 1fr clamp(400px, 33.33vw, 100vw) 1fr;
     grid-template-rows: 1fr clamp(320px, 33.33vh, 500px) 1fr;
     grid-template-areas:
-        "tl tr    tr"
-        "tl  form br"
-        "bl bl    br";
+        "tl tr   tr"
+        "tl form br"
+        "bl bl   br";
 }
 
 form {

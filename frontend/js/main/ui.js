@@ -3,7 +3,7 @@
 // updates navbar items
 _.ui.updateNavItems = () => {
     // empty the group first
-    navItemsEl = $('navbar-items')
+    navItemsEl = $('navbar-items');
     navItemsEl.innerHTML = '';
     
     // then add pages
@@ -48,12 +48,12 @@ _.ui.setScale = (value) => {
 
 _.onReady(() => {
     // inital navbar fill
-    _.ui.updateNavItems()
+    _.ui.updateNavItems();
 
     // message dismiss button will close message
     $('messageDismiss').addEventListener('click', () => $('message').style.display = 'none');
 
     // config shit
-    _.ui.compactNav(_CONFIG.ui?.compactNavbar || false)
-    _.ui.setScale(_CONFIG.ui?.scale || 1.5)
+    _.ui.compactNav(_CONFIG.ui?.compactNavbar || false);
+    _.ui.setScale(_CONFIG.ui?.scale || 1.5);
 });

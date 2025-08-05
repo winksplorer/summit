@@ -146,4 +146,3 @@ The self-extracting archive code so that the entire server is distributed as one
         - [ ] other package managers
     - [ ] Updates page
 - [ ] Installer shell script
-- [ ] Translations
