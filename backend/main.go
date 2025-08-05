@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/NYTimes/gziphandler"
 	"github.com/bddjr/hlfhr"
@@ -57,6 +58,10 @@ func main() {
 		TLSConfig: &tls.Config{
 			MinVersion: tls.VersionTLS13,
 		},
+		ReadTimeout:    5 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		IdleTimeout:    120 * time.Second,
+		MaxHeaderBytes: 16 << 10,
 	})
 	http2.ConfigureServer(srv.Server, &http2.Server{})
 
