@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func setConfigValue(userId string, key string, val interface{}) error {
+func C_SetValue(userId string, key string, val interface{}) error {
 	authsMu.Lock()
 	defer authsMu.Unlock()
 
@@ -15,10 +15,10 @@ func setConfigValue(userId string, key string, val interface{}) error {
 		return fmt.Errorf("user not found: %s", userId)
 	}
 
-	return setValue(u.config, key, val)
+	return H_SetValue(u.config, key, val)
 }
 
-func saveConfig(userId string) error {
+func C_Save(userId string) error {
 	authsMu.RLock()
 	defer authsMu.RUnlock()
 

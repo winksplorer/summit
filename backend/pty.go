@@ -20,8 +20,8 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
 
-func ptyHandler(w http.ResponseWriter, r *http.Request) {
-	if !authenticated(w, r) {
+func REST_Pty(w http.ResponseWriter, r *http.Request) {
+	if !A_Authenticated(w, r) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -112,7 +112,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 
 		if err := msgpack.Unmarshal(msg, &decoded); err == nil && decoded["type"] == "resize" {
 			// resize pty
-			if err := pty.Setsize(ptmx, &pty.Winsize{Cols: asUint16(decoded["cols"]), Rows: asUint16(decoded["rows"])}); err != nil {
+			if err := pty.Setsize(ptmx, &pty.Winsize{Cols: H_AsUint16(decoded["cols"]), Rows: H_AsUint16(decoded["rows"])}); err != nil {
 				log.Println("couldn't resize pty")
 				ptmx.Close()
 				break

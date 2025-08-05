@@ -32,7 +32,7 @@ const (
 type logWriter struct{}
 
 // authenticates user with pam
-func pamAuth(serviceName, userName, passwd string) error {
+func H_PamAuth(serviceName, userName, passwd string) error {
 	t, err := pam.StartFunc(serviceName, userName, func(s pam.Style, msg string) (string, error) {
 		switch s {
 		case pam.PromptEchoOff:
@@ -54,7 +54,7 @@ func pamAuth(serviceName, userName, passwd string) error {
 }
 
 // human readable byte sizes, split unit and value
-func humanReadableSplit(bytes uint64) (float64, string) {
+func H_HumanReadableSplit(bytes uint64) (float64, string) {
 	switch {
 	case bytes >= tb:
 		return float64(bytes) / float64(tb), "t"
@@ -70,13 +70,13 @@ func humanReadableSplit(bytes uint64) (float64, string) {
 }
 
 // human readable byte sizes, combined string
-func humanReadable(bytes uint64) string {
-	value, unit := humanReadableSplit(bytes)
+func H_HumanReadable(bytes uint64) string {
+	value, unit := H_HumanReadableSplit(bytes)
 	return fmt.Sprintf("%d%s", int(math.Round(value)), unit)
 }
 
 // generates random b64 str
-func randomBase64String(length int) (string, error) {
+func H_RandomBase64(length int) (string, error) {
 	numBytes := (length * 3) / 4
 	randomBytes := make([]byte, numBytes)
 	_, err := rand.Read(randomBytes)
@@ -87,7 +87,7 @@ func randomBase64String(length int) (string, error) {
 }
 
 // executes a command and prints output
-func execCmd(args ...string) error {
+func H_Execute(args ...string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("no command provided")
 	}
@@ -131,12 +131,12 @@ func (lw *logWriter) Write(bs []byte) (int, error) {
 }
 
 // gets user ip
-func clientIP(r *http.Request) string {
+func H_ClientIP(r *http.Request) string {
 	return strings.Split(r.RemoteAddr, ":")[0]
 }
 
 // why god
-func asUint16(v any) uint16 {
+func H_AsUint16(v any) uint16 {
 	if u, ok := v.(uint8); ok {
 		return uint16(u)
 	}
@@ -147,18 +147,18 @@ func asUint16(v any) uint16 {
 }
 
 // allows for slight differences if Lighthouse is involved
-func userAgentMatches(storedUA, currentUA string) bool {
+func H_CompareUserAgents(storedUA, currentUA string) bool {
 	if storedUA == currentUA {
 		return true
 	}
 	if strings.Contains(currentUA, "Chrome-Lighthouse") {
-		return extractAppleWebKitVersion(storedUA) == extractAppleWebKitVersion(currentUA)
+		return H_ExtractWebKitVersion(storedUA) == H_ExtractWebKitVersion(currentUA)
 	}
 	return false
 }
 
 // returns the AppleWebKit version from a UA string
-func extractAppleWebKitVersion(ua string) string {
+func H_ExtractWebKitVersion(ua string) string {
 	re := regexp.MustCompile(`AppleWebKit/([\d\.]+)`)
 	match := re.FindStringSubmatch(ua)
 	if len(match) > 1 {
@@ -168,13 +168,13 @@ func extractAppleWebKitVersion(ua string) string {
 }
 
 // prints "{s}: {err}" to stdout, and gives HTTP 500 to w
-func ise(w http.ResponseWriter, s string, err error) {
+func H_ISE(w http.ResponseWriter, s string, err error) {
 	log.Println(s, err)
 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 }
 
 // sets a value in m to val based on key. basically, key="x.y.z" will set m["x"]["y"]["z"] to val.
-func setValue(m map[string]interface{}, key string, val interface{}) error {
+func H_SetValue(m map[string]interface{}, key string, val interface{}) error {
 	var interf interface{} = m
 	for i, k := range strings.Split(key, ".") {
 		nested, ok := interf.(map[string]interface{})
@@ -197,7 +197,7 @@ func setValue(m map[string]interface{}, key string, val interface{}) error {
 }
 
 // copies a file
-func copyFile(src, dst string) error {
+func H_CopyFile(src, dst string) error {
 	srcFile, err := os.Open(src)
 	if err != nil {
 		return err

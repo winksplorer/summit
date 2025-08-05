@@ -17,14 +17,27 @@ var allowedSudoCommands = map[string]string{
 	"poweroff": "/sbin/poweroff",
 }
 
-// http wrapper for authenticated(w,r). handles /api/am-i-authed.
-func amIAuthedHandler(w http.ResponseWriter, r *http.Request) {
+// inits http handlers
+func REST_Init() {
+	log.Println("REST_Init: Init REST handlers.")
+	http.HandleFunc("/", REST_Origin)
+	http.HandleFunc("/api/login", REST_Login)
+	http.HandleFunc("/api/logout", REST_Logout)
+	http.HandleFunc("/api/hostname", REST_Hostname)
+	http.HandleFunc("/api/authenticated", REST_Authenticated)
+	http.HandleFunc("/api/suid", REST_SUID)
+	http.HandleFunc("/api/pty", REST_Pty)
+	http.HandleFunc("/api/comm", REST_Comm)
+}
+
+// http wrapper for A_Authenticated(w, r). handles /api/authenticated.
+func REST_Authenticated(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	if authenticated(w, r) {
+	if A_Authenticated(w, r) {
 		http.Error(w, "OK", http.StatusOK)
 		return
 	}
@@ -32,8 +45,8 @@ func amIAuthedHandler(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
 }
 
-// handles /api/get-hostname
-func getHostnameHandler(w http.ResponseWriter, r *http.Request) {
+// handles /api/hostname
+func REST_Hostname(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
@@ -43,15 +56,15 @@ func getHostnameHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, hostname)
 }
 
-// handles /api/sudo
-func sudoHandler(w http.ResponseWriter, r *http.Request) {
+// handles /api/suid
+func REST_SUID(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	// basic security checks
-	if !authenticated(w, r) {
+	if !A_Authenticated(w, r) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -63,7 +76,7 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		ise(w, "couldn't read /api/sudo data", err)
+		H_ISE(w, "couldn't read /api/sudo data", err)
 		return
 	}
 	defer r.Body.Close()
@@ -77,7 +90,7 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// authenticate as root with PAM
-	if err := pamAuth("passwd", "root", decoded["password"]); err != nil {
+	if err := H_PamAuth("passwd", "root", decoded["password"]); err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -93,7 +106,7 @@ func sudoHandler(w http.ResponseWriter, r *http.Request) {
 	cmd := exec.Command(cmdStr)
 	err = cmd.Run()
 	if err != nil {
-		ise(w, "couldn't run command as root", err)
+		H_ISE(w, "couldn't run command as root", err)
 		return
 	}
 

@@ -35,7 +35,7 @@ var (
 )
 
 // handles /api/login
-func loginHandler(w http.ResponseWriter, r *http.Request) {
+func REST_Login(w http.ResponseWriter, r *http.Request) {
 	// only allow post
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -44,7 +44,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// get login data
 	if err := r.ParseForm(); err != nil {
-		ise(w, "couldn't parse login", err)
+		H_ISE(w, "couldn't parse login", err)
 		return
 	}
 
@@ -55,16 +55,16 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// log in with PAM
-	if err := pamAuth("passwd", r.FormValue("username"), r.FormValue("password")); err != nil {
+	if err := H_PamAuth("passwd", r.FormValue("username"), r.FormValue("password")); err != nil {
 		http.Redirect(w, r, "/?err=auth", http.StatusFound)
 		return
 	}
 
-	if !authenticated(w, r) {
+	if !A_Authenticated(w, r) {
 		// generate id & expire time
-		id, err := randomBase64String(32)
+		id, err := H_RandomBase64(32)
 		if err != nil {
-			ise(w, "couldn't generate login id", err)
+			H_ISE(w, "couldn't generate login id", err)
 			return
 		}
 
@@ -73,28 +73,28 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		// lookup user in the system
 		u, err := user.Lookup(r.FormValue("username"))
 		if err != nil {
-			ise(w, "couldn't lookup username", err)
+			H_ISE(w, "couldn't lookup username", err)
 			return
 		}
 
 		// get uid
 		uid, err := strconv.ParseUint(u.Uid, 10, 32)
 		if err != nil {
-			ise(w, "couldn't parse uid", err)
+			H_ISE(w, "couldn't parse uid", err)
 			return
 		}
 
 		// get gid
 		gid, err := strconv.ParseUint(u.Gid, 10, 32)
 		if err != nil {
-			ise(w, "couldn't parse gid", err)
+			H_ISE(w, "couldn't parse gid", err)
 			return
 		}
 
 		// get group ids
 		stringGroups, err := u.GroupIds()
 		if err != nil {
-			ise(w, "couldn't get group ids", err)
+			H_ISE(w, "couldn't get group ids", err)
 			return
 		}
 
@@ -103,7 +103,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		for i, gidStr := range stringGroups {
 			gidInt, err := strconv.Atoi(gidStr)
 			if err != nil {
-				ise(w, "couldn't convert group ids", err)
+				H_ISE(w, "couldn't convert group ids", err)
 				return
 			}
 			groups[i] = uint32(gidInt)
@@ -117,32 +117,32 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("creating new configuration at", configFile)
 
 			// copy the defaults
-			if err = copyFile(fmt.Sprintf("%s/assets/defaultconfig.json", frontendDir), configFile); err != nil {
-				ise(w, "couldn't create configuration file", err)
+			if err = H_CopyFile(fmt.Sprintf("%s/assets/defaultconfig.json", frontendDir), configFile); err != nil {
+				H_ISE(w, "couldn't create configuration file", err)
 				return
 			}
 
 			// set permissions
 			if err = os.Chmod(configFile, 0600); err != nil {
-				ise(w, "couldn't set permissions of config file (chmod)", err)
+				H_ISE(w, "couldn't set permissions of config file (chmod)", err)
 				return
 			}
 
 			if err = os.Chown(configFile, int(uid), int(gid)); err != nil {
-				ise(w, "couldn't set permissions of config file (chown)", err)
+				H_ISE(w, "couldn't set permissions of config file (chown)", err)
 				return
 			}
 		}
 
 		config, err := os.ReadFile(configFile)
 		if err != nil {
-			ise(w, "couldn't read config file", err)
+			H_ISE(w, "couldn't read config file", err)
 			return
 		}
 
 		err = json.Unmarshal(config, &configData)
 		if err != nil {
-			ise(w, "couldn't parse config file", err)
+			H_ISE(w, "couldn't parse config file", err)
 			return
 		}
 
@@ -159,7 +159,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			configFile: configFile,
 			config:     configData,
 			homedir:    u.HomeDir,
-			ip:         clientIP(r),
+			ip:         H_ClientIP(r),
 			expires:    expires,
 		}
 
@@ -172,33 +172,33 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			Expires:  expires,
 		})
 
-		log.Printf("added a client from %s to known authed users\n", clientIP(r))
+		log.Printf("added a client from %s to known authed users\n", H_ClientIP(r))
 	}
 	http.Redirect(w, r, "/terminal.html", http.StatusFound)
 }
 
 // handles /api/logout
-func logoutHandler(w http.ResponseWriter, r *http.Request) {
+func REST_Logout(w http.ResponseWriter, r *http.Request) {
 	// only allow get
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	if authenticated(w, r) {
+	if A_Authenticated(w, r) {
 		s, err := r.Cookie("s")
 		if err != nil {
-			ise(w, "couldn't get session cookie", err)
+			H_ISE(w, "couldn't get session cookie", err)
 			return
 		}
 
-		deleteAuth(s.Value, w)
+		A_Remove(s.Value, w)
 	}
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 // deletes authentication, both server and browser side.
-func deleteAuth(id string, w http.ResponseWriter) {
+func A_Remove(id string, w http.ResponseWriter) {
 	// server-side
 	authsMu.Lock()
 	defer authsMu.Unlock()
@@ -215,7 +215,7 @@ func deleteAuth(id string, w http.ResponseWriter) {
 }
 
 // deletes expired sessions every 10 minutes
-func removeOldSessions() {
+func A_RemoveExpiredSessions() {
 	for {
 		time.Sleep(10 * time.Minute)
 		authsMu.Lock()
@@ -229,7 +229,7 @@ func removeOldSessions() {
 }
 
 // checks if user is authenticated
-func authenticated(w http.ResponseWriter, r *http.Request) bool {
+func A_Authenticated(w http.ResponseWriter, r *http.Request) bool {
 	s, err := r.Cookie("s")
 	if err != nil {
 		return false
@@ -239,8 +239,8 @@ func authenticated(w http.ResponseWriter, r *http.Request) bool {
 	v, ok := auths[s.Value]
 	authsMu.RUnlock()
 
-	if !ok || !userAgentMatches(v.ua, r.UserAgent()) || v.ip != clientIP(r) || v.expires.Before(time.Now()) || len(s.Value) != 32 {
-		deleteAuth(s.Value, w)
+	if !ok || !H_CompareUserAgents(v.ua, r.UserAgent()) || v.ip != H_ClientIP(r) || v.expires.Before(time.Now()) || len(s.Value) != 32 {
+		A_Remove(s.Value, w)
 		return false
 	}
 	return true

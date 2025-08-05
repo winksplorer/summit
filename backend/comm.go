@@ -15,9 +15,9 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
-func commHandler(w http.ResponseWriter, r *http.Request) {
+func REST_Comm(w http.ResponseWriter, r *http.Request) {
 	// if not authed, then close connection
-	if !authenticated(w, r) {
+	if !A_Authenticated(w, r) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -54,19 +54,19 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			usageValue, usageUnit := humanReadableSplit(virtualMem.Used)
+			usageValue, usageUnit := H_HumanReadableSplit(virtualMem.Used)
 
 			// assemble stats into a comm object
 			stats := map[string]interface{}{
 				"t": "stat.basic",
 				"data": map[string]interface{}{
-					"memTotal":     humanReadable(virtualMem.Total),
+					"memTotal":     H_HumanReadable(virtualMem.Total),
 					"memUsage":     math.Round(usageValue),
 					"memUsageUnit": usageUnit,
 					"cpuUsage":     math.Round(percentages[0]),
 				},
 			}
-			if err := commSend(stats, conn); err != nil {
+			if err := Comm_Send(stats, conn); err != nil {
 				log.Println("couldn't send stats:", err)
 				return
 			}
@@ -115,21 +115,21 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 			// get data
 			keys, ok := decoded["data"].(map[string]interface{})
 			if !ok {
-				commError(data, "config.set", http.StatusBadRequest, "data doesn't exist or isn't an object")
+				Comm_Error(data, "config.set", http.StatusBadRequest, "data doesn't exist or isn't an object")
 				break
 			}
 
 			// loop through and set value
 			for key, value := range keys {
-				if err := setConfigValue(sc.Value, key, value); err != nil {
-					commError(data, "config.set", http.StatusInternalServerError, err.Error())
+				if err := C_SetValue(sc.Value, key, value); err != nil {
+					Comm_Error(data, "config.set", http.StatusInternalServerError, err.Error())
 					break
 				}
 			}
 
 			// save json
-			if err := saveConfig(sc.Value); err != nil {
-				commError(data, "config.set", http.StatusInternalServerError, err.Error())
+			if err := C_Save(sc.Value); err != nil {
+				Comm_Error(data, "config.set", http.StatusInternalServerError, err.Error())
 				break
 			}
 
@@ -140,17 +140,17 @@ func commHandler(w http.ResponseWriter, r *http.Request) {
 			data["error"] = map[string]interface{}{"code": http.StatusNotFound, "msg": "unknown type"}
 		}
 
-		if err := commSend(data, conn); err != nil {
+		if err := Comm_Send(data, conn); err != nil {
 			log.Println("could not send data for", decoded["t"])
 		}
 	}
 }
 
-func commSend(data map[string]interface{}, connection *websocket.Conn) error {
+func Comm_Send(data map[string]interface{}, connection *websocket.Conn) error {
 	// encode
 	encodedData, err := msgpack.Marshal(data)
 	if err != nil {
-		log.Println("couldn't format with mspack:", err)
+		log.Println("couldn't format with msgpack:", err)
 		return err
 	}
 
@@ -162,7 +162,7 @@ func commSend(data map[string]interface{}, connection *websocket.Conn) error {
 	return nil
 }
 
-func commError(data map[string]interface{}, t string, code int, msg string) {
+func Comm_Error(data map[string]interface{}, t string, code int, msg string) {
 	data["error"] = map[string]interface{}{"code": code, "msg": msg}
 	log.Printf("%s failed: %s\n", t, msg)
 }

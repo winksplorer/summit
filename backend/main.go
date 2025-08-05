@@ -48,16 +48,7 @@ func init() {
 }
 
 func main() {
-	// configure endpoints
-	http.HandleFunc("/", templater)
-	http.HandleFunc("/api/login", loginHandler)
-	http.HandleFunc("/api/logout", logoutHandler)
-	http.HandleFunc("/api/get-hostname", getHostnameHandler)
-	http.HandleFunc("/api/am-i-authed", amIAuthedHandler)
-	http.HandleFunc("/api/sudo", sudoHandler)
-	http.HandleFunc("/api/pty", ptyHandler)
-	http.HandleFunc("/api/comm", commHandler)
-	log.Println("successfully registered handlers")
+	REST_Init()
 
 	// configure server (hlfhr is used to redirect http to https)
 	srv := hlfhr.New(&http.Server{
@@ -86,7 +77,7 @@ func main() {
 		}
 
 		// generate tls cert & key
-		if err := execCmd(
+		if err := H_Execute(
 			"openssl",
 			"req",
 			"-x509",
@@ -108,17 +99,16 @@ func main() {
 		}
 	}
 
-	log.Println("starting login auto-remove task")
-	go removeOldSessions()
+	go A_RemoveExpiredSessions()
 
-	log.Printf("summit on port %s\n", port)
+	log.Printf("main: summit on port %s\n", port)
 
 	if err := srv.ListenAndServeTLS("/etc/ssl/certs/summit.crt", "/etc/ssl/private/summit.key"); err != nil {
 		log.Println("error:", err)
 	}
 }
 
-func templater(w http.ResponseWriter, r *http.Request) {
+func REST_Origin(w http.ResponseWriter, r *http.Request) {
 	// only get filename
 	path := strings.TrimPrefix(r.URL.Path, "/")
 	if path == "" {
@@ -136,7 +126,7 @@ func templater(w http.ResponseWriter, r *http.Request) {
 	// template together base + the page
 	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/template/base.html", frontendDir), fmt.Sprintf("%s/template/%s.html", frontendDir, pageName))
 	if err != nil {
-		ise(w, fmt.Sprintf("template parse error for %s", path), err)
+		H_ISE(w, fmt.Sprintf("template parse error for %s", path), err)
 		return
 	}
 
@@ -159,7 +149,7 @@ func templater(w http.ResponseWriter, r *http.Request) {
 	// create json
 	data, err := json.Marshal(u.config)
 	if err != nil {
-		ise(w, "couldn't represent config as json", err)
+		H_ISE(w, "couldn't represent config as json", err)
 		return
 	}
 
@@ -172,7 +162,7 @@ func templater(w http.ResponseWriter, r *http.Request) {
 		"BuildString": buildString,
 	})
 	if err != nil {
-		ise(w, fmt.Sprintf("template exec error for %s", path), err)
+		H_ISE(w, fmt.Sprintf("template exec error for %s", path), err)
 		return
 	}
 }

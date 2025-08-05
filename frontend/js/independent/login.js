@@ -11,10 +11,10 @@ const failCodes = {
 let msgEl = document.getElementById('msg')
 
 // go to terminal page if already logged in
-fetch('/api/am-i-authed').then(res => res.ok && window.location.replace('/terminal.html'));
+fetch('/api/authenticated').then(res => res.ok && window.location.replace('/terminal.html'));
 
 // set hostname element
-fetch('/api/get-hostname')
+fetch('/api/hostname')
     .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))
     .then(data => document.getElementById('hostname').textContent = data)
     .catch(err => console.error('failed to fetch /api/get-hostname (was going to use as text for #hostname):', err));

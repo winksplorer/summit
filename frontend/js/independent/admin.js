@@ -1,7 +1,7 @@
 // summit frontend/js/independent/admin.js - handles admin.html root login page
 
 // set hostname element
-fetch('/api/get-hostname')
+fetch('/api/hostname')
     .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))
     .then(data => document.getElementById('hostname').textContent = data)
     .catch(err => console.error('failed to fetch hostname:', err));
@@ -34,7 +34,7 @@ document.getElementById('authform').addEventListener('submit', (e) => {
     msgEl.textContent = 'authenticating';
 
     // send our data
-    fetch('/api/sudo', {
+    fetch('/api/suid', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
