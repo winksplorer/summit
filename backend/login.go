@@ -114,7 +114,7 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 		configFile := fmt.Sprintf("%s/.config/summit.json", u.HomeDir)
 
 		if _, err := os.Stat(configFile); os.IsNotExist(err) {
-			log.Println("creating new configuration at", configFile)
+			log.Printf("REST_Login: Creating new configuration at %s.", configFile)
 
 			// copy the defaults
 			if err = H_CopyFile(fmt.Sprintf("%s/assets/defaultconfig.json", frontendDir), configFile); err != nil {
@@ -172,7 +172,7 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 			Expires:  expires,
 		})
 
-		log.Printf("added a client from %s to known authed users\n", H_ClientIP(r))
+		log.Printf("REST_Login: Authenticated a client from %s\n", H_ClientIP(r))
 	}
 	http.Redirect(w, r, "/terminal.html", http.StatusFound)
 }
