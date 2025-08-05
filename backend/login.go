@@ -216,15 +216,22 @@ func A_Remove(id string, w http.ResponseWriter) {
 
 // deletes expired sessions every 10 minutes
 func A_RemoveExpiredSessions() {
+	log.Println("A_RemoveExpiredSessions: Start session auto-remove task.")
 	for {
 		time.Sleep(10 * time.Minute)
+		removed := 0
 		authsMu.Lock()
 		for id, v := range auths {
 			if v.expires.Before(time.Now()) {
 				delete(auths, id)
+				removed++
 			}
 		}
 		authsMu.Unlock()
+
+		if removed > 0 {
+			log.Printf("A_RemoveExpiredSessions: Removed %d sessions.\n", removed)
+		}
 	}
 }
 

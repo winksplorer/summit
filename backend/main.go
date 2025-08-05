@@ -101,7 +101,7 @@ func main() {
 
 	go A_RemoveExpiredSessions()
 
-	log.Printf("main: summit on port %s\n", port)
+	log.Printf("main: Initialized summit on port %s.\n", port)
 
 	if err := srv.ListenAndServeTLS("/etc/ssl/certs/summit.crt", "/etc/ssl/private/summit.key"); err != nil {
 		log.Println("error:", err)
