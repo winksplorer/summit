@@ -3,39 +3,33 @@
 package main
 
 import (
-	"crypto/tls"
-	"encoding/json"
 	"fmt"
-	"html/template"
 	"log"
-	"net/http"
 	"os"
-	"strings"
-	"time"
-
-	"github.com/NYTimes/gziphandler"
-	"github.com/bddjr/hlfhr"
-	"golang.org/x/net/http2"
 )
 
 var BuildDate string = "undefined"
 var Version string = "undefined"
-var frontendDir string = "/tmp/summit/frontend-dist"
-var port string = ":7070"
-
 var buildString string = "undefined"
 var hostname string = "undefined"
 
-func init() {
-	buildString = fmt.Sprintf("summit v%s (built on %s)", Version, BuildDate)
+// todo: make these a global config
+var frontendDir string = "/tmp/summit/frontend-dist"
+var port string = ":7070"
+var allowedSudoCommands = map[string]string{
+	"reboot":   "/sbin/reboot",
+	"poweroff": "/sbin/poweroff",
+}
 
+func main() {
 	// custom logging
 	log.SetFlags(0)
 	log.SetOutput(new(logWriter))
+
+	buildString = fmt.Sprintf("summit v%s (built on %s)", Version, BuildDate)
 	log.Println(buildString)
 
-	// select where the frontend is
-	// SEA passes the first arg, so "summit dev" = "/tmp/summit/summit-server dev"
+	// select where the frontend is. SEA will pass all args.
 	if len(os.Args) > 1 && os.Args[1] == "dev" {
 		frontendDir = "frontend"
 	}
@@ -46,128 +40,25 @@ func init() {
 	if err != nil {
 		log.Println("couldn't get hostname:", err)
 	}
-}
 
-func main() {
+	// call init functions
 	REST_Init()
 
-	// configure server (hlfhr is used to redirect http to https)
-	srv := hlfhr.New(&http.Server{
-		Addr:    port,
-		Handler: gziphandler.GzipHandler(http.DefaultServeMux),
-		TLSConfig: &tls.Config{
-			MinVersion: tls.VersionTLS13,
-		},
-		ReadTimeout:    5 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		IdleTimeout:    120 * time.Second,
-		MaxHeaderBytes: 16 << 10,
-	})
-	http2.ConfigureServer(srv.Server, &http2.Server{})
+	if err := TLS_Init(); err != nil {
+		log.Fatalf("TLS_Init: %s.", err)
+	}
 
-	srv.HttpOnHttpsPortErrorHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		hlfhr.RedirectToHttps(w, r, 308)
-	})
-
-	// check if TLS shit exists
-	_, err := os.Stat("/etc/ssl/private/summit.key")
-	_, err2 := os.Stat("/etc/ssl/certs/summit.crt")
-	if os.IsNotExist(err) || os.IsNotExist(err2) {
-		log.Println("generating TLS certificates")
-		// get hostname
-		hostname, err := os.Hostname()
-		if err != nil {
-			log.Println("couldn't get hostname:", err)
-			hostname = "undefined"
-		}
-
-		// generate tls cert & key
-		if err := H_Execute(
-			"openssl",
-			"req",
-			"-x509",
-			"-nodes",
-			"-days", "365",
-			"-newkey", "rsa:2048",
-			"-keyout", "/etc/ssl/private/summit.key",
-			"-out", "/etc/ssl/certs/summit.crt",
-			"-subj", fmt.Sprintf("/C=US/ST=Washington/O=winksplorer & contributors/CN=summit (%s)", hostname),
-		); err != nil {
-			log.Println("couldn't generate certificate:", err)
-			return
-		}
-
-		// change permissions
-		if err := os.Chmod("/etc/ssl/private/summit.key", 0700); err != nil {
-			log.Println("couldn't change private key permissions:", err)
-			return
-		}
+	srv, err := HTTP_Init()
+	if err != nil {
+		log.Fatalf("HTTP_Init: %s.", err)
 	}
 
 	go A_RemoveExpiredSessions()
 
-	log.Printf("main: Initialized summit on port %s.\n", port)
+	log.Printf("Initialized summit on port %s.\n", port)
 
+	// start server
 	if err := srv.ListenAndServeTLS("/etc/ssl/certs/summit.crt", "/etc/ssl/private/summit.key"); err != nil {
 		log.Println("error:", err)
-	}
-}
-
-func REST_Origin(w http.ResponseWriter, r *http.Request) {
-	// only get filename
-	path := strings.TrimPrefix(r.URL.Path, "/")
-	if path == "" {
-		path = "index.html"
-	}
-
-	// if it doesn't need templating, then directly serve it
-	if !strings.HasSuffix(path, ".html") || path == "index.html" || path == "admin.html" {
-		http.FileServer(http.Dir(frontendDir)).ServeHTTP(w, r)
-		return
-	}
-
-	pageName := strings.TrimSuffix(path, ".html")
-
-	// template together base + the page
-	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/template/base.html", frontendDir), fmt.Sprintf("%s/template/%s.html", frontendDir, pageName))
-	if err != nil {
-		H_ISE(w, fmt.Sprintf("template parse error for %s", path), err)
-		return
-	}
-
-	// get user. if not found then redirect to login
-	sc, err := r.Cookie("s")
-	if err != nil {
-		http.Redirect(w, r, "/?err=inv", http.StatusFound)
-		return
-	}
-
-	authsMu.RLock()
-	defer authsMu.RUnlock()
-
-	u, ok := auths[sc.Value]
-	if !ok {
-		http.Redirect(w, r, "/?err=inv", http.StatusFound)
-		return
-	}
-
-	// create json
-	data, err := json.Marshal(u.config)
-	if err != nil {
-		H_ISE(w, "couldn't represent config as json", err)
-		return
-	}
-
-	err = tmpl.ExecuteTemplate(w, pageName, map[string]interface{}{
-		"Title":    pageName + " - " + hostname,
-		"Config":   template.JS(data),
-		"Hostname": hostname,
-
-		// page specific shit
-		"BuildString": buildString,
-	})
-	if err != nil {
-		H_ISE(w, fmt.Sprintf("template exec error for %s", path), err)
-		return
 	}
 }

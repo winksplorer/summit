@@ -5,17 +5,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 )
-
-var allowedSudoCommands = map[string]string{
-	"reboot":   "/sbin/reboot",
-	"poweroff": "/sbin/poweroff",
-}
 
 // inits http handlers
 func REST_Init() {
@@ -28,6 +25,66 @@ func REST_Init() {
 	http.HandleFunc("/api/suid", REST_SUID)
 	http.HandleFunc("/api/pty", REST_Pty)
 	http.HandleFunc("/api/comm", REST_Comm)
+}
+
+// file serving and templates. handles /.
+func REST_Origin(w http.ResponseWriter, r *http.Request) {
+	// only get filename
+	path := strings.TrimPrefix(r.URL.Path, "/")
+	if path == "" {
+		path = "index.html"
+	}
+
+	// if it doesn't need templating, then directly serve it
+	if !strings.HasSuffix(path, ".html") || path == "index.html" || path == "admin.html" {
+		http.FileServer(http.Dir(frontendDir)).ServeHTTP(w, r)
+		return
+	}
+
+	pageName := strings.TrimSuffix(path, ".html")
+
+	// template together base + the page
+	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/template/base.html", frontendDir), fmt.Sprintf("%s/template/%s.html", frontendDir, pageName))
+	if err != nil {
+		H_ISE(w, fmt.Sprintf("template parse error for %s", path), err)
+		return
+	}
+
+	// get user. if not found then redirect to login
+	sc, err := r.Cookie("s")
+	if err != nil {
+		http.Redirect(w, r, "/?err=inv", http.StatusFound)
+		return
+	}
+
+	authsMu.RLock()
+	defer authsMu.RUnlock()
+
+	u, ok := auths[sc.Value]
+	if !ok {
+		http.Redirect(w, r, "/?err=inv", http.StatusFound)
+		return
+	}
+
+	// create json
+	data, err := json.Marshal(u.config)
+	if err != nil {
+		H_ISE(w, "couldn't represent config as json", err)
+		return
+	}
+
+	err = tmpl.ExecuteTemplate(w, pageName, map[string]interface{}{
+		"Title":    pageName + " - " + hostname,
+		"Config":   template.JS(data),
+		"Hostname": hostname,
+
+		// page specific shit
+		"BuildString": buildString,
+	})
+	if err != nil {
+		H_ISE(w, fmt.Sprintf("template exec error for %s", path), err)
+		return
+	}
 }
 
 // http wrapper for A_Authenticated(w, r). handles /api/authenticated.
