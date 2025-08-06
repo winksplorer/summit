@@ -5,40 +5,44 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+
+	"github.com/gorilla/websocket"
 )
 
-var BuildDate string = "undefined"
-var Version string = "undefined"
-var buildString string = "undefined"
-var hostname string = "undefined"
+var (
+	BuildDate   string = "undefined"
+	Version     string = "undefined"
+	BuildString string = "undefined"
+	Hostname    string = "undefined"
+	WS_Upgrader        = websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool { return true },
+	}
 
-// todo: make these a global config
-var frontendDir string = "/tmp/summit/frontend-dist"
-var port string = ":7070"
-var allowedRootCommands = map[string]string{
-	"reboot":   "/sbin/reboot",
-	"poweroff": "/sbin/poweroff",
-}
+	// todo: make these a global config
+	FrontendDir string = "/tmp/summit/frontend-dist"
+	Port        string = ":7070"
+)
 
 func main() {
 	// custom logging
 	log.SetFlags(0)
 	log.SetOutput(new(logWriter))
 
-	buildString = fmt.Sprintf("summit v%s (built on %s)", Version, BuildDate)
-	log.Println(buildString)
+	BuildString = fmt.Sprintf("summit v%s (built on %s)", Version, BuildDate)
+	log.Println(BuildString)
 
 	// select where the frontend is. SEA will pass all args.
 	if len(os.Args) > 1 && os.Args[1] == "dev" {
-		frontendDir = "frontend"
+		FrontendDir = "frontend"
 	}
 
-	// get the hostname
+	// get the Hostname
 	var err error
-	hostname, err = os.Hostname()
+	Hostname, err = os.Hostname()
 	if err != nil {
-		log.Println("couldn't get hostname:", err)
+		log.Println("couldn't get Hostname:", err)
 	}
 
 	// call init functions
@@ -55,7 +59,7 @@ func main() {
 
 	go A_RemoveExpiredSessions()
 
-	log.Printf("Initialized summit on port %s.\n", port)
+	log.Printf("Initialized summit on port %s.\n", Port)
 
 	// start server
 	if err := srv.ListenAndServeTLS("/etc/ssl/certs/summit.crt", "/etc/ssl/private/summit.key"); err != nil {

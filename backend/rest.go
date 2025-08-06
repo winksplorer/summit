@@ -14,16 +14,23 @@ import (
 	"strings"
 )
 
-var REST_Handlers = map[string]func(http.ResponseWriter, *http.Request){
-	"/":                  REST_Origin,
-	"/api/login":         REST_Login,
-	"/api/logout":        REST_Logout,
-	"/api/hostname":      REST_Hostname,
-	"/api/authenticated": REST_Authenticated,
-	"/api/suid":          REST_SUID,
-	"/api/pty":           REST_Pty,
-	"/api/comm":          REST_Comm,
-}
+var (
+	REST_Handlers = map[string]func(http.ResponseWriter, *http.Request){
+		"/":                  REST_Origin,
+		"/api/login":         REST_Login,
+		"/api/logout":        REST_Logout,
+		"/api/hostname":      REST_Hostname,
+		"/api/authenticated": REST_Authenticated,
+		"/api/suid":          REST_SUID,
+		"/api/pty":           REST_Pty,
+		"/api/comm":          REST_Comm,
+	}
+
+	REST_AllowedRootCommands = map[string]string{
+		"reboot":   "/sbin/reboot",
+		"poweroff": "/sbin/poweroff",
+	}
+)
 
 // inits http handlers
 func REST_Init() {
@@ -43,14 +50,14 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 
 	// if it doesn't need templating, then directly serve it
 	if !strings.HasSuffix(path, ".html") || path == "index.html" || path == "admin.html" {
-		http.FileServer(http.Dir(frontendDir)).ServeHTTP(w, r)
+		http.FileServer(http.Dir(FrontendDir)).ServeHTTP(w, r)
 		return
 	}
 
 	pageName := strings.TrimSuffix(path, ".html")
 
 	// template together base + the page
-	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/template/base.html", frontendDir), fmt.Sprintf("%s/template/%s.html", frontendDir, pageName))
+	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/template/base.html", FrontendDir), fmt.Sprintf("%s/template/%s.html", FrontendDir, pageName))
 	if err != nil {
 		H_ISE(w, fmt.Sprintf("template parse error for %s", path), err)
 		return
@@ -63,10 +70,10 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authsMu.RLock()
-	defer authsMu.RUnlock()
+	A_SessionsMutex.RLock()
+	defer A_SessionsMutex.RUnlock()
 
-	u, ok := auths[sc.Value]
+	u, ok := A_Sessions[sc.Value]
 	if !ok {
 		http.Redirect(w, r, "/?err=inv", http.StatusFound)
 		return
@@ -80,12 +87,12 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = tmpl.ExecuteTemplate(w, pageName, map[string]interface{}{
-		"Title":    pageName + " - " + hostname,
+		"Title":    pageName + " - " + Hostname,
 		"Config":   template.JS(data),
-		"Hostname": hostname,
+		"Hostname": Hostname,
 
 		// page specific shit
-		"BuildString": buildString,
+		"BuildString": BuildString,
 	})
 	if err != nil {
 		H_ISE(w, fmt.Sprintf("template exec error for %s", path), err)
@@ -108,7 +115,7 @@ func REST_Authenticated(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
 }
 
-// handles /api/hostname
+// handles /api/Hostname
 func REST_Hostname(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -116,7 +123,7 @@ func REST_Hostname(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/plain")
-	fmt.Fprintln(w, hostname)
+	fmt.Fprintln(w, Hostname)
 }
 
 // handles /api/suid
@@ -159,7 +166,7 @@ func REST_SUID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// see what command we need
-	cmdStr, ok := allowedRootCommands[decoded["operation"]]
+	cmdStr, ok := REST_AllowedRootCommands[decoded["operation"]]
 	if !ok {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return

@@ -16,7 +16,7 @@ func HTTP_Init() (*hlfhr.Server, error) {
 
 	// configure server (hlfhr is used to redirect http to https)
 	srv := hlfhr.New(&http.Server{
-		Addr:    port,
+		Addr:    Port,
 		Handler: gziphandler.GzipHandler(http.DefaultServeMux),
 		TLSConfig: &tls.Config{
 			MinVersion: tls.VersionTLS13,

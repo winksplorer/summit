@@ -24,7 +24,7 @@ func TLS_Init() error {
 			"-newkey", "rsa:2048",
 			"-keyout", "/etc/ssl/private/summit.key",
 			"-out", "/etc/ssl/certs/summit.crt",
-			"-subj", fmt.Sprintf("/C=US/ST=Washington/O=winksplorer & contributors/CN=summit (%s)", hostname),
+			"-subj", fmt.Sprintf("/C=US/ST=Washington/O=winksplorer & contributors/CN=summit (%s)", Hostname),
 		); err != nil {
 			return err
 		}

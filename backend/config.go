@@ -7,10 +7,10 @@ import (
 )
 
 func C_SetValue(userId string, key string, val interface{}) error {
-	authsMu.Lock()
-	defer authsMu.Unlock()
+	A_SessionsMutex.Lock()
+	defer A_SessionsMutex.Unlock()
 
-	u, ok := auths[userId]
+	u, ok := A_Sessions[userId]
 	if !ok {
 		return fmt.Errorf("user not found: %s", userId)
 	}
@@ -19,10 +19,10 @@ func C_SetValue(userId string, key string, val interface{}) error {
 }
 
 func C_Save(userId string) error {
-	authsMu.RLock()
-	defer authsMu.RUnlock()
+	A_SessionsMutex.RLock()
+	defer A_SessionsMutex.RUnlock()
 
-	u, ok := auths[userId]
+	u, ok := A_Sessions[userId]
 	if !ok {
 		return fmt.Errorf("user not found: %s", userId)
 	}

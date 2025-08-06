@@ -16,10 +16,6 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool { return true },
-}
-
 func REST_Pty(w http.ResponseWriter, r *http.Request) {
 	if !A_Authenticated(w, r) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -33,16 +29,16 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// upgrade to ws
-	conn, err := upgrader.Upgrade(w, r, nil)
+	conn, err := WS_Upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("couldn't upgrade to websockets:", err)
 		return
 	}
 	defer conn.Close()
 
-	authsMu.RLock()
-	u := auths[sc.Value]
-	authsMu.RUnlock()
+	A_SessionsMutex.RLock()
+	u := A_Sessions[sc.Value]
+	A_SessionsMutex.RUnlock()
 
 	// get login shell
 	out, err := exec.Command("getent", "passwd", strconv.FormatInt(int64(u.uid), 10)).Output()

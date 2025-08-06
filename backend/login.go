@@ -14,9 +14,9 @@ import (
 	"time"
 )
 
-const authExpireTime = 4 * time.Hour
+const A_SessionExpireTime = 4 * time.Hour
 
-type authedUser struct {
+type A_Session struct {
 	user       string                 // username
 	gid        uint32                 // unix gid
 	uid        uint32                 // unix uid
@@ -30,8 +30,8 @@ type authedUser struct {
 }
 
 var (
-	authsMu sync.RWMutex
-	auths   = make(map[string]authedUser)
+	A_SessionsMutex sync.RWMutex
+	A_Sessions      = make(map[string]A_Session)
 )
 
 // handles /api/login
@@ -68,7 +68,7 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		expires := time.Now().Add(authExpireTime)
+		expires := time.Now().Add(A_SessionExpireTime)
 
 		// lookup user in the system
 		u, err := user.Lookup(r.FormValue("username"))
@@ -117,7 +117,7 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 			log.Printf("REST_Login: Creating new configuration at %s.", configFile)
 
 			// copy the defaults
-			if err = H_CopyFile(fmt.Sprintf("%s/assets/defaultconfig.json", frontendDir), configFile); err != nil {
+			if err = H_CopyFile(fmt.Sprintf("%s/assets/defaultconfig.json", FrontendDir), configFile); err != nil {
 				H_ISE(w, "couldn't create configuration file", err)
 				return
 			}
@@ -147,10 +147,10 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// create auth, server-side
-		authsMu.Lock()
-		defer authsMu.Unlock()
+		A_SessionsMutex.Lock()
+		defer A_SessionsMutex.Unlock()
 
-		auths[id] = authedUser{
+		A_Sessions[id] = A_Session{
 			ua:         r.UserAgent(),
 			user:       u.Username,
 			uid:        uint32(uid),
@@ -200,9 +200,9 @@ func REST_Logout(w http.ResponseWriter, r *http.Request) {
 // deletes authentication, both server and browser side.
 func A_Remove(id string, w http.ResponseWriter) {
 	// server-side
-	authsMu.Lock()
-	defer authsMu.Unlock()
-	delete(auths, id)
+	A_SessionsMutex.Lock()
+	defer A_SessionsMutex.Unlock()
+	delete(A_Sessions, id)
 
 	// browser-side
 	http.SetCookie(w, &http.Cookie{
@@ -220,14 +220,14 @@ func A_RemoveExpiredSessions() {
 	for {
 		time.Sleep(10 * time.Minute)
 		removed := 0
-		authsMu.Lock()
-		for id, v := range auths {
+		A_SessionsMutex.Lock()
+		for id, v := range A_Sessions {
 			if v.expires.Before(time.Now()) {
-				delete(auths, id)
+				delete(A_Sessions, id)
 				removed++
 			}
 		}
-		authsMu.Unlock()
+		A_SessionsMutex.Unlock()
 
 		if removed > 0 {
 			log.Printf("A_RemoveExpiredSessions: Removed %d sessions.\n", removed)
@@ -242,9 +242,9 @@ func A_Authenticated(w http.ResponseWriter, r *http.Request) bool {
 		return false
 	}
 
-	authsMu.RLock()
-	v, ok := auths[s.Value]
-	authsMu.RUnlock()
+	A_SessionsMutex.RLock()
+	v, ok := A_Sessions[s.Value]
+	A_SessionsMutex.RUnlock()
 
 	if !ok || !H_CompareUserAgents(v.ua, r.UserAgent()) || v.ip != H_ClientIP(r) || v.expires.Before(time.Now()) || len(s.Value) != 32 {
 		A_Remove(s.Value, w)
