@@ -14,17 +14,23 @@ import (
 	"strings"
 )
 
+var REST_Handlers = map[string]func(http.ResponseWriter, *http.Request){
+	"/":                  REST_Origin,
+	"/api/login":         REST_Login,
+	"/api/logout":        REST_Logout,
+	"/api/hostname":      REST_Hostname,
+	"/api/authenticated": REST_Authenticated,
+	"/api/suid":          REST_SUID,
+	"/api/pty":           REST_Pty,
+	"/api/comm":          REST_Comm,
+}
+
 // inits http handlers
 func REST_Init() {
 	log.Println("REST_Init: Init REST handlers.")
-	http.HandleFunc("/", REST_Origin)
-	http.HandleFunc("/api/login", REST_Login)
-	http.HandleFunc("/api/logout", REST_Logout)
-	http.HandleFunc("/api/hostname", REST_Hostname)
-	http.HandleFunc("/api/authenticated", REST_Authenticated)
-	http.HandleFunc("/api/suid", REST_SUID)
-	http.HandleFunc("/api/pty", REST_Pty)
-	http.HandleFunc("/api/comm", REST_Comm)
+	for endpoint, handler := range REST_Handlers {
+		http.HandleFunc(endpoint, handler)
+	}
 }
 
 // file serving and templates. handles /.
@@ -153,7 +159,7 @@ func REST_SUID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// see what command we need
-	cmdStr, ok := allowedSudoCommands[decoded["operation"]]
+	cmdStr, ok := allowedRootCommands[decoded["operation"]]
 	if !ok {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return

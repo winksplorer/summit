@@ -16,7 +16,7 @@ var hostname string = "undefined"
 // todo: make these a global config
 var frontendDir string = "/tmp/summit/frontend-dist"
 var port string = ":7070"
-var allowedSudoCommands = map[string]string{
+var allowedRootCommands = map[string]string{
 	"reboot":   "/sbin/reboot",
 	"poweroff": "/sbin/poweroff",
 }
