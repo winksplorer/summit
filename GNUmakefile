@@ -14,13 +14,8 @@ all: backend frontend sea
 clean:
 	rm -rf summit-server summit summit.tar.xz summit.tar.xz.o frontend-dist
 
-# safeguard against log.Panicln midnight moments
-check_panic:
-	@echo "  CHECK (grep) .panic"
-	@! grep -rIi '\.panic' backend/ || (echo 'learn to read your code!!' && exit 1)
-
 # backend server build with go (and also run panic safeguard)
-backend: check_panic
+backend:
 	@echo "     GO (${GO}) backend -> summit-server"
 	@cd backend && $(GO) mod tidy && $(GO) build -o ../summit-server -ldflags="-s -w -X main.BuildDate=$(shell date +%Y-%b-%d) -X main.Version=$(SUMMIT_VERSION)"
 

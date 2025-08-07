@@ -17,7 +17,7 @@ fetch('/api/authenticated').then(res => res.ok && window.location.replace('/term
 fetch('/api/hostname')
     .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))
     .then(data => document.getElementById('hostname').textContent = data)
-    .catch(err => console.error('failed to fetch /api/get-hostname (was going to use as text for #hostname):', err));
+    .catch(err => console.error('failed to fetch hostname:', err));
 
 // url parameters (?auth)
 const authParam = new URLSearchParams(window.location.search).get('err');
