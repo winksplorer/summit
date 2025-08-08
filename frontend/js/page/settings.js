@@ -3,8 +3,10 @@
 _.page.changedSettings = {};
 
 _.page.saveSettings = () => {
-    _.comm.request('config.set', _.page.changedSettings);
-    location.reload();
+    _.comm.request('config.set', _.page.changedSettings).then(() => {
+        $('save-button').disabled = true; // firefox, why do you hate me?
+        location.reload()
+    });
 }
 
 _.onReady(() => {
