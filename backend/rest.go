@@ -1,4 +1,4 @@
-// summit backend/basicApi.go - simple http endpoint shit. more complex actions should be in comm.
+// summit backend/rest.go - simple http endpoint shit. more complex actions should be in comm.
 
 package main
 

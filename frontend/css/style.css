@@ -8,8 +8,7 @@
     --sidebar-text: white;
 
     --line: #404040;
-
-    --msg-error-color: orangered;
+    --msg-error-color: #ce0000;
 
     --font: 'Archivo Narrow';
     --icons-font: 'summit Icons';
@@ -165,14 +164,16 @@ button {
 
 /* message box */
 #message {
-    margin-top: 0.4em;
+    background: var(--sidebar-bg);
+
     display: none;
+    align-items: center;
 }
 
 /* message box */
 #message > h3 { color: var(--msg-error-color); }
 #message > button { margin-left: auto; margin-right: 1em; font-size: 0.8em; }
-#message > * { margin: 0.5em; }
+#message > * { margin: 0.25em 0.5em; }
 
     /* misc */
 
@@ -198,6 +199,12 @@ button {
     display: flex;
     flex-direction: column;
     gap: 0.5em;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 ::-webkit-scrollbar { width: 4px; }

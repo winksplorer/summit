@@ -122,6 +122,7 @@ The self-extracting archive code so that the entire server is distributed as one
         - [X] Colors
         - [X] Sidebar
         - [X] Main page content
+    - [X] Messages
     - [ ] Input elements
 - [ ] Logging
     - [ ] Backend

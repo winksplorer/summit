@@ -29,7 +29,7 @@
         <!-- Page-specific JS/CSS -->
         {{template "head" .}}
     </head>
-    <body>
+    <body class="dark">
         <div id="sidebar">
             <h1 class="hostname">{{.Hostname}}</h1>
             <div id="navbar-items"></div>
@@ -55,13 +55,15 @@
             </div>
         </div>
 
-        <div class="filled-container" id="message">
-            <h3 id="messageTitle"></h3>
-            <p id="messageSubtitle"></p>
-            <button id="messageDismiss">x</button>
-        </div>
+        <div class="right">
+            <div id="message">
+                <h3 id="messageTitle"></h3>
+                <p id="messageSubtitle"></p>
+                <button id="messageDismiss">x</button>
+            </div>
 
-        {{template "main" .}}
+            {{template "main" .}}
+        </div>
     </body>
 </html>
 {{end}}

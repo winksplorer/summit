@@ -2,6 +2,7 @@
 
 _.helpers.getInputValue = (el) => el.type === 'checkbox' ? el.checked : el.value;
 _.helpers.setInputValue = (el, val) => el.type === 'checkbox' ? (el.checked = val) : (el.value = val);
+
 _.helpers.getObjectValue = (obj, key) => {
     const parts = key.split('.');
     let value = obj;

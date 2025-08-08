@@ -36,12 +36,13 @@ _.ui.updateStats = (data) => {
 }
 
 // toggles dark mode
-_.ui.darkMode = (enabled) => ['dark', 'light'].forEach(c => document.body.classList.toggle(c));
+_.ui.darkMode = (enabled) => {
+    ['dark', 'light'].forEach(c => document.body.classList.remove(c));
+    document.body.classList.add(enabled ? 'dark' : 'light');
+}
 
 // changes sidebar width
-_.ui.sidebarWidth = (width) => {
-    $('sidebar').style.width = `${width}px`;
-}
+_.ui.sidebarWidth = (width) => $('sidebar').style.width = `${width}px`;
 
 _.onReady(() => {
     // inital navbar fill
@@ -51,6 +52,6 @@ _.onReady(() => {
     $('messageDismiss').addEventListener('click', () => $('message').style.display = 'none');
 
     // config shit
-    _.ui.darkMode(_CONFIG.ui?.darkMode || true);
+    _.ui.darkMode(_CONFIG.ui?.darkMode ?? true);
     _.ui.sidebarWidth(_CONFIG.ui?.sidebarWidth || 170);
 });
