@@ -95,16 +95,16 @@ button {
 }
 
     /* sidebar + layout + hostname + nav items */
-.sidebar {
+#sidebar {
     background: var(--sidebar-bg);
     color: var(--sidebar-text);
     
-    width: 160px;
+    width: 170px;
     display: flex;
     flex-direction: column;
 }
 
-.sidebar > *:not(#navbar-items), #navbar-items > a {
+#sidebar > *:not(#navbar-items), #navbar-items > a {
     padding: 0 20px;
 }
 

@@ -35,15 +35,12 @@ _.ui.updateStats = (data) => {
     if (!_.ui.odometerInitialized) _.ui.odometerInitialized = true;
 }
 
-// toggles compact navbar
-_.ui.compactNav = (enabled) => {
-    $('nav-right').style.flexDirection = enabled ? "row" : "column";
-    document.querySelector('.hostname').style.fontSize = enabled ? "1.5em" : "2em";
-}
+// toggles dark mode
+_.ui.darkMode = (enabled) => ['dark', 'light'].forEach(c => document.body.classList.toggle(c));
 
-// sets ui scale
-_.ui.setScale = (value) => {
-    document.body.style.fontSize = `${value}em`;
+// changes sidebar width
+_.ui.sidebarWidth = (width) => {
+    $('sidebar').style.width = `${width}px`;
 }
 
 _.onReady(() => {
@@ -54,6 +51,6 @@ _.onReady(() => {
     $('messageDismiss').addEventListener('click', () => $('message').style.display = 'none');
 
     // config shit
-    _.ui.compactNav(_CONFIG.ui?.compactNavbar || false);
-    _.ui.setScale(_CONFIG.ui?.scale || 1.5);
+    _.ui.darkMode(_CONFIG.ui?.darkMode || true);
+    _.ui.sidebarWidth(_CONFIG.ui?.sidebarWidth || 170);
 });
