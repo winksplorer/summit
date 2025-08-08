@@ -115,10 +115,11 @@ The self-extracting archive code so that the entire server is distributed as one
         - [X] Responsiveness
         - [X] Admin page
         - [X] Cleanup
-    - [ ] Main UI
-        - [ ] Colors
-        - [ ] Navbar/sidebar
-        - [ ] Main page content
+    - [X] Main UI
+        - [X] Colors
+        - [X] Sidebar
+        - [X] Main page content
+    - [ ] Input elements
 - [ ] Logging
     - [ ] Backend
         - [ ] Application-specific logs?
