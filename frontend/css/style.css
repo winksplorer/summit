@@ -99,6 +99,8 @@ button {
     color: var(--sidebar-text);
     
     min-width: 170px;
+    max-width: 170px;
+
     display: flex;
     flex-direction: column;
 }
@@ -111,6 +113,10 @@ button {
 .hostname { 
     margin-top: 0;
     margin-bottom: 0.3em;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* navbar item links */

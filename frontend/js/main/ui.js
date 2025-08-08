@@ -42,7 +42,7 @@ _.ui.darkMode = (enabled) => {
 }
 
 // changes sidebar width
-_.ui.sidebarWidth = (width) => $('sidebar').style.minWidth = `${width}px`;
+_.ui.sidebarWidth = (width) => $('sidebar').style.minWidth = $('sidebar').style.maxWidth = `${width}px`;
 
 _.onReady(() => {
     // inital navbar fill
