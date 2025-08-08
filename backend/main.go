@@ -20,7 +20,6 @@ var (
 		CheckOrigin: func(r *http.Request) bool { return true },
 	}
 
-	// todo: make these a global config
 	FrontendDir string = "/tmp/summit/frontend-dist"
 	Port        string = ":7070"
 )
@@ -35,18 +34,20 @@ func main() {
 
 	// select where the frontend is. SEA will pass all args.
 	if len(os.Args) > 1 && os.Args[1] == "dev" {
+		log.Println("Using ./frontend for frontend directory.")
 		FrontendDir = "frontend"
 	}
 
-	// get the Hostname
+	// get the hostname
 	var err error
 	Hostname, err = os.Hostname()
 	if err != nil {
-		log.Println("couldn't get Hostname:", err)
+		log.Fatalf("os.Hostname: %s.", err)
 	}
 
 	// call init functions
 	REST_Init()
+	go A_RemoveExpiredSessions()
 
 	if err := TLS_Init(); err != nil {
 		log.Fatalf("TLS_Init: %s.", err)
@@ -57,12 +58,10 @@ func main() {
 		log.Fatalf("HTTP_Init: %s.", err)
 	}
 
-	go A_RemoveExpiredSessions()
-
 	log.Printf("Initialized summit on port %s.\n", Port)
 
 	// start server
 	if err := srv.ListenAndServeTLS("/etc/ssl/certs/summit.crt", "/etc/ssl/private/summit.key"); err != nil {
-		log.Println("error:", err)
+		log.Fatalf("srv.ListenAndServeTLS: %s.", err)
 	}
 }

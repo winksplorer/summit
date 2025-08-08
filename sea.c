@@ -18,10 +18,10 @@ int extract_mem(const void *data, size_t data_size, const char *output_dir) {
     // libarchive options
     if (archive_read_support_format_tar(archive))                      print_archive_error_exit("archive_read_support_format_tar", archive);
     if (archive_read_support_filter_xz(archive))                       print_archive_error_exit("archive_read_support_filter_xz", archive);
-    if (archive_read_open_memory(archive, data, data_size)) print_archive_error_exit("archive_read_open_memory", archive);
+    if (archive_read_open_memory(archive, data, data_size))            print_archive_error_exit("archive_read_open_memory", archive);
     if (archive_write_disk_set_options(disk,
         ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_PERM | ARCHIVE_EXTRACT_SECURE_NODOTDOT
-       | ARCHIVE_EXTRACT_ACL | ARCHIVE_EXTRACT_FFLAGS))                 print_archive_error_exit("archive_write_disk_set_options", archive);
+       | ARCHIVE_EXTRACT_ACL | ARCHIVE_EXTRACT_FFLAGS))                print_archive_error_exit("archive_write_disk_set_options", archive);
 
     // go through the archive file by file
     while (!(r = archive_read_next_header(archive, &entry))) {
@@ -61,7 +61,7 @@ int extract_mem(const void *data, size_t data_size, const char *output_dir) {
 int main(int argc, char* argv[]) {
     // root check + printing basic info
     if (geteuid() != 0) return fprintf(stderr, "summit requires root permissions to work correctly.\n"), 1;
-    printf("summit SEA (%s %s).\nsummit and its SEA are licensed under Apache-2.0 and include third-party components under MIT and OFL licenses. copyright (c) 2025 winksplorer et al.\narchive size = %.2f MB\n",
+    printf("summit SEA (%s %s).\nsummit and its SEA are licensed under Apache-2.0 and include third-party components under MIT and OFL licenses. Copyright (c) 2025 winksplorer et al.\narchive size = %.2f MB\n",
         __DATE__, __TIME__, (double)(_binary_summit_tar_xz_end - _binary_summit_tar_xz_start)/1000000);
 
     // extract the embedded summit.tar.xz into /tmp/summit
