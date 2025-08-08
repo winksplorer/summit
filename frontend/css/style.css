@@ -1,13 +1,13 @@
 /* summit frontend/css/style.css - main stylesheet */
 
 :root {
-    --page-bg: #222;
-    --main-bg: #101010;
+    --main-bg: #070707;
     --text: white;
 
-    --filled-container-bg: #eeeef6;
-    --filled-container-text: black;
-    --radius: 0.225em;
+    --sidebar-bg: #101010;
+    --sidebar-text: white;
+
+    --line: #404040;
 
     --msg-error-color: orangered;
 
@@ -20,29 +20,19 @@ body {
     background: var(--page-bg);
     color: var(--text);
 
-    display:flex;
-    flex-direction: column;
-    height: 99vh;
+    display: flex;
+    height: 100vh;
     overflow-y: hidden;
     overflow-x: hidden;
+    margin: 0;
 
     font-size: 1.5em;
     font-family: var(--font), sans-serif;
 }
 
     /* generic "ui elements" */
-.filled-container {
-    background: var(--filled-container-bg);
-    color: var(--filled-container-text);
-    border-radius: var(--radius);
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
 .container {
-    border: 0.05em solid var(--filled-container-bg);
+    border: 0.05em solid var(--line);
     padding: 1em;
     position: relative;
     margin: 0 1em;
@@ -68,7 +58,13 @@ body {
     padding: 0.5em 1em;
 
     background: var(--main-bg);
-    border-top: 0.05em solid var(--filled-container-bg);
+    border-top: 0.05em solid var(--line);
+}
+
+hr {
+    border: none;
+    height: 0.05em;
+    background: var(--line);
 }
 
     /* inputs */
@@ -98,23 +94,24 @@ button {
     margin-top: 0.25em;
 }
 
-    /* navbar + layout + hostname + nav items */
-.navbar { padding: 0.35em 0.6em; }
-
-/* push nav-right to the right of the navbar (shocking) */
-#nav-right { 
-    margin-left: auto;
+    /* sidebar + layout + hostname + nav items */
+.sidebar {
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    
+    width: 160px;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    white-space: nowrap;
+}
+
+.sidebar > *, #navbar-items > a {
+    padding-left: 20px;
 }
 
 /* hostname text */
 .hostname { 
-    margin-top: -0.3em;
-    margin-bottom: -0.2em;
-    margin-right: 0.4em;
+    margin-top: 0;
+    margin-bottom: 0.3em;
 }
 
 /* navbar item links */
@@ -126,30 +123,25 @@ button {
 /* navbar item group */
 #navbar-items { 
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: 0.5em;
     white-space: nowrap;
+    width: 100%;
+    margin-left: -20px;
 }
 
-.current { text-decoration: underline !important; /* ???????????? */ }
+.current { background: white; color: black !important; }
 
-    /* the right side of the navbar (stats, quick actions, etc) */
+    /* the bottom side of the navbar (stats, quick actions, etc) */
 
 /* all non-animated text in stats */
 #stats > .normal {
-    margin-top: -0.3em;
-    margin-bottom: 0.1em;
     margin-left: -0.1em;
-}
-
-/* the "g/31g" text */
-#stats-memrest {
-    margin-right: 0.5em;
 }
 
 /* the tiny icons for reboot, shutdown, logout, etc */
 #quick-actions { 
-    margin-left: 0.5em;
     font-family: var(--icons-font);
     font-size: 1.1em;
 }
@@ -173,10 +165,7 @@ button {
 .main {
     background: var(--main-bg);
     flex-grow: 1;
-    margin-top: 0.5em;
-    margin-bottom: 0.166em;
     overflow: auto;
-    border-radius: var(--radius);
     display: flex;
     flex-direction: column;
     gap: 1.5em;
@@ -186,5 +175,7 @@ button {
 .nopadding {
     padding: 0;
 }
+
+.bottom { margin-top: auto; }
 
 a:hover { font-weight: 700; }

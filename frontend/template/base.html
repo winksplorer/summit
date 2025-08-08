@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{{.Title}}</title>
 
-        <link rel="stylesheet" href="css/lib/odometer-ts.css" />
+        <link rel="stylesheet" href="css/lib/odometer-default.css" />
 
         <!-- JS_BUNDLE_START -->
         <!-- General JS -->
@@ -30,10 +30,10 @@
         {{template "head" .}}
     </head>
     <body>
-        <div class="filled-container navbar">
+        <div class="sidebar">
             <h1 class="hostname">{{.Hostname}}</h1>
             <div id="navbar-items"></div>
-            <div id="nav-right">
+            <div class="bottom">
                 <div id="stats">
                     <span class="odometer" id="stats-memused"></span>
                     <span class="normal" id="stats-memrest">g/g</span>

@@ -7,7 +7,7 @@ _.page.t = new Terminal({
     cursorBlink: true,
     convertEol: true,
     theme: {
-        background: '#101010',
+        background: '#070707',
         foreground: '#eeeef6'
     }
 });
