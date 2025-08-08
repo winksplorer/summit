@@ -104,8 +104,8 @@ button {
     flex-direction: column;
 }
 
-.sidebar > *, #navbar-items > a {
-    padding-left: 20px;
+.sidebar > *:not(#navbar-items), #navbar-items > a {
+    padding: 0 20px;
 }
 
 /* hostname text */
@@ -120,6 +120,9 @@ button {
     text-decoration: none;
 }
 
+#quick-actions > a:hover { font-weight: 700; }
+#navbar-items > a:hover { background: var(--line); }
+
 /* navbar item group */
 #navbar-items { 
     display: flex;
@@ -128,22 +131,34 @@ button {
     gap: 0.5em;
     white-space: nowrap;
     width: 100%;
-    margin-left: -20px;
 }
 
-.current { background: white; color: black !important; }
+/* ughhhhhh */
+.current { background: var(--sidebar-text) !important; color: var(--sidebar-bg) !important; }
 
     /* the bottom side of the navbar (stats, quick actions, etc) */
 
-/* all non-animated text in stats */
-#stats > .normal {
-    margin-left: -0.1em;
+/* all animated text in stats */
+/* oh fucking god. TODO: not this. */
+.odometer {
+    margin-right: -5px;
+    margin-bottom: 3px;
 }
 
 /* the tiny icons for reboot, shutdown, logout, etc */
 #quick-actions { 
     font-family: var(--icons-font);
     font-size: 1.1em;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.separator {
+    width: 1px;
+    height: 1.1em;
+    background: var(--line);
 }
 
     /* messages */
@@ -176,6 +191,15 @@ button {
     padding: 0;
 }
 
-.bottom { margin-top: auto; }
+.bottom {
+    margin-top: auto;
+    margin-bottom: 0.5em;
 
-a:hover { font-weight: 700; }
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--line); }
+::-webkit-scrollbar-thumb { background: var(--text); }

@@ -29,7 +29,7 @@ _.ui.updateStats = (data) => {
 
     $('stats-cpu').textContent = data.cpuUsage;
     $('stats-memused').textContent = data.memUsage;
-    $('stats-memrest').textContent = `${data.memUsageUnit}/${data.memTotal}`;
+    $('stats-memrest').textContent = `${data.memUsageUnit}/${data.memTotal} ram`;
 
     if (!_.isColdEntry && !_.ui.odometerInitialized) Odometer.init();
     if (!_.ui.odometerInitialized) _.ui.odometerInitialized = true;
