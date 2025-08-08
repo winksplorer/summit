@@ -124,6 +124,7 @@ The self-extracting archive code so that the entire server is distributed as one
         - [X] Main page content
     - [X] Messages
     - [ ] Input elements
+    - [ ] Light mode
 - [ ] Logging
     - [ ] Backend
         - [ ] Application-specific logs?
