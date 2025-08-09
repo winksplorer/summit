@@ -1,6 +1,8 @@
 /* summit frontend/css/style.css - main stylesheet */
 
 :root {
+    color-scheme: light dark;
+
     --s0: #050606;
     --s1: #0c0d0e;
     --s2: #181a1b;
@@ -22,6 +24,20 @@
 
     --font: 'Archivo Narrow';
     --icons-font: 'summit Icons';
+}
+
+[data-theme="light"] {
+    color-scheme: light;
+
+    --s0: #d5d5d4;
+    --s1: #cdcecf;
+    --s2: #c2c3c4;
+    --s3: #b6b8ba;
+    --s4: #abadb0;
+    --s5: #94969c;
+
+    --text: #181514;
+    --sidebar-text: #181514;
 }
 
     /* very generic shit */
