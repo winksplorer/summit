@@ -11,6 +11,7 @@ import (
 	"io"
 	"log"
 	"math"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
@@ -132,7 +133,12 @@ func (lw *logWriter) Write(bs []byte) (int, error) {
 
 // gets user ip
 func H_ClientIP(r *http.Request) string {
-	return strings.Split(r.RemoteAddr, ":")[0]
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		return r.RemoteAddr
+	}
+
+	return host
 }
 
 // why god
