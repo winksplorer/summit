@@ -91,7 +91,6 @@ The self-extracting archive code so that the entire server is distributed as one
     - [X] Fix the fucking thing
     - [X] Fix doas
 - [X] UI Notifications
-- [X] Get rid of the dumb awful edition system
 - [X] Implement templates
 - [X] Use a WebSocket connection instead of HTTP endpoints
     - [X] Proof of concept (Stats test)
@@ -103,10 +102,6 @@ The self-extracting archive code so that the entire server is distributed as one
         - [X] Bundling
         - [X] Minification
     - [X] Simplify CSS
-- [X] We need code comments :sob:
-    - [X] SEA
-    - [X] Backend
-    - [X] Frontend
 - [X] Settings
     - [X] Settings page
     - [X] Backend settings system

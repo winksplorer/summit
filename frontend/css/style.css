@@ -74,6 +74,8 @@ hr {
 }
 
     /* inputs */
+
+/* buttons */
 button:hover, input[type="submit"]:hover { background: var(--s2); }
 button:active, input[type="submit"]:active { background: var(--s1); }
 button:disabled, input[type="submit"]:disabled { color: var(--s5); background: var(--s3); }
@@ -86,6 +88,54 @@ button, input[type="submit"] {
     padding: 0.1em 0.5em;
     border: none
 }
+
+/* ranges */
+/* WHY, BROWSER GODS */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+}
+
+/* range tracks */
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 0.4em;
+
+    background: var(--s3);
+    border-radius: 0;
+}
+
+input[type="range"]::-moz-range-track {
+    height: 0.4em;
+
+    background: var(--s3);
+    border-radius: 0;
+}
+
+/* range thumbs */
+input[type="range"]::-webkit-slider-thumb:hover { background: var(--s5); }
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+
+    width: 0.6em;
+    height: 1.3em;
+    margin-top: -0.5em;
+
+    background: var(--s4);
+}
+
+input[type="range"]::-moz-range-thumb:hover { background: var(--s5); }
+input[type="range"]::-moz-range-thumb {
+    width: 0.6em;
+    height: 1.3em;
+    margin-top: -0.5em;
+
+    background: var(--s4);
+    border: none;
+    border-radius: 0;
+}
+
 
 .input-pair {
     display: flex;

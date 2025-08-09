@@ -24,10 +24,10 @@ import (
 
 // used for humanReadable functions
 const (
-	kb = 1024
-	mb = kb * 1024
-	gb = mb * 1024
-	tb = gb * 1024
+	kib = 1024
+	mib = kib * 1024
+	gib = mib * 1024
+	tib = gib * 1024
 )
 
 type logWriter struct{}
@@ -57,14 +57,14 @@ func H_PamAuth(serviceName, userName, passwd string) error {
 // human readable byte sizes, split unit and value
 func H_HumanReadableSplit(bytes uint64) (float64, string) {
 	switch {
-	case bytes >= tb:
-		return float64(bytes) / float64(tb), "t"
-	case bytes >= gb:
-		return float64(bytes) / float64(gb), "g"
-	case bytes >= mb:
-		return float64(bytes) / float64(mb), "m"
-	case bytes >= kb:
-		return float64(bytes) / float64(kb), "k"
+	case bytes >= tib:
+		return float64(bytes) / float64(tib), "t"
+	case bytes >= gib:
+		return float64(bytes) / float64(gib), "g"
+	case bytes >= mib:
+		return float64(bytes) / float64(mib), "m"
+	case bytes >= kib:
+		return float64(bytes) / float64(kib), "k"
 	default:
 		return float64(bytes), "b"
 	}
