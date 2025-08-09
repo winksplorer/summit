@@ -118,7 +118,7 @@ The self-extracting archive code so that the entire server is distributed as one
         - [X] Sidebar
         - [X] Main page content
     - [X] Messages
-    - [ ] Input elements
+    - [X] Input elements
     - [ ] Light mode
 - [ ] Logging
     - [ ] Backend

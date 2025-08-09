@@ -8,6 +8,9 @@
     --s4: #303436;
     --s5: #484e51;
 
+    --a0: #479cff;
+    --a1: #99c8ff;
+
     --main-bg: var(--s0);
     --text: #e8e6e3;
 
@@ -86,7 +89,37 @@ button, input[type="submit"] {
     background: var(--s3);
     color: var(--text);
     padding: 0.1em 0.5em;
-    border: none
+    border: none;
+
+    transition: background 0.05s ease-in-out;
+}
+
+/* checkboxes */
+input[type="checkbox"]:hover { border-color: var(--s5); }
+input[type="checkbox"] {
+    appearance: none;
+    width: 1.5em;
+    height: 1.5em;
+
+    display: grid;
+    place-content: center;
+    
+    cursor: pointer;
+    border: 2px solid var(--line);
+
+    transition: border-color 0.1s ease-in-out;
+}
+
+input[type="checkbox"]:checked::before { transform: scale(1); }
+input[type="checkbox"]::before {
+    content: "";
+    width: 0.9em;
+    height: 0.9em;
+    transform: scale(0);
+
+    background: var(--a1);
+
+    transition: transform 0.05s ease-in-out;
 }
 
 /* ranges */
@@ -113,7 +146,7 @@ input[type="range"]::-moz-range-track {
 }
 
 /* range thumbs */
-input[type="range"]::-webkit-slider-thumb:hover { background: var(--s5); }
+input[type="range"]::-webkit-slider-thumb:hover { background: var(--a0); }
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -122,18 +155,21 @@ input[type="range"]::-webkit-slider-thumb {
     height: 1.3em;
     margin-top: -0.5em;
 
-    background: var(--s4);
+    background: var(--a1);
+    transition: background 0.06s ease-in-out;
 }
 
-input[type="range"]::-moz-range-thumb:hover { background: var(--s5); }
+input[type="range"]::-moz-range-thumb:hover { background: var(--a0); }
 input[type="range"]::-moz-range-thumb {
     width: 0.6em;
     height: 1.3em;
     margin-top: -0.5em;
 
-    background: var(--s4);
     border: none;
     border-radius: 0;
+
+    background: var(--a1);
+    transition: background 0.06s ease-in-out;
 }
 
 
@@ -141,13 +177,18 @@ input[type="range"]::-moz-range-thumb {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
+}
+
+.range-pair {
+    align-items: flex-start;
 }
 
 .range-wrapper {
     display: flex;
     flex-direction: column;
     width: 20%;
+    margin-top: 0.3em;
 }
 
 .range-labels {
