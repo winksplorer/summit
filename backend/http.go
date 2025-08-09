@@ -28,7 +28,7 @@ func HTTP_Init() (*hlfhr.Server, error) {
 	})
 
 	srv.HttpOnHttpsPortErrorHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		hlfhr.RedirectToHttps(w, r, 308)
+		hlfhr.RedirectToHttps(w, r, http.StatusPermanentRedirect)
 	})
 
 	// http/2 support

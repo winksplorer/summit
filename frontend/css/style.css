@@ -1,14 +1,21 @@
 /* summit frontend/css/style.css - main stylesheet */
 
 :root {
-    --main-bg: #070707;
-    --text: white;
+    --s0: #050606;
+    --s1: #0c0d0e;
+    --s2: #181a1b;
+    --s3: #242729;
+    --s4: #303436;
+    --s5: #484e51;
 
-    --sidebar-bg: #101010;
-    --sidebar-text: white;
+    --main-bg: var(--s0);
+    --text: #e8e6e3;
 
-    --line: #404040;
-    --msg-error-color: #ce0000;
+    --sidebar-bg: var(--s1);
+    --sidebar-text: #e8e6e3;
+
+    --line: var(--s4);
+    --msg-error-color: #ff3c3c;
 
     --font: 'Archivo Narrow';
     --icons-font: 'summit Icons';
@@ -67,9 +74,17 @@ hr {
 }
 
     /* inputs */
-button {
+button:hover, input[type="submit"]:hover { background: var(--s2); }
+button:active, input[type="submit"]:active { background: var(--s1); }
+button:disabled, input[type="submit"]:disabled { color: var(--s5); background: var(--s3); }
+button, input[type="submit"] {
     font-size: 0.85em;
     font-family: var(--font), sans-serif;
+
+    background: var(--s3);
+    color: var(--text);
+    padding: 0.1em 0.5em;
+    border: none
 }
 
 .input-pair {
@@ -176,7 +191,6 @@ button {
     align-items: center;
 }
 
-/* message box */
 #message > h3 { color: var(--msg-error-color); }
 #message > button { margin-left: auto; margin-right: 1em; font-size: 0.8em; }
 #message > * { margin: 0.25em 0.5em; }

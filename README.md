@@ -10,7 +10,7 @@ summit is a portable and self-contained server management web dashboard for Linu
 - All of summit is distributed as one file
 - As of July 29th, 2025, the entire final executable is ~3.0 MB
 - Portability (Tested with Debian, Alpine, and FreeBSD so far)
-- Sub-100ms page loads (Tested on gigabit LAN with Chromium 100 and Alpine 3.22)
+- Fast page loads
 - PAM-based login system
 - xterm.js-based terminal
 - HTTP/2 & HTTPS
