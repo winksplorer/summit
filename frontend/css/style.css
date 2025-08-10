@@ -110,7 +110,7 @@ button, input[type="submit"] {
     padding: 0.1em 0.5em;
     border: none;
 
-    transition: background 0.07s ease-in-out;
+    transition: background 0.07s ease-in-out, color 0.07s ease-in-out;
 }
 
 /* checkboxes */

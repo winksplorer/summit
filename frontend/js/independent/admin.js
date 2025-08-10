@@ -6,6 +6,9 @@ fetch('/api/hostname')
     .then(data => document.getElementById('hostname').textContent = data)
     .catch(err => console.error('failed to fetch hostname:', err));
 
+// set theme
+document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';
+
 // elements
 const msgEl = document.getElementById('msg')
 const opEl = document.getElementById('operation')
@@ -30,7 +33,7 @@ document.getElementById('authform').addEventListener('submit', (e) => {
     buttonEl.disabled = true;
     var msgEl = document.getElementById('msg');
     msgEl.style.visibility = 'visible';
-    msgEl.style.color = 'white';
+    msgEl.style.color = 'var(--text)';
     msgEl.textContent = 'authenticating';
 
     // send our data

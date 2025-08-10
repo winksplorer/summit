@@ -39,7 +39,12 @@ _.ui.updateStats = (data) => {
 }
 
 // toggles dark mode
-_.ui.darkMode = (enabled) => document.documentElement.dataset.theme = enabled ? 'dark' : 'light';
+_.ui.darkMode = (enabled) => {
+    const theme = enabled ? 'dark' : 'light';
+
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+}
 
 // changes sidebar width
 _.ui.sidebarWidth = (width) => $('sidebar').style.minWidth = $('sidebar').style.maxWidth = `${width}px`;

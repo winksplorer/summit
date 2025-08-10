@@ -19,6 +19,10 @@ fetch('/api/hostname')
     .then(data => document.getElementById('hostname').textContent = data)
     .catch(err => console.error('failed to fetch hostname:', err));
 
+
+// set theme
+document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';
+
 // url parameters (?auth)
 const authParam = new URLSearchParams(window.location.search).get('err');
 
@@ -30,6 +34,6 @@ msgEl.textContent = failCodes[authParam] || 'a';
 document.querySelector('form').addEventListener('submit', (e) => {
     document.querySelector('input[type="submit"]').disabled = true;
     msgEl.style.visibility = 'visible';
-    msgEl.style.color = 'white';
+    msgEl.style.color = 'var(--text)';
     msgEl.textContent = 'logging in';
 })
