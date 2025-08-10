@@ -39,8 +39,20 @@ _.comm.socket.onmessage = async (event) => {
 
 _.comm.socket.onerror = async (err) => {
     _.ui.dispatchMsg('error while contacting server', 'a serious error has occurred. all communication has been halted. check devtools for more info.');
+    console.error(err);
+
     for (const id in _.comm.pending) {
         _.comm.pending[id].reject(err);
+        delete _.comm.pending[id];
+    }
+}
+
+_.comm.socket.onclose = async (event) => {
+    _.ui.dispatchMsg('disconnected', `comm socket was closed (${event.code}). check devtools for more info.`);
+    console.log(`socket closed (code: ${event.code}, reason: ${event.reason || 'none'}, wasClean: ${event.wasClean})`);
+
+    for (const id in _.comm.pending) {
+        _.comm.pending[id].reject('socket closed.');
         delete _.comm.pending[id];
     }
 }

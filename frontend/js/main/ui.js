@@ -36,10 +36,7 @@ _.ui.updateStats = (data) => {
 }
 
 // toggles dark mode
-_.ui.darkMode = (enabled) => {
-    ['dark', 'light'].forEach(c => document.body.classList.remove(c));
-    document.body.classList.add(enabled ? 'dark' : 'light');
-}
+_.ui.darkMode = (enabled) => document.documentElement.dataset.theme = enabled ? 'dark' : 'light';
 
 // changes sidebar width
 _.ui.sidebarWidth = (width) => $('sidebar').style.minWidth = $('sidebar').style.maxWidth = `${width}px`;
