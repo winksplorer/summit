@@ -77,36 +77,10 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// get uid
-		uid, err := strconv.ParseUint(u.Uid, 10, 32)
+		uid, gid, groups, err := A_GetUnixInfo(u)
 		if err != nil {
-			H_ISE(w, "couldn't parse uid", err)
+			H_ISE(w, "A_GetUnixInfo", err)
 			return
-		}
-
-		// get gid
-		gid, err := strconv.ParseUint(u.Gid, 10, 32)
-		if err != nil {
-			H_ISE(w, "couldn't parse gid", err)
-			return
-		}
-
-		// get group ids
-		stringGroups, err := u.GroupIds()
-		if err != nil {
-			H_ISE(w, "couldn't get group ids", err)
-			return
-		}
-
-		var groups []uint32 = make([]uint32, len(stringGroups))
-
-		for i, gidStr := range stringGroups {
-			gidInt, err := strconv.Atoi(gidStr)
-			if err != nil {
-				H_ISE(w, "couldn't convert group ids", err)
-				return
-			}
-			groups[i] = uint32(gidInt)
 		}
 
 		// config logic
@@ -114,22 +88,8 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 		configFile := fmt.Sprintf("%s/.config/summit.json", u.HomeDir)
 
 		if _, err := os.Stat(configFile); os.IsNotExist(err) {
-			log.Printf("REST_Login: Creating new configuration at %s.", configFile)
-
-			// copy the defaults
-			if err = H_CopyFile(fmt.Sprintf("%s/assets/defaultconfig.json", FrontendDir), configFile); err != nil {
+			if err = C_Create(configFile, uid, gid); err != nil {
 				H_ISE(w, "couldn't create configuration file", err)
-				return
-			}
-
-			// set permissions
-			if err = os.Chmod(configFile, 0600); err != nil {
-				H_ISE(w, "couldn't set permissions of config file (chmod)", err)
-				return
-			}
-
-			if err = os.Chown(configFile, int(uid), int(gid)); err != nil {
-				H_ISE(w, "couldn't set permissions of config file (chown)", err)
 				return
 			}
 		}
@@ -148,7 +108,6 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 
 		// create auth, server-side
 		A_SessionsMutex.Lock()
-		defer A_SessionsMutex.Unlock()
 
 		A_Sessions[id] = A_Session{
 			ua:         r.UserAgent(),
@@ -162,6 +121,8 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 			ip:         H_ClientIP(r),
 			expires:    expires,
 		}
+
+		A_SessionsMutex.Unlock()
 
 		// create auth, browser-side
 		http.SetCookie(w, &http.Cookie{
@@ -195,6 +156,39 @@ func REST_Logout(w http.ResponseWriter, r *http.Request) {
 		A_Remove(s.Value, w)
 	}
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func A_GetUnixInfo(u *user.User) (uint32, uint32, []uint32, error) {
+	// get uid
+	uid, err := strconv.ParseUint(u.Uid, 10, 32)
+	if err != nil {
+		return 0, 0, nil, err
+	}
+
+	// get gid
+	gid, err := strconv.ParseUint(u.Gid, 10, 32)
+	if err != nil {
+		return 0, 0, nil, err
+	}
+
+	// get group ids
+	stringGroups, err := u.GroupIds()
+	if err != nil {
+		return 0, 0, nil, err
+	}
+
+	var groups []uint32 = make([]uint32, len(stringGroups))
+
+	// convert group ids to uint32, because somebody thought a fucking STRING is the best way.
+	for i, gidStr := range stringGroups {
+		gidInt, err := strconv.Atoi(gidStr)
+		if err != nil {
+			return 0, 0, nil, err
+		}
+		groups[i] = uint32(gidInt)
+	}
+
+	return uint32(uid), uint32(gid), groups, nil
 }
 
 // deletes authentication, both server and browser side.

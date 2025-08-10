@@ -3,8 +3,29 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 )
+
+func C_Create(configFile string, uid uint32, gid uint32) error {
+	log.Printf("C_Create: Creating new configuration at %s.", configFile)
+
+	// copy the defaults
+	if err := H_CopyFile(fmt.Sprintf("%s/assets/defaultconfig.json", FrontendDir), configFile); err != nil {
+		return err
+	}
+
+	// set permissions
+	if err := os.Chmod(configFile, 0600); err != nil {
+		return err
+	}
+
+	if err := os.Chown(configFile, int(uid), int(gid)); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func C_SetValue(userId string, key string, val interface{}) error {
 	A_SessionsMutex.Lock()
