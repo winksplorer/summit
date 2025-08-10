@@ -1,7 +1,7 @@
 /* summit frontend/css/style.css - main stylesheet */
 
 :root {
-    color-scheme: light dark;
+    color-scheme: dark;
 
     --s0: #050606;
     --s1: #0c0d0e;
@@ -110,7 +110,7 @@ button, input[type="submit"] {
     padding: 0.1em 0.5em;
     border: none;
 
-    transition: background 0.05s ease-in-out;
+    transition: background 0.07s ease-in-out;
 }
 
 /* checkboxes */
@@ -138,7 +138,7 @@ input[type="checkbox"]::before {
 
     background: var(--a1);
 
-    transition: transform 0.05s ease-in-out;
+    transition: transform 0.07s ease-in-out;
 }
 
 /* ranges */
@@ -175,7 +175,7 @@ input[type="range"]::-webkit-slider-thumb {
     margin-top: -0.5em;
 
     background: var(--a1);
-    transition: background 0.06s ease-in-out;
+    transition: background 0.07s ease-in-out;
 }
 
 input[type="range"]::-moz-range-thumb:hover { background: var(--a0); }
@@ -188,7 +188,7 @@ input[type="range"]::-moz-range-thumb {
     border-radius: 0;
 
     background: var(--a1);
-    transition: background 0.06s ease-in-out;
+    transition: background 0.07s ease-in-out;
 }
 
 
