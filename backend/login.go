@@ -131,6 +131,8 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 			Path:     "/",
 			SameSite: http.SameSiteStrictMode,
 			Expires:  expires,
+			Secure:   true,
+			HttpOnly: true,
 		})
 
 		log.Printf("REST_Login: Authenticated a client from %s\n", H_ClientIP(r))

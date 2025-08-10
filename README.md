@@ -123,6 +123,7 @@ The self-extracting archive code so that the entire server is distributed as one
     - [ ] User choosable accent color
     - [ ] Sync with system dark/light theme
 - [ ] Global config
+- [ ] Mac-style padlock system
 - [ ] Logging
     - [ ] Backend
         - [ ] Application-specific logs?
