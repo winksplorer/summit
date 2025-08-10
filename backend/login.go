@@ -240,7 +240,7 @@ func A_Authenticated(w http.ResponseWriter, r *http.Request) bool {
 	v, ok := A_Sessions[s.Value]
 	A_SessionsMutex.RUnlock()
 
-	if !ok || !H_CompareUserAgents(v.ua, r.UserAgent()) || v.ip != H_ClientIP(r) || v.expires.Before(time.Now()) || len(s.Value) != 32 {
+	if !ok || v.ua != r.UserAgent() || v.ip != H_ClientIP(r) || v.expires.Before(time.Now()) || len(s.Value) != 32 {
 		A_Remove(s.Value, w)
 		return false
 	}

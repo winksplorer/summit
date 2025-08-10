@@ -15,7 +15,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"regexp"
 	"strings"
 	"time"
 
@@ -150,27 +149,6 @@ func H_AsUint16(v any) uint16 {
 		return uint16(u)
 	}
 	return 0
-}
-
-// allows for slight differences if Lighthouse is involved
-func H_CompareUserAgents(storedUA, currentUA string) bool {
-	if storedUA == currentUA {
-		return true
-	}
-	if strings.Contains(currentUA, "Chrome-Lighthouse") {
-		return H_ExtractWebKitVersion(storedUA) == H_ExtractWebKitVersion(currentUA)
-	}
-	return false
-}
-
-// returns the AppleWebKit version from a UA string
-func H_ExtractWebKitVersion(ua string) string {
-	re := regexp.MustCompile(`AppleWebKit/([\d\.]+)`)
-	match := re.FindStringSubmatch(ua)
-	if len(match) > 1 {
-		return match[1]
-	}
-	return ""
 }
 
 // prints "{s}: {err}" to stdout, and gives HTTP 500 to w

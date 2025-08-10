@@ -119,7 +119,10 @@ The self-extracting archive code so that the entire server is distributed as one
         - [X] Main page content
     - [X] Messages
     - [X] Input elements
-    - [ ] Light mode
+    - [X] Light mode
+    - [ ] User choosable accent color
+    - [ ] Sync with system dark/light theme
+- [ ] Global config
 - [ ] Logging
     - [ ] Backend
         - [ ] Application-specific logs?
