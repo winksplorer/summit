@@ -15,3 +15,5 @@ _.helpers.getObjectValue = (obj, key) => {
 
     return value;
 }
+
+_.helpers.getCSSVar = (varName) => getComputedStyle(document.documentElement).getPropertyValue(`--${varName}`).trim();
