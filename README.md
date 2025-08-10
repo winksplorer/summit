@@ -23,7 +23,7 @@ summit is a portable and self-contained server management web dashboard for Linu
 
 All of these commands assume you're running as root. summit will likely build & run on other systems, but I have not tested.
 
-The final compiled output is simply `./summit`.
+The final compiled output is simply `./summit`. By default, summit installs to `/usr/local/bin`. 
 
 ### Alpine
 
@@ -52,7 +52,7 @@ apt install golang-go make clang binutils libarchive-dev libpam0g-dev git openss
 pkg install go gmake binutils libarchive git openssl minify gsed \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
-    && gmake all install PREFIX=/usr/local LD=ld.gold SED=gsed \
+    && gmake all install LD=ld.gold SED=gsed \
     && mkdir -p /etc/ssl/private
 ```
 
@@ -146,4 +146,5 @@ The self-extracting archive code so that the entire server is distributed as one
         - [ ] pkg support
         - [ ] other package managers
     - [ ] Updates page
+- [ ] Service files
 - [ ] Installer shell script

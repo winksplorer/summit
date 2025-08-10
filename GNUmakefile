@@ -5,7 +5,7 @@ TAR ?= tar
 SED ?= sed
 MINIFIER ?= minify -q
 
-PREFIX ?= /usr
+PREFIX ?= /usr/local
 
 .PHONY: backend frontend all sea clean install
 
