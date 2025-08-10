@@ -1,5 +1,8 @@
 // summit frontend/js/main/ui.js - handles ui systems
 
+// returns true if the current theme is the dark theme
+_.ui.isDarkTheme = () => document.documentElement.dataset.theme === 'dark';
+
 // updates navbar items
 _.ui.updateNavItems = () => {
     // empty the group first

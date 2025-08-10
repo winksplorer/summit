@@ -1,52 +1,12 @@
 // summit frontend/js/term.js - handles terminal
 
-// todo: move this somewhere else
-_.page.terminalThemes = {
-    base: {
-        background: _.helpers.getCSSVar('s0'),
-        foreground: _.helpers.getCSSVar('text'),
-        cursor: _.helpers.getCSSVar('text'),
-        cursorAccent: _.helpers.getCSSVar('s5'),
-        selectionBackground: document.documentElement.dataset.theme === 'dark' ? 'rgba(171,178,191,0.3)' : 'rgba(42,43,51,0.3)',
-    },
-    oneDark: {
-        black: '#1e2127',
-        red: '#e06c75',
-        green: '#98c379',
-        yellow: '#d19a66',
-        blue: '#61afef',
-        magenta: '#c678dd',
-        cyan: '#56b6c2',
-        white: '#abb2bf',
-
-        brightBlack: '#5c6370',
-        brightRed: '#e06c75',
-        brightGreen: '#98c379',
-        brightYellow: '#d19a66',
-        brightBlue: '#61afef',
-        brightMagenta: '#c678dd',
-        brightCyan: '#56b6c2',
-        brightWhite: '#ffffff',
-    },
-    oneLight: {
-        black: '#000000',
-        red: '#de3d35',
-        green: '#3e953a',
-        yellow: '#d2b67b',
-        blue: '#2f5af3',
-        magenta: '#a00095',
-        cyan: '#3e953a',
-        white: '#bbbbbb',
-
-        brightBlack: '#000000',
-        brightRed: '#de3d35',
-        brightGreen: '#3e953a',
-        brightYellow: '#d2b67b',
-        brightBlue: '#2f5af3',
-        brightMagenta: '#a00095',
-        brightCyan: '#3e953a',
-        brightWhite: '#ffffff',
-    }
+// the basic terminal "theme" that guarantees contrast and matching backgrounds/text with ui
+_.page.baseTerminalTheme = {
+    background: _.helpers.getCSSVar('s0'),
+    foreground: _.helpers.getCSSVar('text'),
+    cursor: _.helpers.getCSSVar('text'),
+    cursorAccent: _.helpers.getCSSVar('s5'),
+    selectionBackground: _.ui.isDarkTheme() ? 'rgba(171,178,191,0.3)' : 'rgba(42,43,51,0.3)',
 }
 
 // init terminal object
@@ -55,7 +15,7 @@ _.page.t = new Terminal({
     fontSize: 14,
     cursorBlink: true,
     convertEol: true,
-    theme: { ..._.page.terminalThemes.base, ...document.documentElement.dataset.theme === 'dark' ? _.page.terminalThemes.oneDark : _.page.terminalThemes.oneLight }
+    theme: { ..._.page.baseTerminalTheme, ..._.ui.isDarkTheme() ? _CONFIG.terminal?.darkTheme  : _CONFIG.terminal?.lightTheme }
 });
 
 // init terminal fit addon (dynamically resize based on container size)
@@ -82,6 +42,8 @@ _.onReady(() => {
 
     // pty -> terminal
     socket.onmessage = (event) => _.page.t.write(event.data);
+    socket.onerror = (err) => _.page.t.write(`\n\x1b[0m--- summit terminal: \x1b[91mcritical error\x1b[0m (${err}) ---`);
+    socket.onclose = (event) => _.page.t.write(`\n\x1b[0m--- summit terminal: \x1b[91mconnection closed\x1b[0m (code: ${event.code}, reason: ${event.reason || 'none'}, wasClean: ${event.wasClean}) ---`);
 
     // terminal -> pty
     _.page.t.onData(data => socket.send(data));
