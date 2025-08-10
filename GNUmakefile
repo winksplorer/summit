@@ -17,7 +17,7 @@ clean:
 # backend server build with go (and also run panic safeguard)
 backend:
 	@echo "     GO (${GO}) backend -> summit-server"
-	@cd backend && $(GO) mod tidy && $(GO) build -o ../summit-server -ldflags="-s -w -X main.BuildDate=$(shell date +%Y-%b-%d) -X main.Version=$(SUMMIT_VERSION)"
+	@cd backend && $(GO) mod tidy && $(GO) build -o ../summit-server -buildvcs=false -ldflags="-s -w -X main.BuildDate=$(shell date +%Y-%b-%d) -X main.Version=$(SUMMIT_VERSION)"
 
 # bundle + minify frontend
 frontend:
