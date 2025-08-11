@@ -3,10 +3,8 @@
 package main
 
 import (
-	"bytes"
 	"crypto/rand"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -40,7 +38,7 @@ func H_PamAuth(serviceName, userName, passwd string) error {
 		case pam.PromptEchoOn, pam.ErrorMsg, pam.TextInfo:
 			return "", nil
 		}
-		return "", errors.New("unrecognized pam message style")
+		return "", fmt.Errorf("unrecognized pam message style")
 	})
 
 	if err != nil {
@@ -86,32 +84,16 @@ func H_RandomBase64(length int) (string, error) {
 	return base64.RawURLEncoding.EncodeToString(randomBytes)[:length], nil
 }
 
-// executes a command and prints output
+// executes a command and prints output if failed
 func H_Execute(args ...string) error {
 	if len(args) == 0 {
-		return fmt.Errorf("no command provided")
+		return fmt.Errorf("no command")
 	}
-
-	// extract the command name and arguments
-	cmdName := args[0]
-	cmdArgs := args[1:]
 
 	// create the command
-	cmd := exec.Command(cmdName, cmdArgs...)
-
-	var stdout bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stdout
-
-	// run the command and capture the combined output
-	err := cmd.Run()
-	output := stdout.String()
-	if output != "" {
-		fmt.Println(output)
-	}
-
+	out, err := exec.Command(args[0], args[1:]...).CombinedOutput()
 	if err != nil {
-		lines := strings.Split(strings.TrimSpace(output), "\n")
+		lines := strings.Split(strings.TrimSpace(string(out)), "\n")
 		if len(lines) > 0 {
 			lastLine := lines[len(lines)-1]
 			return fmt.Errorf("%v: command execution failed: %v - last line: %v", strings.Join(args, " "), err, lastLine)
