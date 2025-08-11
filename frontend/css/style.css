@@ -99,7 +99,7 @@ hr {
 
 /* buttons */
 button:hover, input[type="submit"]:hover, select:hover { background: var(--s2); }
-button:active, input[type="submit"]:active, select:active { background: var(--s1); }
+button:active, input[type="submit"]:active { background: var(--s1); }
 button:disabled, input[type="submit"]:disabled, select:disabled { color: var(--s5); background: var(--s3); }
 button, input[type="submit"], select {
     font-size: 0.85em;
