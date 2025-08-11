@@ -42,7 +42,7 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 
 	// get login shell
 	out, err := exec.Command("getent", "passwd", strconv.FormatInt(int64(u.uid), 10)).Output()
-	shell := "bash"
+	shell := "/usr/bin/sh"
 	if err == nil {
 		shell = strings.Split(strings.TrimSuffix(string(out), "\n"), ":")[6]
 	}
@@ -84,11 +84,13 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				log.Println("couldn't read from pty:", err)
 				ptmx.Close()
+				conn.Close()
 				return
 			}
 			if err := conn.WriteMessage(websocket.TextMessage, buf[:n]); err != nil {
 				log.Println("couldn't send to websockets:", err)
 				ptmx.Close()
+				conn.Close()
 				return
 			}
 		}
