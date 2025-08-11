@@ -98,10 +98,10 @@ hr {
     /* inputs */
 
 /* buttons */
-button:hover, input[type="submit"]:hover { background: var(--s2); }
-button:active, input[type="submit"]:active { background: var(--s1); }
-button:disabled, input[type="submit"]:disabled { color: var(--s5); background: var(--s3); }
-button, input[type="submit"] {
+button:hover, input[type="submit"]:hover, select:hover { background: var(--s2); border-right-color: var(--s2); }
+button:active, input[type="submit"]:active, select:active { background: var(--s1); border-right-color: var(--s1); }
+button:disabled, input[type="submit"]:disabled, select:disabled { color: var(--s5); background: var(--s3); border-right-color: var(--s3); }
+button, input[type="submit"], select {
     font-size: 0.85em;
     font-family: var(--font), sans-serif;
 
@@ -111,6 +111,25 @@ button, input[type="submit"] {
     border: none;
 
     transition: background 0.07s ease-in-out, color 0.07s ease-in-out;
+}
+
+/* dropdowns. this is cursed as hell, and probably the absolute worst hack i've ever seen (the border-right).
+ * 1. there is no guarantee that all browsers that don't support -moz-appearance will have this issue.
+ * 2. windows accessibility modes will especially not like this.
+ * 3. also ties border-right-color to buttons as well, so you have wasted declarations.
+ * still the "best" way for now, though...
+ * TODO: add a modern dropdown to the icons font, and use the better hack described here: https://stackoverflow.com/a/69356260
+ */
+select {
+    font-size: 0.7em;
+    padding: 0.1em 0;
+    padding-right: 1em;
+    padding-left: 0.25em;
+    border-right: 0.3em solid var(--s3);
+}
+
+@supports (-moz-appearance: none) {
+    select { border-right: none; }
 }
 
 /* checkboxes */
