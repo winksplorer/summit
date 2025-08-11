@@ -42,7 +42,9 @@ _.onReady(() => {
 
     // pty -> terminal
     socket.onmessage = (event) => _.page.t.write(event.data);
-    socket.onclose = (event) => _.page.t.write(`\n\x1b[0m--- summit terminal: \x1b[91mconnection closed\x1b[0m (code: ${event.code}, reason: ${event.reason || 'none'}, wasClean: ${event.wasClean}) ---`);
+    socket.onclose = (event) => {
+        if (event.code !== 1001) _.page.t.write(`\n\x1b[0m--- summit terminal: \x1b[91mconnection closed\x1b[0m (code: ${event.code}, reason: ${event.reason || 'none'}, wasClean: ${event.wasClean}) ---`);
+    }
 
     // terminal -> pty
     _.page.t.onData(data => socket.send(data));
