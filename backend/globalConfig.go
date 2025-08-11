@@ -1,0 +1,59 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+)
+
+const GC_Path string = "/etc/summit.json"
+
+var GC_Config map[string]interface{}
+
+func GC_Create() error {
+	log.Printf("GC_Create: Creating new configuration at %s.", GC_Path)
+
+	// copy the defaults
+	if err := H_CopyFile(fmt.Sprintf("%s/assets/defaultgc.json", FrontendDir), GC_Path); err != nil {
+		return err
+	}
+
+	// set permissions
+	if err := os.Chmod(GC_Path, 0664); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GC_SetValue(key string, val interface{}) error {
+	return H_SetValue(GC_Config, key, val)
+}
+
+func GC_Read() error {
+	config, err := os.ReadFile(GC_Path)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(config, &GC_Config)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GC_Save() error {
+	data, err := json.MarshalIndent(GC_Config, "", "  ")
+	if err != nil {
+		return fmt.Errorf("config serialization error: %s", err)
+	}
+
+	if err := os.WriteFile(GC_Path, data, 0664); err != nil {
+		return fmt.Errorf("config write error: %s", err)
+	}
+
+	return nil
+}

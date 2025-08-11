@@ -148,6 +148,10 @@ func H_AsUint16(v any) uint16 {
 	if u, ok := v.(int8); ok {
 		return uint16(u)
 	}
+
+	if u, ok := v.(float64); ok {
+		return uint16(u)
+	}
 	return 0
 }
 
@@ -178,6 +182,28 @@ func H_SetValue(m map[string]interface{}, key string, val interface{}) error {
 	}
 
 	return nil
+}
+
+// returns a value in m based on key. basically, key="x.y.z" will return m["x"]["y"]["z"]. also it type asserts.
+func H_GetValue[T any](m map[string]interface{}, key string) (T, error) {
+	var zero T
+	var interf interface{} = m
+	for _, k := range strings.Split(key, ".") {
+		nested, ok := interf.(map[string]interface{})
+		if !ok {
+			return zero, fmt.Errorf("not a map at %q", k)
+		}
+		interf, ok = nested[k]
+		if !ok {
+			return zero, fmt.Errorf("couldn't find %q", key)
+		}
+	}
+
+	val, ok := interf.(T)
+	if !ok {
+		return zero, fmt.Errorf("value at %q is not %T, but instead %T", key, zero, interf)
+	}
+	return val, nil
 }
 
 // copies a file

@@ -45,6 +45,26 @@ func main() {
 		log.Fatalf("os.Hostname: %s.", err)
 	}
 
+	// init global config
+	if _, err := os.Stat(GC_Path); os.IsNotExist(err) {
+		if err = GC_Create(); err != nil {
+			log.Fatalf("GC_Create: %s.", err)
+		}
+	}
+
+	if err := GC_Read(); err != nil {
+		log.Fatalf("GC_Read: %s.", err)
+	}
+
+	// set port from config
+	p, err := H_GetValue[float64](GC_Config, "port")
+	if err != nil {
+		log.Printf("H_GetValue: %s.", err)
+		log.Printf("Couldn't read port, defaulting to %s.", Port)
+	} else {
+		Port = fmt.Sprintf(":%d", H_AsUint16(p))
+	}
+
 	// call init functions
 	REST_Init()
 	go A_RemoveExpiredSessions()
