@@ -38,12 +38,13 @@ _.ui.updateStats = (data) => {
     if (!_.ui.odometerInitialized) _.ui.odometerInitialized = true;
 }
 
-// toggles dark mode
-_.ui.darkMode = (enabled) => {
-    const theme = enabled ? 'dark' : 'light';
+// sets theme
+_.ui.setTheme = (theme) => {
+    if (theme === 'sync') effectiveTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    else effectiveTheme = theme;
 
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem('theme', theme);
+    document.documentElement.dataset.theme = effectiveTheme;
+    localStorage.setItem('theme', effectiveTheme);
 }
 
 // sets accent color
@@ -56,8 +57,8 @@ _.ui.setAccentColor = (color) => {
     rootStyle.setProperty('--a1', _.helpers.formatHslAsCSS(h, s, _.ui.isDarkTheme() ? l : l-20));
 }
 
-// changes sidebar width
-_.ui.sidebarWidth = (width) => $('sidebar').style.minWidth = $('sidebar').style.maxWidth = `${width}px`;
+// sets the sidebar width
+_.ui.setSidebarWidth = (width) => $('sidebar').style.minWidth = $('sidebar').style.maxWidth = `${width}px`;
 
 _.onReady(() => {
     // inital navbar fill
@@ -67,7 +68,7 @@ _.onReady(() => {
     $('messageDismiss').addEventListener('click', () => $('message').style.display = 'none');
 
     // config shit
-    _.ui.darkMode(_CONFIG.ui?.darkMode ?? true);
-    _.ui.sidebarWidth(_CONFIG.ui?.sidebarWidth || 170);
+    _.ui.setTheme(_CONFIG.ui?.theme || 'sync');
+    _.ui.setSidebarWidth(_CONFIG.ui?.sidebarWidth || 170);
     _.ui.setAccentColor(_CONFIG.ui?.accentColor || '#99c8ff');
 });

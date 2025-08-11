@@ -1,7 +1,7 @@
 {
     "ui": {
         "pages": ["terminal", "logging", "storage", "networking", "containers", "services", "updates", "settings"],
-        "darkMode": true,
+        "theme": "sync",
         "sidebarWidth": 170,
         "accentColor": "#99c8ff"
     },
