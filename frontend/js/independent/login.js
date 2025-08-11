@@ -21,7 +21,8 @@ fetch('/api/hostname')
 
 
 // set theme
-document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';
+const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+document.documentElement.dataset.theme = localStorage.getItem('theme') || preferredTheme;
 
 // url parameters (?auth)
 const authParam = new URLSearchParams(window.location.search).get('err');

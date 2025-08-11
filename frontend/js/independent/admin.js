@@ -7,7 +7,8 @@ fetch('/api/hostname')
     .catch(err => console.error('failed to fetch hostname:', err));
 
 // set theme
-document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';
+const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+document.documentElement.dataset.theme = localStorage.getItem('theme') || preferredTheme;
 
 // elements
 const msgEl = document.getElementById('msg')

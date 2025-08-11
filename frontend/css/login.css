@@ -57,7 +57,7 @@ form {
 }
 
 body, h1 { margin: 0; }
-h1 { font-size: clamp(1.4em, 5.5vh, 4.5em); }
+h1 { font-size: clamp(3em, 5.5vh, 4.5em); }
 #password { margin-top: 1em; }
 
 input[type="submit"]:hover { background: var(--s2); }
@@ -85,7 +85,7 @@ input[placeholder] {
 .br { grid-area: br; background: var(--s4); }
 
 p, input {
-    font-size: clamp(1em, 2vh, 1.7em);
+    font-size: clamp(1.3em, 2vh, 1.7em);
     border: none;
 }
 
@@ -101,6 +101,6 @@ p, input {
         grid-template-rows: 1fr clamp(320px, 33.33vw, 500px) 1fr;
     }
 
-    h1 { font-size: clamp(1.4em, 5vh, 3.75em); }
-    p, input { font-size: clamp(1em, 2vh, 1.6em); }
+    h1 { font-size: clamp(3em, 5vh, 3.75em); }
+    p, input { font-size: clamp(1.3em, 2vh, 1.6em); }
 }
