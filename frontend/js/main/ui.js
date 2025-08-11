@@ -46,6 +46,16 @@ _.ui.darkMode = (enabled) => {
     localStorage.setItem('theme', theme);
 }
 
+// sets accent color
+_.ui.setAccentColor = (color) => {
+    const rootStyle = document.documentElement.style;
+    let [h, s, l] = _.helpers.rgb2hsl(..._.helpers.hex2rgb(color));
+    [s, l] = [s*100, l*100];
+
+    rootStyle.setProperty('--a0', _.helpers.formatHslAsCSS(h, s, _.ui.isDarkTheme() ? l-20 : l-40 ));
+    rootStyle.setProperty('--a1', _.helpers.formatHslAsCSS(h, s, _.ui.isDarkTheme() ? l : l-20));
+}
+
 // changes sidebar width
 _.ui.sidebarWidth = (width) => $('sidebar').style.minWidth = $('sidebar').style.maxWidth = `${width}px`;
 
@@ -59,4 +69,5 @@ _.onReady(() => {
     // config shit
     _.ui.darkMode(_CONFIG.ui?.darkMode ?? true);
     _.ui.sidebarWidth(_CONFIG.ui?.sidebarWidth || 170);
+    _.ui.setAccentColor(_CONFIG.ui?.accentColor || '#99c8ff');
 });

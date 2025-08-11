@@ -2,7 +2,8 @@
     "ui": {
         "pages": ["terminal", "logging", "storage", "networking", "containers", "services", "updates", "settings"],
         "darkMode": true,
-        "sidebarWidth": 170
+        "sidebarWidth": 170,
+        "accentColor": "#99c8ff"
     },
     "terminal": {
         "darkTheme": {
@@ -24,7 +25,6 @@
             "brightCyan": "#8ec07c",
             "brightWhite": "#ebdbb2"
         },
-
         "lightTheme": {
             "black": "#fbf1c7",
             "red": "#cc241d",

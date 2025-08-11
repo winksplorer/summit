@@ -120,7 +120,7 @@ The self-extracting archive code so that the entire server is distributed as one
     - [X] Messages
     - [X] Input elements
     - [X] Light mode
-    - [ ] User choosable accent color
+    - [X] User choosable accent color
     - [ ] Sync with system dark/light theme
 - [ ] Global config
 - [ ] Mac-style padlock system
