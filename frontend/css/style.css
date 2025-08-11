@@ -145,6 +145,7 @@ input[type="checkbox"]::before {
 input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
 input[type="color"]::-webkit-color-swatch { border: none; }
 input[type="color"]::-moz-color-swatch { border: none; }
+input[type="color"]:hover { border-color: var(--s5); }
 input[type="color"] {
     appearance: none;
     -webkit-appearance: none;
@@ -158,6 +159,8 @@ input[type="color"] {
     cursor: pointer;
     background: transparent;
     border: 2px solid var(--line);
+
+    transition: border-color 0.1s ease-in-out;
 }
 
 /* ranges */
