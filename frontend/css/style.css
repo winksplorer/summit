@@ -141,6 +141,25 @@ input[type="checkbox"]::before {
     transition: transform 0.07s ease-in-out;
 }
 
+/* color selectors. i want to find the address of the guy who designed this. */
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { border: none; }
+input[type="color"]::-moz-color-swatch { border: none; }
+input[type="color"] {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 3em;
+    height: 1.5em;
+
+    border: none;
+    padding: 2px;
+
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid var(--line);
+}
+
 /* ranges */
 /* WHY, BROWSER GODS */
 input[type="range"] {
