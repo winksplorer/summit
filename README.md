@@ -107,7 +107,7 @@ The self-extracting archive code so that the entire server is distributed as one
     - [X] Backend settings system
     - [X] Frontend settings system
     - [X] Default config
-- [ ] Complete frontend redesign
+- [X] Complete frontend redesign
     - [X] Independent pages
         - [X] Login prototype
         - [X] Responsiveness
@@ -123,7 +123,6 @@ The self-extracting archive code so that the entire server is distributed as one
     - [X] User choosable accent color
     - [X] Sync with system dark/light theme
 - [X] Global config
-- [ ] Mac-style padlock system
 - [ ] Logging
     - [ ] Backend
         - [ ] Application-specific logs?
