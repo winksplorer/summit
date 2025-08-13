@@ -14,10 +14,11 @@ var (
 	BuildDate   string = "undefined"
 	Version     string = "undefined"
 	BuildString string = "undefined"
-	Hostname    string = "undefined"
-	WS_Upgrader        = websocket.Upgrader{}
 
 	FrontendDir string = "/tmp/summit/frontend-dist"
+	Hostname    string = "undefined"
+
+	WS_Upgrader = websocket.Upgrader{}
 )
 
 func main() {
