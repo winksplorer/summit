@@ -5,7 +5,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/gorilla/websocket"
@@ -16,12 +15,9 @@ var (
 	Version     string = "undefined"
 	BuildString string = "undefined"
 	Hostname    string = "undefined"
-	WS_Upgrader        = websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool { return true },
-	}
+	WS_Upgrader        = websocket.Upgrader{}
 
 	FrontendDir string = "/tmp/summit/frontend-dist"
-	Port        string = ":7070"
 )
 
 func main() {
@@ -57,12 +53,13 @@ func main() {
 	}
 
 	// set port from config
+	port := ":7070"
 	p, err := H_GetValue[float64](GC_Config, "port")
 	if err != nil {
 		log.Printf("H_GetValue: %s.", err)
-		log.Printf("Couldn't read port, defaulting to %s.", Port)
+		log.Printf("Couldn't read port, defaulting to %s.", port)
 	} else {
-		Port = fmt.Sprintf(":%d", H_AsUint16(p))
+		port = fmt.Sprintf(":%d", H_AsUint16(p))
 	}
 
 	// call init functions
@@ -73,12 +70,12 @@ func main() {
 		log.Fatalf("TLS_Init: %s.", err)
 	}
 
-	srv, err := HTTP_Init()
+	srv, err := HTTP_Init(port)
 	if err != nil {
 		log.Fatalf("HTTP_Init: %s.", err)
 	}
 
-	log.Printf("Initialized summit on port %s.\n", Port)
+	log.Printf("Initialized summit on port %s.\n", port)
 
 	// start server
 	if err := srv.ListenAndServeTLS("/etc/ssl/certs/summit.crt", "/etc/ssl/private/summit.key"); err != nil {

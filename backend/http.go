@@ -11,12 +11,12 @@ import (
 	"golang.org/x/net/http2"
 )
 
-func HTTP_Init() (*hlfhr.Server, error) {
+func HTTP_Init(port string) (*hlfhr.Server, error) {
 	log.Println("HTTP_Init: Init HTTP server.")
 
 	// configure server (hlfhr is used to redirect http to https)
 	srv := hlfhr.New(&http.Server{
-		Addr:    Port,
+		Addr:    port,
 		Handler: gziphandler.GzipHandler(http.DefaultServeMux),
 		TLSConfig: &tls.Config{
 			MinVersion: tls.VersionTLS13,
