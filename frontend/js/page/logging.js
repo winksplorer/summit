@@ -1,0 +1,1 @@
+// summit frontend/js/page/logging.js - handles the logging page

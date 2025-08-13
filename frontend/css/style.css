@@ -79,6 +79,15 @@ body {
     margin-bottom:0.2em;
 }
 
+.sticky-header {
+    position: sticky;
+    top:0;
+    padding: 0.5em 1em;
+
+    background: var(--main-bg);
+    border-bottom: 0.05em solid var(--line);
+}
+
 .sticky-footer {
     position: sticky;
     bottom:0;
@@ -356,9 +365,8 @@ input[type="range"]::-moz-range-thumb {
     padding-top: 1em;
 }
 
-.nopadding {
-    padding: 0;
-}
+.nopadding { padding: 0; }
+.label-margin { margin-right: 0.5em; }
 
 .bottom {
     margin-top: auto;

@@ -1,0 +1,21 @@
+{{define "logging"}}
+    {{template "base" .}}
+{{end}}
+
+{{define "head"}}
+<script src="js/page/logging.js" defer></script>
+{{end}}
+
+{{define "main"}}
+<div class="main nopadding">
+
+    <div class="sticky-header">
+        <label for="source" class="label-margin">log source</label>
+        <select id="source">
+            <option value="all">all</option>
+            <option value="test">test</option>
+            <option value="test2">test2</option>
+        </select>
+    </div>
+</div>
+{{end}}
