@@ -26,8 +26,9 @@ _.ui.dispatchMsg = (title, subtitle) => {
     $('message').style.display = 'flex';
 }
 
-// handles stats changes
+// handles stats changes. this is quite likely, the worst code i have ever written. i fucking hate this.
 _.ui.updateStats = (data) => {
+    if (!_.ui.odometerInitialized) $('stats').style.visibility = 'visible';
     if (_.isColdEntry && !_.ui.odometerInitialized) Odometer.init();
 
     $('stats-cpu').textContent = data.cpuUsage;

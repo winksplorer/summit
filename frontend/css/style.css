@@ -315,6 +315,10 @@ input[type="range"]::-moz-range-thumb {
 
     /* the bottom side of the navbar (stats, quick actions, etc) */
 
+#stats {
+    visibility: hidden;
+}
+
 /* all animated text in stats */
 /* oh fucking god. TODO: not this. */
 .odometer {
