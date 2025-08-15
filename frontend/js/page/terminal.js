@@ -11,7 +11,7 @@ _.page.baseTerminalTheme = {
 
 // init terminal object
 _.page.t = new Terminal({
-    fontFamily: '"Courier New", monospace',
+    fontFamily: _CONFIG.terminal?.font || 'monospace',
     fontSize: 14,
     cursorBlink: true,
     convertEol: true,
