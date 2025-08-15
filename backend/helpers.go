@@ -84,24 +84,26 @@ func H_RandomBase64(length int) (string, error) {
 	return base64.RawURLEncoding.EncodeToString(randomBytes)[:length], nil
 }
 
-// executes a command and prints output if failed
-func H_Execute(args ...string) error {
+// executes a command and prints output if failed. returns complete output.
+func H_Execute(args ...string) (string, error) {
 	if len(args) == 0 {
-		return fmt.Errorf("no command")
+		return "", fmt.Errorf("no command")
 	}
 
 	// create the command
 	out, err := exec.Command(args[0], args[1:]...).CombinedOutput()
+	strout := string(out)
+
 	if err != nil {
-		lines := strings.Split(strings.TrimSpace(string(out)), "\n")
+		lines := strings.Split(strings.TrimSpace(strout), "\n")
 		if len(lines) > 0 {
 			lastLine := lines[len(lines)-1]
-			return fmt.Errorf("%v: command execution failed: %v - last line: %v", strings.Join(args, " "), err, lastLine)
+			return strout, fmt.Errorf("%v: command execution failed: %v - last line: %v", strings.Join(args, " "), err, lastLine)
 		}
-		return fmt.Errorf("command execution failed: %v", err)
+		return strout, fmt.Errorf("command execution failed: %v", err)
 	}
 
-	return nil
+	return strout, nil
 }
 
 // logging format

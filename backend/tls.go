@@ -15,7 +15,7 @@ func TLS_Init() error {
 		log.Println("TLS_Init: Creating TLS certificate.")
 
 		// create cert
-		if err := H_Execute(
+		if _, err := H_Execute(
 			"openssl",
 			"req",
 			"-x509",
