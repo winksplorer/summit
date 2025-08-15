@@ -22,4 +22,4 @@ _.onReady = (cb) => document.readyState === 'loading'
 
 // true if we just logged in or if we came here directly from another site (no reloads, no same-domain pages except login & admin)
 _.isColdEntry = performance.getEntriesByType("navigation")[0]?.type !== 'reload'
-                && ['', location.origin, location.origin + '/'].includes(document.referrer);
+                && ['', location.origin, location.origin + '/'].includes(document.referrer.split('?')[0]);
