@@ -3,6 +3,11 @@
 // returns true if the current theme is the dark theme
 _.ui.isDarkTheme = () => document.documentElement.dataset.theme === 'dark';
 
+// returns true if odometer should init for stats
+_.ui.shouldInitOdometerStats = (afterValueSet) =>
+    (afterValueSet ? !_.isColdEntry : _.isColdEntry)
+    && (!_.ui.odometerInitialized) && (_CONFIG.ui?.odometerStats);
+
 // updates navbar items
 _.ui.updateNavItems = () => {
     // empty the group first
@@ -26,16 +31,16 @@ _.ui.dispatchMsg = (title, subtitle) => {
     $('message').style.display = 'flex';
 }
 
-// handles stats changes. this is quite likely, the worst code i have ever written. i fucking hate this.
+// handles stats changes.
 _.ui.updateStats = (data) => {
     if (!_.ui.odometerInitialized) $('stats').style.visibility = 'visible';
-    if (_.isColdEntry && !_.ui.odometerInitialized) Odometer.init();
+    if (_.ui.shouldInitOdometerStats(false)) Odometer.init();
 
     $('stats-cpu').textContent = data.cpuUsage;
     $('stats-memused').textContent = data.memUsage;
     $('stats-memrest').textContent = `${data.memUsageUnit}/${data.memTotal} ram`;
 
-    if (!_.isColdEntry && !_.ui.odometerInitialized) Odometer.init();
+    if (_.ui.shouldInitOdometerStats(true)) Odometer.init();
     if (!_.ui.odometerInitialized) _.ui.odometerInitialized = true;
 }
 
