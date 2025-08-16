@@ -55,12 +55,12 @@ func main() {
 
 	// set port from config
 	port := ":7070"
-	p, err := H_GetValue[float64](GC_Config, "port")
+	p, err := H_GetNumericalValue[uint16](GC_Config, "port")
 	if err != nil {
 		log.Printf("H_GetValue: %s.", err)
 		log.Printf("Couldn't read port, defaulting to %s.", port)
 	} else {
-		port = fmt.Sprintf(":%d", H_AsUint16(p))
+		port = fmt.Sprintf(":%d", p)
 	}
 
 	// call init functions

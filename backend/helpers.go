@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"reflect"
 	"strings"
 	"time"
 
@@ -27,7 +28,12 @@ const (
 	tib = gib * 1024
 )
 
-type logWriter struct{}
+type (
+	logWriter struct{}
+	Number    interface {
+		~int | ~uint | ~int8 | ~uint8 | ~int16 | ~uint16 | ~int32 | ~uint32 | ~int64 | ~uint64 | ~float32 | ~float64
+	}
+)
 
 // authenticates user with pam
 func H_PamAuth(serviceName, userName, passwd string) error {
@@ -125,19 +131,25 @@ func H_ClientIP(r *http.Request) string {
 	return host
 }
 
-// why god
-func H_AsUint16(v any) uint16 {
-	if u, ok := v.(uint8); ok {
-		return uint16(u)
+/* "Go is such a nice language!"
+ * Go:
+ *
+ * At this point, I REALLY hope that I'm just dumb and that there's a better way to do this.
+ * There has to be a better way, right? RIGHT?
+ */
+func H_Cast[T Number](v any) (T, error) {
+	var zero T
+	rv := reflect.ValueOf(v)
+	switch rv.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return T(rv.Int()), nil
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return T(rv.Uint()), nil
+	case reflect.Float32, reflect.Float64:
+		return T(rv.Float()), nil
+	default:
+		return zero, fmt.Errorf("not numeric: %T", v)
 	}
-	if u, ok := v.(int8); ok {
-		return uint16(u)
-	}
-
-	if u, ok := v.(float64); ok {
-		return uint16(u)
-	}
-	return 0
 }
 
 // prints "{s}: {err}" to stdout, and gives HTTP 500 to w
@@ -169,19 +181,30 @@ func H_SetValue(m map[string]interface{}, key string, val interface{}) error {
 	return nil
 }
 
-// returns a value in m based on key. basically, key="x.y.z" will return m["x"]["y"]["z"]. also it type asserts.
-func H_GetValue[T any](m map[string]interface{}, key string) (T, error) {
-	var zero T
+// returns a value in m based on key. basically, key="x.y.z" will return m["x"]["y"]["z"].
+func H_GetRawValue(m map[string]interface{}, key string) (interface{}, error) {
 	var interf interface{} = m
 	for _, k := range strings.Split(key, ".") {
 		nested, ok := interf.(map[string]interface{})
 		if !ok {
-			return zero, fmt.Errorf("not a map at %q", k)
+			return nil, fmt.Errorf("not a map at %q", k)
 		}
 		interf, ok = nested[k]
 		if !ok {
-			return zero, fmt.Errorf("couldn't find %q", key)
+			return nil, fmt.Errorf("couldn't find %q", key)
 		}
+	}
+
+	return interf, nil
+}
+
+// returns a value in m based on key. basically, key="x.y.z" will return m["x"]["y"]["z"]. also it type asserts.
+func H_GetValue[T any](m map[string]interface{}, key string) (T, error) {
+	var zero T
+
+	interf, err := H_GetRawValue(m, key)
+	if err != nil {
+		return zero, err
 	}
 
 	val, ok := interf.(T)
@@ -189,6 +212,23 @@ func H_GetValue[T any](m map[string]interface{}, key string) (T, error) {
 		return zero, fmt.Errorf("value at %q is not %T, but instead %T", key, zero, interf)
 	}
 	return val, nil
+}
+
+// returns the uint16 in m based on key. basically, key="x.y.z" will return m["x"]["y"]["z"], but as a uint16.
+func H_GetNumericalValue[T Number](m map[string]interface{}, key string) (T, error) {
+	var zero T
+
+	interf, err := H_GetRawValue(m, key)
+	if err != nil {
+		return zero, err
+	}
+
+	casted, err := H_Cast[T](interf)
+	if err != nil {
+		return zero, err
+	}
+
+	return casted, nil
 }
 
 // copies a file

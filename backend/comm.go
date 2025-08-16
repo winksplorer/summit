@@ -144,20 +144,20 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 
-			amount, err := H_GetValue[int8](decoded, "data.amount")
+			amount, err := H_GetNumericalValue[uint16](decoded, "data.amount")
 			if err != nil {
 				Comm_ISE(data, err.Error())
 				break
 			}
 
-			page, err := H_GetValue[int8](decoded, "data.page")
+			page, err := H_GetNumericalValue[uint16](decoded, "data.page")
 			if err != nil {
 				Comm_ISE(data, err.Error())
 				break
 			}
 
 			// actual read
-			events, err := L_Read(source, H_AsUint16(page*amount), H_AsUint16(amount))
+			events, err := L_Read(source, page*amount, amount)
 			if err != nil {
 				Comm_ISE(data, err.Error())
 				break

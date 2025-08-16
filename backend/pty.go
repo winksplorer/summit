@@ -109,8 +109,22 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 		var decoded map[string]interface{}
 
 		if err := msgpack.Unmarshal(msg, &decoded); err == nil && decoded["type"] == "resize" {
+			cols, err := H_Cast[uint16](decoded["cols"])
+			if err != nil {
+				log.Println("cols wasn't numerical")
+				ptmx.Close()
+				break
+			}
+
+			rows, err := H_Cast[uint16](decoded["rows"])
+			if err != nil {
+				log.Println("cols wasn't numerical")
+				ptmx.Close()
+				break
+			}
+
 			// resize pty
-			if err := pty.Setsize(ptmx, &pty.Winsize{Cols: H_AsUint16(decoded["cols"]), Rows: H_AsUint16(decoded["rows"])}); err != nil {
+			if err := pty.Setsize(ptmx, &pty.Winsize{Cols: cols, Rows: rows}); err != nil {
 				log.Println("couldn't resize pty")
 				ptmx.Close()
 				break
