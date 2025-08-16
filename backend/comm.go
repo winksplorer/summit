@@ -167,7 +167,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 
 			for _, e := range events {
 				thedata = append(thedata, map[string]interface{}{
-					"time":   e.Time.Format(time.RFC3339),
+					"time":   e.Time.Unix(),
 					"source": e.Source,
 					"msg":    e.Message,
 				})
