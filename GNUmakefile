@@ -7,6 +7,13 @@ MINIFIER ?= minify -q
 
 PREFIX ?= /usr/local
 
+GOFLAGS = -buildvcs=false -trimpath
+GO_LDFLAGS = -s -w -buildid= -X main.BuildDate=$(shell date +%Y-%b-%d) -X main.Version=$(SUMMIT_VERSION)
+
+ifeq ($(SMALL),1)
+	GOFLAGS += -gcflags=all=-l
+endif
+
 .PHONY: backend frontend all sea clean install
 
 all: backend frontend sea
@@ -17,7 +24,7 @@ clean:
 # backend server build with go (and also run panic safeguard)
 backend:
 	@echo "     GO (${GO}) backend -> summit-server"
-	@cd backend && $(GO) mod tidy && $(GO) build -o ../summit-server -buildvcs=false -ldflags="-s -w -X main.BuildDate=$(shell date +%Y-%b-%d) -X main.Version=$(SUMMIT_VERSION)"
+	@cd backend && $(GO) mod tidy && $(GO) build -o ../summit-server $(GOFLAGS) -ldflags="$(GO_LDFLAGS)"
 
 # bundle + minify frontend
 frontend:
