@@ -115,21 +115,21 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			// get data
 			keys, ok := decoded["data"].(map[string]interface{})
 			if !ok {
-				Comm_Error(data, "config.set", http.StatusBadRequest, "data doesn't exist or isn't an object")
+				Comm_Error(data, http.StatusBadRequest, "data doesn't exist or isn't an object")
 				break
 			}
 
 			// loop through and set value
 			for key, value := range keys {
 				if err := C_SetValue(sc.Value, key, value); err != nil {
-					Comm_Error(data, "config.set", http.StatusInternalServerError, err.Error())
+					Comm_ISE(data, err.Error())
 					break
 				}
 			}
 
 			// save json
 			if err := C_Save(sc.Value); err != nil {
-				Comm_Error(data, "config.set", http.StatusInternalServerError, err.Error())
+				Comm_ISE(data, err.Error())
 				break
 			}
 
@@ -140,26 +140,26 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 
 			source, err := H_GetValue[string](decoded, "data.source")
 			if err != nil {
-				Comm_Error(data, "log.read", http.StatusInternalServerError, err.Error())
+				Comm_ISE(data, err.Error())
 				break
 			}
 
 			amount, err := H_GetValue[int8](decoded, "data.amount")
 			if err != nil {
-				Comm_Error(data, "log.read", http.StatusInternalServerError, err.Error())
+				Comm_ISE(data, err.Error())
 				break
 			}
 
 			page, err := H_GetValue[int8](decoded, "data.page")
 			if err != nil {
-				Comm_Error(data, "log.read", http.StatusInternalServerError, err.Error())
+				Comm_ISE(data, err.Error())
 				break
 			}
 
 			// actual read
 			events, err := L_Read(source, H_AsUint16(page*amount), H_AsUint16(amount))
 			if err != nil {
-				Comm_Error(data, "log.read", http.StatusInternalServerError, err.Error())
+				Comm_ISE(data, err.Error())
 				break
 			}
 
@@ -176,7 +176,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			data["data"] = thedata
 		default:
 			// if t is not recognized, then throw error
-			data["error"] = map[string]interface{}{"code": http.StatusNotFound, "msg": "unknown type"}
+			Comm_Error(data, http.StatusNotFound, "unknown type")
 		}
 
 		if err := Comm_Send(data, conn); err != nil {
@@ -201,7 +201,12 @@ func Comm_Send(data map[string]interface{}, connection *websocket.Conn) error {
 	return nil
 }
 
-func Comm_Error(data map[string]interface{}, t string, code int, msg string) {
+func Comm_Error(data map[string]interface{}, code int, msg string) {
 	data["error"] = map[string]interface{}{"code": code, "msg": msg}
-	log.Printf("%s failed: %s\n", t, msg)
+	log.Printf("%s failed: %s\n", data["t"], msg)
+}
+
+func Comm_ISE(data map[string]interface{}, msg string) {
+	data["error"] = map[string]interface{}{"code": http.StatusInternalServerError, "msg": msg}
+	log.Printf("%s failed: %s\n", data["t"], msg)
 }
