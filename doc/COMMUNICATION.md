@@ -68,3 +68,12 @@ The frontend (and backend, if it ever requests data from the frontend) will alwa
 - Sets configuration values.
 - Request: `{"ui.scale": 1.75, "ui.compactNavbar": false}`
 - Response: `{}`
+
+### `log.read`
+
+> [!NOTE]
+> This will absolutely be changed soon
+
+- Reads system logs.
+- Request: `{"source": "test", "amount": 100, "page": 2}`
+- Response: `[{"time": "2006-01-02T15:04:05Z07:00", "source": "test", "msg": "Message"}, {"time": "2006-01-02T15:04:06Z07:00", "source": "test", "msg": "Message 2"}]`

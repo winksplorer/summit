@@ -135,6 +135,45 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 
 			// return success
 			data["data"] = map[string]interface{}{}
+		case "log.read":
+			// TODO: no
+
+			source, err := H_GetValue[string](decoded, "data.source")
+			if err != nil {
+				Comm_Error(data, "log.read", http.StatusInternalServerError, err.Error())
+				break
+			}
+
+			amount, err := H_GetValue[int8](decoded, "data.amount")
+			if err != nil {
+				Comm_Error(data, "log.read", http.StatusInternalServerError, err.Error())
+				break
+			}
+
+			page, err := H_GetValue[int8](decoded, "data.page")
+			if err != nil {
+				Comm_Error(data, "log.read", http.StatusInternalServerError, err.Error())
+				break
+			}
+
+			// actual read
+			events, err := L_Read(source, H_AsUint16(page*amount), H_AsUint16(amount))
+			if err != nil {
+				Comm_Error(data, "log.read", http.StatusInternalServerError, err.Error())
+				break
+			}
+
+			thedata := []map[string]interface{}{}
+
+			for _, e := range events {
+				thedata = append(thedata, map[string]interface{}{
+					"time":   e.Time.Format(time.RFC3339),
+					"source": e.Source,
+					"msg":    e.Message,
+				})
+			}
+
+			data["data"] = thedata
 		default:
 			// if t is not recognized, then throw error
 			data["error"] = map[string]interface{}{"code": http.StatusNotFound, "msg": "unknown type"}
