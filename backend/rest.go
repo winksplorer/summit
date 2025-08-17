@@ -32,12 +32,19 @@ var (
 	}
 )
 
-type REST_TemplateData struct {
-	Title       string
-	Config      template.JS
-	Hostname    string
-	BuildString string
-}
+type (
+	REST_TemplateData struct {
+		Title       string
+		Config      template.JS
+		Hostname    string
+		BuildString string
+	}
+
+	REST_RootRequest struct {
+		Password  string
+		Operation string
+	}
+)
 
 // inits http handlers
 func REST_Init() {
@@ -159,21 +166,21 @@ func REST_SUID(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	// parse
-	var decoded map[string]string
-	if err := json.Unmarshal(body, &decoded); err != nil {
+	var rootReq REST_RootRequest
+	if err := json.Unmarshal(body, &rootReq); err != nil {
 		log.Println("error: failed to parse /api/sudo data:", err)
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
 
 	// authenticate as root with PAM
-	if err := H_PamAuth("passwd", "root", decoded["password"]); err != nil {
+	if err := H_PamAuth("passwd", "root", rootReq.Password); err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
 	// see what command we need
-	cmdStr, ok := REST_AllowedRootCommands[decoded["operation"]]
+	cmdStr, ok := REST_AllowedRootCommands[rootReq.Operation]
 	if !ok {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
