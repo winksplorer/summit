@@ -21,9 +21,6 @@ _.page.t = new Terminal({
 // init terminal fit addon (dynamically resize based on container size)
 _.page.fit = new FitAddon.FitAddon();
 
-// init reszie observer
-_.page.terminalResizeObserver = new ResizeObserver(() => _.page.fit?.fit());
-
 _.onReady(() => {
     // init terminal and websocket connection
     _.page.t.loadAddon(_.page.fit);
@@ -58,5 +55,5 @@ _.onReady(() => {
         }));
     });
     
-    _.page.terminalResizeObserver.observe($('terminal'));
+    window.addEventListener('resize', () => _.page.fit?.fit());
 });
