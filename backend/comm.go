@@ -116,7 +116,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			// get data
 			keys, ok := decoded["data"].(map[string]interface{})
 			if !ok {
-				Comm_Error(data, http.StatusBadRequest, "data doesn't exist or isn't an object")
+				Comm_BR(data, "data doesn't exist or isn't an object")
 				break
 			}
 
@@ -139,19 +139,19 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 		case "log.read":
 			source, err := H_GetValue[string](decoded, "data.source")
 			if err != nil {
-				Comm_ISE(data, err.Error())
+				Comm_BR(data, err.Error())
 				break
 			}
 
 			amount, err := H_GetNumericalValue[uint16](decoded, "data.amount")
 			if err != nil {
-				Comm_ISE(data, err.Error())
+				Comm_BR(data, err.Error())
 				break
 			}
 
 			page, err := H_GetNumericalValue[uint16](decoded, "data.page")
 			if err != nil {
-				Comm_ISE(data, err.Error())
+				Comm_BR(data, err.Error())
 				break
 			}
 
@@ -210,4 +210,9 @@ func Comm_Error(data map[string]interface{}, code int, msg string) {
 // Comm_Error(data, http.StatusInternalServerError, msg)
 func Comm_ISE(data map[string]interface{}, msg string) {
 	Comm_Error(data, http.StatusInternalServerError, msg)
+}
+
+// Comm_Error(data, http.StatusBadRequest, msg)
+func Comm_BR(data map[string]interface{}, msg string) {
+	Comm_Error(data, http.StatusBadRequest, msg)
 }
