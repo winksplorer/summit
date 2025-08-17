@@ -6,14 +6,17 @@ import (
 	"time"
 )
 
+// maximum amount of events that can be read at once
 const L_MaxReadAmount = 200
 
+// an event
 type L_Event struct {
 	Time    time.Time
 	Source  string
 	Message string
 }
 
+// reads `amount` events from `source`, starting from `offset`
 func L_Read(source string, offset uint16, amount uint16) ([]L_Event, error) {
 	if amount > L_MaxReadAmount {
 		return nil, fmt.Errorf("amount too high (%d > %d)", amount, L_MaxReadAmount)

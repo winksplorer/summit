@@ -15,6 +15,7 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
+// comm websockets. handles /api/comm
 func REST_Comm(w http.ResponseWriter, r *http.Request) {
 	// if not authed, then close connection
 	if !A_Authenticated(w, r) {
@@ -136,8 +137,6 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			// return success
 			data["data"] = map[string]interface{}{}
 		case "log.read":
-			// TODO: no
-
 			source, err := H_GetValue[string](decoded, "data.source")
 			if err != nil {
 				Comm_ISE(data, err.Error())
@@ -185,6 +184,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// encodes and sends a comm message
 func Comm_Send(data map[string]interface{}, connection *websocket.Conn) error {
 	// encode
 	encodedData, err := msgpack.Marshal(data)
@@ -201,12 +201,13 @@ func Comm_Send(data map[string]interface{}, connection *websocket.Conn) error {
 	return nil
 }
 
+// prints log message and sets data["error"]
 func Comm_Error(data map[string]interface{}, code int, msg string) {
 	data["error"] = map[string]interface{}{"code": code, "msg": msg}
 	log.Printf("%s failed: %s\n", data["t"], msg)
 }
 
+// Comm_Error(data, http.StatusInternalServerError, msg)
 func Comm_ISE(data map[string]interface{}, msg string) {
-	data["error"] = map[string]interface{}{"code": http.StatusInternalServerError, "msg": msg}
-	log.Printf("%s failed: %s\n", data["t"], msg)
+	Comm_Error(data, http.StatusInternalServerError, msg)
 }

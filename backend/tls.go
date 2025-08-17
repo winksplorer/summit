@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// creates tls certs if they don't exist
 func TLS_Init() error {
 	_, err := os.Stat("/etc/ssl/private/summit.key")
 	_, err2 := os.Stat("/etc/ssl/certs/summit.crt")

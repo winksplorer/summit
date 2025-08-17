@@ -21,6 +21,7 @@ var (
 	WS_Upgrader = websocket.Upgrader{}
 )
 
+// entry point
 func main() {
 	// custom logging
 	log.SetFlags(0)
@@ -57,7 +58,7 @@ func main() {
 	port := ":7070"
 	p, err := H_GetNumericalValue[uint16](GC_Config, "port")
 	if err != nil {
-		log.Printf("H_GetValue: %s.", err)
+		log.Printf("H_GetNumericalValue[uint16]: %s.", err)
 		log.Printf("Couldn't read port, defaulting to %s.", port)
 	} else {
 		port = fmt.Sprintf(":%d", p)

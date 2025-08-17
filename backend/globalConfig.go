@@ -7,10 +7,13 @@ import (
 	"os"
 )
 
+// the path to the global config
 const GC_Path string = "/etc/summit.json"
 
+// cached global config
 var GC_Config map[string]interface{}
 
+// copies global config template to GC_Path
 func GC_Create() error {
 	log.Printf("GC_Create: Creating new configuration at %s.", GC_Path)
 
@@ -27,10 +30,12 @@ func GC_Create() error {
 	return nil
 }
 
+// sets a value in GC_Config
 func GC_SetValue(key string, val interface{}) error {
 	return H_SetValue(GC_Config, key, val)
 }
 
+// fills in GC_Config with the actual data from GC_Path
 func GC_Read() error {
 	config, err := os.ReadFile(GC_Path)
 	if err != nil {
@@ -45,6 +50,7 @@ func GC_Read() error {
 	return nil
 }
 
+// saves GC_Config to GC_path
 func GC_Save() error {
 	data, err := json.MarshalIndent(GC_Config, "", "  ")
 	if err != nil {

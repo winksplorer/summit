@@ -16,6 +16,7 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
+// websocket terminal. handles /api/pty
 func REST_Pty(w http.ResponseWriter, r *http.Request) {
 	if !A_Authenticated(w, r) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)

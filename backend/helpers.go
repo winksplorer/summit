@@ -198,7 +198,7 @@ func H_GetRawValue(m map[string]interface{}, key string) (interface{}, error) {
 	return interf, nil
 }
 
-// returns a value in m based on key. basically, key="x.y.z" will return m["x"]["y"]["z"]. also it type asserts.
+// returns T in m based on key, using value.(T). basically, key="x.y.z" will return m["x"]["y"]["z"].
 func H_GetValue[T any](m map[string]interface{}, key string) (T, error) {
 	var zero T
 
@@ -214,7 +214,7 @@ func H_GetValue[T any](m map[string]interface{}, key string) (T, error) {
 	return val, nil
 }
 
-// returns the uint16 in m based on key. basically, key="x.y.z" will return m["x"]["y"]["z"], but as a uint16.
+// returns T in m based on key, using H_Cast[T]. basically, key="x.y.z" will return m["x"]["y"]["z"].
 func H_GetNumericalValue[T Number](m map[string]interface{}, key string) (T, error) {
 	var zero T
 

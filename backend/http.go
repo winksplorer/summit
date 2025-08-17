@@ -11,6 +11,7 @@ import (
 	"golang.org/x/net/http2"
 )
 
+// inits http server
 func HTTP_Init(port string) (*hlfhr.Server, error) {
 	log.Println("HTTP_Init: Init HTTP server.")
 

@@ -14,8 +14,10 @@ import (
 	"time"
 )
 
+// the maximum time a session can last
 const A_SessionExpireTime = 4 * time.Hour
 
+// a user session
 type A_Session struct {
 	user       string                 // username
 	gid        uint32                 // unix gid
@@ -30,8 +32,11 @@ type A_Session struct {
 }
 
 var (
+	// mutex for A_Sessions
 	A_SessionsMutex sync.RWMutex
-	A_Sessions      = make(map[string]A_Session)
+
+	// stores all valid sessions
+	A_Sessions = make(map[string]A_Session)
 )
 
 // handles /api/login
@@ -160,6 +165,7 @@ func REST_Logout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
+// gets uid, gid, and associated groups from a user
 func A_GetUnixInfo(u *user.User) (uint32, uint32, []uint32, error) {
 	// get uid
 	uid, err := strconv.ParseUint(u.Uid, 10, 32)

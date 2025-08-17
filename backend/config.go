@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// copies user config template to `configFile`, and sets permissions
 func C_Create(configFile string, uid uint32, gid uint32) error {
 	log.Printf("C_Create: Creating new configuration at %s.", configFile)
 
@@ -27,6 +28,7 @@ func C_Create(configFile string, uid uint32, gid uint32) error {
 	return nil
 }
 
+// sets a user config value
 func C_SetValue(userId string, key string, val interface{}) error {
 	A_SessionsMutex.Lock()
 	defer A_SessionsMutex.Unlock()
@@ -39,6 +41,7 @@ func C_SetValue(userId string, key string, val interface{}) error {
 	return H_SetValue(u.config, key, val)
 }
 
+// saves user config
 func C_Save(userId string) error {
 	A_SessionsMutex.RLock()
 	defer A_SessionsMutex.RUnlock()
