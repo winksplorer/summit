@@ -15,9 +15,11 @@ summit is a portable and self-contained server management web dashboard for Linu
 - xterm.js-based terminal
 - HTTP/2 & HTTPS
 
-## Screenshot
+## Screenshots
 
-<img src="doc/terminal-screenshot.png" width="771">
+<img src="doc/dark-terminal.png" width="750">
+
+<img src="doc/light-settings.png" width="750">
 
 ## Building
 
