@@ -3,8 +3,8 @@
 
 summit is a portable and self-contained server management web dashboard for Linux and BSD that fits in 3MB.
 
-> [!NOTE]
-> Currently, many features (storage, networking, containers, updates, etc.) are missing. However, summit is under rapid development and I expect it to be "finished" before October. (Not a hard promise, though!)
+> [!IMPORTANT]
+> A lot of features (storage, networking, containers, updates, etc.) are missing currently.
 
 ## Features
 - All of summit is distributed as one file
