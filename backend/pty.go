@@ -16,6 +16,13 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
+// msgpack request made when terminal is resized
+type PTY_ResizeRequest struct {
+	Type string
+	Rows uint16
+	Cols uint16
+}
+
 // websocket terminal. handles /api/pty
 func REST_Pty(w http.ResponseWriter, r *http.Request) {
 	if !A_Authenticated(w, r) {
@@ -107,25 +114,10 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// try to parse resize message
-		var decoded map[string]interface{}
-
-		if err := msgpack.Unmarshal(msg, &decoded); err == nil && decoded["type"] == "resize" {
-			cols, err := H_Cast[uint16](decoded["cols"])
-			if err != nil {
-				log.Println("cols wasn't numerical")
-				ptmx.Close()
-				break
-			}
-
-			rows, err := H_Cast[uint16](decoded["rows"])
-			if err != nil {
-				log.Println("cols wasn't numerical")
-				ptmx.Close()
-				break
-			}
-
+		var resizeReq PTY_ResizeRequest
+		if err = msgpack.Unmarshal(msg, &resizeReq); err == nil && resizeReq.Type == "resize" {
 			// resize pty
-			if err := pty.Setsize(ptmx, &pty.Winsize{Cols: cols, Rows: rows}); err != nil {
+			if err := pty.Setsize(ptmx, &pty.Winsize{Cols: resizeReq.Cols, Rows: resizeReq.Rows}); err != nil {
 				log.Println("couldn't resize pty")
 				ptmx.Close()
 				break

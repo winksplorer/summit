@@ -32,6 +32,13 @@ var (
 	}
 )
 
+type REST_TemplateData struct {
+	Title       string
+	Config      template.JS
+	Hostname    string
+	BuildString string
+}
+
 // inits http handlers
 func REST_Init() {
 	log.Println("REST_Init: Init REST handlers.")
@@ -86,13 +93,13 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = tmpl.ExecuteTemplate(w, pageName, map[string]interface{}{
-		"Title":    pageName + " - " + Hostname,
-		"Config":   template.JS(data),
-		"Hostname": Hostname,
+	err = tmpl.ExecuteTemplate(w, pageName, REST_TemplateData{
+		Title:    pageName + " - " + Hostname,
+		Config:   template.JS(data),
+		Hostname: Hostname,
 
 		// page specific shit
-		"BuildString": BuildString,
+		BuildString: BuildString,
 	})
 	if err != nil {
 		H_ISE(w, fmt.Sprintf("template exec error for %s", path), err)

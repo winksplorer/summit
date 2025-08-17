@@ -35,9 +35,9 @@ _.onReady(() => {
     // send initial resize
     socket.onopen = () =>
         socket.send(msgpack.serialize({
-            type: "resize",
-            cols: _.page.t.cols,
-            rows: _.page.t.rows
+            Type: "resize",
+            Cols: _.page.t.cols,
+            Rows: _.page.t.rows
         }));
 
     // pty -> terminal
@@ -52,9 +52,9 @@ _.onReady(() => {
     // handle resize
     _.page.t.onResize(({ cols, rows }) => {
         socket.send(msgpack.serialize({
-            type: "resize",
-            cols: cols,
-            rows: rows
+            Type: "resize",
+            Cols: cols,
+            Rows: rows
         }));
     });
     
