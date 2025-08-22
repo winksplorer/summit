@@ -39,7 +39,7 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 	// upgrade to ws
 	conn, err := WS_Upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("couldn't upgrade to websockets:", err)
+		log.Println("REST_Pty: Couldn't upgrade to WebSocket:", err)
 		return
 	}
 	defer conn.Close()
@@ -79,7 +79,7 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 	// start shell with pty
 	ptmx, err := pty.Start(cmd)
 	if err != nil {
-		log.Println("couldn't start pty:", err)
+		log.Println("REST_Pty: Couldn't start PTY:", err)
 		return
 	}
 	defer ptmx.Close()
@@ -90,13 +90,13 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 		for {
 			n, err := ptmx.Read(buf)
 			if err != nil {
-				log.Println("couldn't read from pty:", err)
+				log.Println("REST_Pty: Couldn't read from PTY:", err)
 				ptmx.Close()
 				conn.Close()
 				return
 			}
 			if err := conn.WriteMessage(websocket.TextMessage, buf[:n]); err != nil {
-				log.Println("couldn't send to websockets:", err)
+				log.Println("REST_Pty: Couldn't send to WebSocket:", err)
 				ptmx.Close()
 				conn.Close()
 				return
@@ -108,7 +108,7 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("couldn't read from websockets:", err)
+			log.Println("REST_Pty: Couldn't read from WebSocket:", err)
 			ptmx.Close()
 			break
 		}
@@ -118,7 +118,7 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 		if err = msgpack.Unmarshal(msg, &resizeReq); err == nil && resizeReq.Type == "resize" {
 			// resize pty
 			if err := pty.Setsize(ptmx, &pty.Winsize{Cols: resizeReq.Cols, Rows: resizeReq.Rows}); err != nil {
-				log.Println("couldn't resize pty")
+				log.Println("REST_Pty: Couldn't resize PTY:", err)
 				ptmx.Close()
 				break
 			}
@@ -126,7 +126,7 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 			// alert the process that the resizing happened
 			err = cmd.Process.Signal(syscall.SIGWINCH)
 			if err != nil {
-				log.Println("couldn't alert pty shell process of a resizing")
+				log.Println("REST_Pty: Couldn't alert PTY shell process of a resizing:", err)
 				ptmx.Close()
 				break
 			}
@@ -134,7 +134,7 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if _, err := ptmx.Write(msg); err != nil {
-			log.Println("couldn't write to pty:", err)
+			log.Println("REST_Pty: Couldn't write to PTY:", err)
 			ptmx.Close()
 			break
 		}

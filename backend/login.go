@@ -49,7 +49,7 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 
 	// get login data
 	if err := r.ParseForm(); err != nil {
-		H_ISE(w, "couldn't parse login", err)
+		H_ISE(w, "REST_Login: Couldn't parse login", err)
 		return
 	}
 
@@ -69,7 +69,7 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 		// generate id & expire time
 		id, err := H_RandomBase64(32)
 		if err != nil {
-			H_ISE(w, "couldn't generate login id", err)
+			H_ISE(w, "REST_Login: Couldn't generate login id", err)
 			return
 		}
 
@@ -78,7 +78,7 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 		// lookup user in the system
 		u, err := user.Lookup(r.FormValue("username"))
 		if err != nil {
-			H_ISE(w, "couldn't lookup username", err)
+			H_ISE(w, "REST_Login: Couldn't lookup username", err)
 			return
 		}
 
@@ -94,20 +94,20 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 
 		if _, err := os.Stat(configFile); os.IsNotExist(err) {
 			if err = C_Create(configFile, uid, gid); err != nil {
-				H_ISE(w, "couldn't create configuration file", err)
+				H_ISE(w, "REST_Login: Couldn't create configuration file", err)
 				return
 			}
 		}
 
 		config, err := os.ReadFile(configFile)
 		if err != nil {
-			H_ISE(w, "couldn't read config file", err)
+			H_ISE(w, "REST_Login: Couldn't read config file", err)
 			return
 		}
 
 		err = json.Unmarshal(config, &configData)
 		if err != nil {
-			H_ISE(w, "couldn't parse config file", err)
+			H_ISE(w, "REST_Login: Couldn't parse config file", err)
 			return
 		}
 
@@ -156,7 +156,7 @@ func REST_Logout(w http.ResponseWriter, r *http.Request) {
 	if A_Authenticated(w, r) {
 		s, err := r.Cookie("s")
 		if err != nil {
-			H_ISE(w, "couldn't get session cookie", err)
+			H_ISE(w, "REST_Logout: Couldn't get session cookie", err)
 			return
 		}
 

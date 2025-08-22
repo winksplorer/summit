@@ -32,7 +32,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 	// upgrade to ws
 	conn, err := WS_Upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("couldn't upgrade to websockets:", err)
+		log.Println("REST_Comm: Couldn't upgrade to websockets:", err)
 		return
 	}
 	defer conn.Close()
@@ -45,13 +45,13 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			// calculate stats
 			percentages, err := cpu.Percent(0, false)
 			if err != nil {
-				log.Println("couldn't get cpu info:", err)
+				log.Println("REST_Comm: Couldn't get CPU usage:", err)
 				return
 			}
 
 			virtualMem, err := mem.VirtualMemory()
 			if err != nil {
-				log.Println("couldn't get memory info:", err)
+				log.Println("REST_Comm: Couldn't get memory usage:", err)
 				return
 			}
 
@@ -68,7 +68,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 				},
 			}
 			if err := Comm_Send(stats, conn); err != nil {
-				log.Println("couldn't send stats:", err)
+				log.Println("REST_Comm: Couldn't send stats:", err)
 				return
 			}
 
@@ -92,7 +92,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("couldn't read from websockets:", err)
+			log.Println("REST_Comm: Couldn't read from WebSocket:", err)
 			cancel()
 			break
 		}
@@ -100,7 +100,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 		// decode comm object
 		var decoded map[string]interface{}
 		if err := msgpack.Unmarshal(msg, &decoded); err != nil {
-			log.Println("could not read data")
+			log.Println("REST_Comm: Could not read data")
 			continue
 		}
 
@@ -116,7 +116,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			// get data
 			keys, ok := decoded["data"].(map[string]interface{})
 			if !ok {
-				Comm_BR(data, "data doesn't exist or isn't an object")
+				Comm_BR(data, "Data doesn't exist or isn't an object")
 				break
 			}
 
@@ -175,11 +175,11 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			data["data"] = thedata
 		default:
 			// if t is not recognized, then throw error
-			Comm_Error(data, http.StatusNotFound, "unknown type")
+			Comm_Error(data, http.StatusNotFound, "Unknown type")
 		}
 
 		if err := Comm_Send(data, conn); err != nil {
-			log.Println("could not send data for", decoded["t"])
+			log.Println("REST_Comm: Could not send data for", decoded["t"])
 		}
 	}
 }
@@ -189,13 +189,13 @@ func Comm_Send(data map[string]interface{}, connection *websocket.Conn) error {
 	// encode
 	encodedData, err := msgpack.Marshal(data)
 	if err != nil {
-		log.Println("couldn't format with msgpack:", err)
+		log.Println("Comm_Send: Couldn't format with MessagePack:", err)
 		return err
 	}
 
 	// send
 	if err := connection.WriteMessage(websocket.BinaryMessage, encodedData); err != nil {
-		log.Println("couldn't send to websockets:", err)
+		log.Println("Comm_Send: Couldn't send to WebSocket:", err)
 		return err
 	}
 	return nil
@@ -204,7 +204,7 @@ func Comm_Send(data map[string]interface{}, connection *websocket.Conn) error {
 // prints log message and sets data["error"]
 func Comm_Error(data map[string]interface{}, code int, msg string) {
 	data["error"] = map[string]interface{}{"code": code, "msg": msg}
-	log.Printf("%s failed: %s\n", data["t"], msg)
+	log.Printf("%s: %s.\n", data["t"], msg)
 }
 
 // Comm_Error(data, http.StatusInternalServerError, msg)

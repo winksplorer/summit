@@ -73,7 +73,7 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 	// template together base + the page
 	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/template/base.html", FrontendDir), fmt.Sprintf("%s/template/%s.html", FrontendDir, pageName))
 	if err != nil {
-		H_ISE(w, fmt.Sprintf("template parse error for %s", path), err)
+		H_ISE(w, fmt.Sprintf("REST_Origin: Template parse error for %s", path), err)
 		return
 	}
 
@@ -96,7 +96,7 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 	// create json
 	data, err := json.Marshal(u.config)
 	if err != nil {
-		H_ISE(w, "couldn't represent config as json", err)
+		H_ISE(w, "REST_Origin: Couldn't represent config as JSON", err)
 		return
 	}
 
@@ -109,7 +109,7 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 		BuildString: BuildString,
 	})
 	if err != nil {
-		H_ISE(w, fmt.Sprintf("template exec error for %s", path), err)
+		H_ISE(w, fmt.Sprintf("REST_Origin: Template exec error for %s", path), err)
 		return
 	}
 }
@@ -160,7 +160,7 @@ func REST_SUID(w http.ResponseWriter, r *http.Request) {
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		H_ISE(w, "couldn't read /api/sudo data", err)
+		H_ISE(w, "REST_SUID: Couldn't read request data", err)
 		return
 	}
 	defer r.Body.Close()
@@ -168,7 +168,7 @@ func REST_SUID(w http.ResponseWriter, r *http.Request) {
 	// parse
 	var rootReq REST_RootRequest
 	if err := json.Unmarshal(body, &rootReq); err != nil {
-		log.Println("error: failed to parse /api/sudo data:", err)
+		log.Println("REST_SUID: Couldn't parse request data:", err)
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
@@ -190,7 +190,7 @@ func REST_SUID(w http.ResponseWriter, r *http.Request) {
 	cmd := exec.Command(cmdStr)
 	err = cmd.Run()
 	if err != nil {
-		H_ISE(w, "couldn't run command as root", err)
+		H_ISE(w, "REST_SUID: Couldn't execute requested action", err)
 		return
 	}
 
