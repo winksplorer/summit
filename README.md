@@ -125,6 +125,7 @@ The self-extracting archive code so that the entire server is distributed as one
     - [X] User choosable accent color
     - [X] Sync with system dark/light theme
 - [X] Global config
+- [X] 404 page
 - [ ] Logging
     - [ ] Backend
         - [ ] Application-specific logs?

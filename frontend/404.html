@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>login</title>
+        <link rel="stylesheet" href="css/typography.css" type="text/css">
+        <link rel="stylesheet" href="css/independent.css" type="text/css">
+    </head>
+    <body>
+        <div class="main block">
+            <h1 id="hostname">?</h1>
+            <p>this page doesn't exist (or something went horribly wrong).<br>
+            right now, probably both.</p>
+            <button onclick="location.href = '/'">return to home</button>
+        </div>
+        <div class="block br"></div>
+        <div class="block bl"></div>
+        <div class="block tl"></div>
+        <div class="block tr"></div>
+
+        <script>
+            fetch('/api/hostname')
+                .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))
+                .then(data => document.getElementById('hostname').textContent = data)
+                .catch(err => console.error('failed to fetch hostname:', err));
+        </script>
+    </body>
+</html>

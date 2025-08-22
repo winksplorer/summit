@@ -44,7 +44,7 @@ body {
         "bl bl   br";
 }
 
-form {
+form, .main {
     grid-area: form;
     background: var(--s0);
     padding: 1.62vh 2.24vw;
@@ -60,15 +60,19 @@ body, h1 { margin: 0; }
 h1 { font-size: clamp(3em, 5.5vh, 4.5em); }
 #password { margin-top: 1em; }
 
-input[type="submit"]:hover { background: var(--s2); }
-input[type="submit"]:active { background: var(--s1); }
-input[type="submit"]:disabled { color: var(--s5); background: var(--s3); }
-input[type="submit"] {
+input[type="submit"]:hover, button:hover { background: var(--s2); }
+input[type="submit"]:active, button:active { background: var(--s1); }
+input[type="submit"]:disabled, button:disabled { color: var(--s5); background: var(--s3); }
+input[type="submit"], button {
     padding: 0 1em;
     background: var(--s3);
     color: var(--text);
 
     transition: background 0.07s ease-in-out, color 0.07s ease-in-out;
+}
+
+button {
+    width: fit-content;
 }
 
 input[placeholder] {
@@ -84,7 +88,7 @@ input[placeholder] {
 .tr { grid-area: tr; background: var(--s3); }
 .br { grid-area: br; background: var(--s4); }
 
-p, input {
+p, input, button {
     font-size: clamp(1.3em, 2vh, 1.7em);
     border: none;
 }
