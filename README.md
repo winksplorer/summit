@@ -1,5 +1,7 @@
 # summit
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/winksplorer/summit/ci-and-badge.yml)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/winksplorer/summit)
+![x64 glibc compiled size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/winksplorer/6afa57f72db1f0883a5a9782a9718ffe/raw/x64_glibc_size.json)
 
 summit is a portable and self-contained server management web dashboard for Linux and BSD that fits in 3MB.
 
