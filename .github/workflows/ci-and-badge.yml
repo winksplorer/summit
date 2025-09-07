@@ -1,0 +1,37 @@
+name: CI + size badge
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install deps
+      run: sudo apt update && sudo apt install -y golang-go make clang binutils libarchive-dev libpam0g-dev git openssl minify
+
+    - name: Build
+      run: make
+    
+    - name: Measure
+        id: sizes
+        run: |
+          echo "COMPILED_SIZE=$(cat summit | wc -c | numfmt --to=iec)" >> $GITHUB_ENV
+
+    # yes, this is horrifically bad. it *does* work, though...
+    - name: Set compiled size badge for x64 glibc
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: 6afa57f72db1f0883a5a9782a9718ffe
+        filename: x64_glibc_size.json
+        label: "compiled size (x64 glibc)"
+        message: ${{ env.COMPILED_SIZE }}
+        color: "orange"
