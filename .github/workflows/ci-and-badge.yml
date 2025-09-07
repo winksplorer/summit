@@ -21,8 +21,8 @@ jobs:
       run: make
     
     - name: Measure
-        id: sizes
-        run: |
+      id: sizes
+      run: |
           echo "COMPILED_SIZE=$(cat summit | wc -c | numfmt --to=iec)" >> $GITHUB_ENV
 
     # yes, this is horrifically bad. it *does* work, though...
