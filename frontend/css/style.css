@@ -87,6 +87,11 @@ body {
 
     background: var(--main-bg);
     border-bottom: 0.05em solid var(--line);
+
+    /* god hates me */
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
 }
 
 .sticky-footer {
@@ -399,7 +404,6 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .nopadding { padding: 0; }
-.label-margin { margin-right: 0.5em; }
 
 .bottom {
     margin-top: auto;
@@ -415,6 +419,8 @@ input[type="range"]::-moz-range-thumb {
     flex-direction: column;
     width: 100%;
 }
+
+.separator_0-2 { margin-right: 0.2em; }
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--line); }
