@@ -148,6 +148,7 @@ select {
 
 @supports (-moz-appearance: none) {
     select { border-right: none; }
+    html, body { scrollbar-color: var(--text) var(--line); } /* also do firefox-specific scrollbars */
 }
 
 /* checkboxes and color selectors */
@@ -250,10 +251,7 @@ input[type="range"]::-moz-range-thumb {
     align-items: center;
 }
 
-.range-pair {
-    align-items: flex-start;
-}
-
+.range-pair { align-items: flex-start; }
 .range-wrapper {
     display: flex;
     flex-direction: column;
@@ -281,9 +279,7 @@ input[type="range"]::-moz-range-thumb {
     flex-direction: column;
 }
 
-#sidebar > *:not(#navbar-items), #navbar-items > a {
-    padding: 0 20px;
-}
+#sidebar > *:not(#navbar-items), #navbar-items > a { padding: 0 20px; }
 
 /* hostname text */
 .hostname { 
@@ -319,9 +315,7 @@ input[type="range"]::-moz-range-thumb {
 
     /* the bottom side of the navbar (stats, quick actions, etc) */
 
-#stats {
-    visibility: hidden;
-}
+#stats { visibility: hidden; }
 
 /* all animated text in stats */
 /* oh fucking god. TODO: not this. */
@@ -372,22 +366,15 @@ input[type="range"]::-moz-range-thumb {
     align-items: center;
 }
 
-#logging_no-entries > * {
-    margin: 0;
-}
+#logging_no-entries > * { margin: 0; }
 
 /* logging events */
-.logging_e_time, .logging_e_source {
-    color: var(--text-gray)
-}
+.logging_e_time, .logging_e_source { color: var(--text-gray) }
+.logging_e_source { margin-left: auto; }
 
 .logging_e {
     display: flex;
     gap: 1em;
-}
-
-.logging_e_source {
-    margin-left: auto;
 }
 
     /* misc */
