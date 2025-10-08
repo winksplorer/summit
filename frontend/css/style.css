@@ -15,6 +15,7 @@
 
     --main-bg: var(--s0);
     --text: #e8e6e3;
+    --text-gray: #787673;
 
     --sidebar-bg: var(--s1);
     --sidebar-text: #e8e6e3;
@@ -368,6 +369,20 @@ input[type="range"]::-moz-range-thumb {
 
 #logging_no-entries > * {
     margin: 0;
+}
+
+/* logging events */
+.logging_e_time, .logging_e_source {
+    color: var(--text-gray)
+}
+
+.logging_e {
+    display: flex;
+    gap: 1em;
+}
+
+.logging_e_source {
+    margin-left: auto;
 }
 
     /* misc */
