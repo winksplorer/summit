@@ -7,8 +7,9 @@ const failCodes = {
     'inv': 'invalid session'
 }
 
-// msg element
-let msgEl = document.getElementById('msg')
+// elements
+const msgEl = document.getElementById('msg')
+const hostnameEl = document.getElementById('hostname');
 
 // go to terminal page if already logged in
 fetch('/api/authenticated').then(res => res.ok && window.location.replace('/terminal.html'));
@@ -16,7 +17,10 @@ fetch('/api/authenticated').then(res => res.ok && window.location.replace('/term
 // set hostname element
 fetch('/api/hostname')
     .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))
-    .then(data => document.getElementById('hostname').textContent = data)
+    .then(data => {
+        hostnameEl.textContent = data;
+        hostnameEl.style.visibility = 'visible';
+    })
     .catch(err => console.error('failed to fetch hostname:', err));
 
 

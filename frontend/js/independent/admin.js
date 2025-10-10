@@ -1,19 +1,23 @@
 // summit frontend/js/independent/admin.js - handles admin.html root login page
 
+// elements
+const msgEl = document.getElementById('msg')
+const opEl = document.getElementById('operation')
+const buttonEl = document.querySelector('input[type="submit"]')
+const hostnameEl = document.getElementById('hostname');
+
 // set hostname element
 fetch('/api/hostname')
     .then(res => res.ok ? res.text() : Promise.reject(`HTTP ${res.status}`))
-    .then(data => document.getElementById('hostname').textContent = data)
+    .then(data => {
+        hostnameEl.textContent = data;
+        hostnameEl.style.visibility = 'visible';
+    })
     .catch(err => console.error('failed to fetch hostname:', err));
 
 // set theme
 const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 document.documentElement.dataset.theme = localStorage.getItem('theme') || preferredTheme;
-
-// elements
-const msgEl = document.getElementById('msg')
-const opEl = document.getElementById('operation')
-const buttonEl = document.querySelector('input[type="submit"]')
 
 // url parameters (?operation)
 const urlParams = new URLSearchParams(window.location.search);

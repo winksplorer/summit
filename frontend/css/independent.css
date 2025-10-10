@@ -59,6 +59,7 @@ form, .main {
 body, h1 { margin: 0; }
 h1 { font-size: clamp(3em, 5.5vh, 4.5em); }
 #password { margin-top: 1em; }
+#hostname { visibility: hidden; }
 
 input[type="submit"]:hover, button:hover { background: var(--s2); }
 input[type="submit"]:active, button:active { background: var(--s1); }
