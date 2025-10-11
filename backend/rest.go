@@ -66,11 +66,7 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 	// oh boy. TODO: make this not horrific
 	if !strings.HasSuffix(path, ".html") || path == "index.html" || path == "admin.html" || path == "404.html" {
 		if _, err := os.Stat(fmt.Sprintf("%s/%s", FrontendDir, path)); os.IsNotExist(err) {
-			if path == "404.html" {
-				http.Error(w, "Not Found", http.StatusNotFound)
-			} else {
-				http.ServeFile(w, r, fmt.Sprintf("%s/404.html", FrontendDir))
-			}
+			HTTP_NotFound(w, path)
 		} else {
 			http.FileServer(http.Dir(FrontendDir)).ServeHTTP(w, r)
 		}
@@ -82,7 +78,7 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 	// template together base + the page
 	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/template/base.html", FrontendDir), fmt.Sprintf("%s/template/%s.html", FrontendDir, pageName))
 	if err != nil && strings.Contains(err.Error(), "no such file or directory") {
-		http.ServeFile(w, r, fmt.Sprintf("%s/404.html", FrontendDir))
+		HTTP_NotFound(w, path)
 		return
 	} else if err != nil {
 		H_ISE(w, fmt.Sprintf("REST_Origin: Template parse error for %s", path), err)

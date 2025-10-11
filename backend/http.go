@@ -2,8 +2,10 @@ package main
 
 import (
 	"crypto/tls"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/NYTimes/gziphandler"
@@ -38,4 +40,15 @@ func HTTP_Init(port string) (*hlfhr.Server, error) {
 	}
 
 	return srv, nil
+}
+
+func HTTP_NotFound(w http.ResponseWriter, path string) {
+	notFoundPage, err := os.ReadFile(fmt.Sprintf("%s/404.html", FrontendDir))
+	if path == "404.html" || err != nil {
+		http.Error(w, "Not Found", http.StatusNotFound)
+	} else {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, string(notFoundPage))
+	}
 }
