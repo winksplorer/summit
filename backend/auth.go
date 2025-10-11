@@ -1,4 +1,4 @@
-// summit backend/login.go - handles login
+// summit backend/auth.go - handles authentication and sessions
 
 package main
 

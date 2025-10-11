@@ -137,23 +137,9 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			// return success
 			data["data"] = map[string]interface{}{}
 		case "log.read":
-			source, err := H_GetValue[string](decoded, "data.source")
-			if err != nil {
-				Comm_BR(data, err.Error())
-				break
-			}
-
-			amount, err := H_GetNumericalValue[uint16](decoded, "data.amount")
-			if err != nil {
-				Comm_BR(data, err.Error())
-				break
-			}
-
-			page, err := H_GetNumericalValue[uint16](decoded, "data.page")
-			if err != nil {
-				Comm_BR(data, err.Error())
-				break
-			}
+			source := IT_Must[string](decoded, "data.source", "all")
+			amount := IT_MustNumber[uint16](decoded, "data.amount", 50)
+			page := IT_MustNumber[uint16](decoded, "data.page", 1)
 
 			// actual read
 			events, err := L_Read(source, page*amount, amount)

@@ -32,7 +32,7 @@ func GC_Create() error {
 
 // sets a value in GC_Config
 func GC_SetValue(key string, val interface{}) error {
-	return H_SetValue(GC_Config, key, val)
+	return IT_Set(GC_Config, key, val)
 }
 
 // fills in GC_Config with the actual data from GC_Path

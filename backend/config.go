@@ -38,7 +38,7 @@ func C_SetValue(userId string, key string, val interface{}) error {
 		return fmt.Errorf("user not found: %s", userId)
 	}
 
-	return H_SetValue(u.config, key, val)
+	return IT_Set(u.config, key, val)
 }
 
 // saves user config

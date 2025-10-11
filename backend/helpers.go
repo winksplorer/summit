@@ -139,14 +139,13 @@ func H_ClientIP(r *http.Request) string {
  */
 func H_Cast[T Number](v any) (T, error) {
 	var zero T
-	rv := reflect.ValueOf(v)
-	switch rv.Kind() {
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return T(rv.Int()), nil
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return T(rv.Uint()), nil
-	case reflect.Float32, reflect.Float64:
-		return T(rv.Float()), nil
+	switch n := v.(type) {
+	case int, int8, int16, int32, int64:
+		return T(reflect.ValueOf(n).Int()), nil
+	case uint, uint8, uint16, uint32, uint64:
+		return T(reflect.ValueOf(n).Uint()), nil
+	case float32, float64:
+		return T(reflect.ValueOf(n).Float()), nil
 	default:
 		return zero, fmt.Errorf("not numeric: %T", v)
 	}
@@ -156,79 +155,6 @@ func H_Cast[T Number](v any) (T, error) {
 func H_ISE(w http.ResponseWriter, s string, err error) {
 	log.Println(s, err)
 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-}
-
-// sets a value in m to val based on key. basically, key="x.y.z" will set m["x"]["y"]["z"] to val.
-func H_SetValue(m map[string]interface{}, key string, val interface{}) error {
-	var interf interface{} = m
-	for i, k := range strings.Split(key, ".") {
-		nested, ok := interf.(map[string]interface{})
-		if !ok {
-			return fmt.Errorf("not a map at %s", key)
-		}
-
-		if i == len(strings.Split(key, "."))-1 {
-			nested[k] = val
-			return nil
-		}
-
-		if _, ok := nested[k]; !ok {
-			nested[k] = make(map[string]interface{})
-		}
-		interf = nested[k]
-	}
-
-	return nil
-}
-
-// returns a value in m based on key. basically, key="x.y.z" will return m["x"]["y"]["z"].
-func H_GetRawValue(m map[string]interface{}, key string) (interface{}, error) {
-	var interf interface{} = m
-	for _, k := range strings.Split(key, ".") {
-		nested, ok := interf.(map[string]interface{})
-		if !ok {
-			return nil, fmt.Errorf("not a map at %q", k)
-		}
-		interf, ok = nested[k]
-		if !ok {
-			return nil, fmt.Errorf("couldn't find %q", key)
-		}
-	}
-
-	return interf, nil
-}
-
-// returns T in m based on key, using value.(T). basically, key="x.y.z" will return m["x"]["y"]["z"].
-func H_GetValue[T any](m map[string]interface{}, key string) (T, error) {
-	var zero T
-
-	interf, err := H_GetRawValue(m, key)
-	if err != nil {
-		return zero, err
-	}
-
-	val, ok := interf.(T)
-	if !ok {
-		return zero, fmt.Errorf("value at %q is not %T, but instead %T", key, zero, interf)
-	}
-	return val, nil
-}
-
-// returns T in m based on key, using H_Cast[T]. basically, key="x.y.z" will return m["x"]["y"]["z"].
-func H_GetNumericalValue[T Number](m map[string]interface{}, key string) (T, error) {
-	var zero T
-
-	interf, err := H_GetRawValue(m, key)
-	if err != nil {
-		return zero, err
-	}
-
-	casted, err := H_Cast[T](interf)
-	if err != nil {
-		return zero, err
-	}
-
-	return casted, nil
 }
 
 // copies a file

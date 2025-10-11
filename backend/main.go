@@ -55,14 +55,7 @@ func main() {
 	}
 
 	// set port from config
-	port := ":7070"
-	p, err := H_GetNumericalValue[uint16](GC_Config, "port")
-	if err != nil {
-		log.Printf("H_GetNumericalValue[uint16]: %s.", err)
-		log.Printf("Couldn't read port, defaulting to %s.", port)
-	} else {
-		port = fmt.Sprintf(":%d", p)
-	}
+	port := fmt.Sprintf(":%d", IT_MustNumber[uint16](GC_Config, "port", 7070))
 
 	// call init functions
 	REST_Init()
