@@ -19,16 +19,16 @@ const A_SessionExpireTime = 4 * time.Hour
 
 // a user session
 type A_Session struct {
-	user       string                 // username
-	gid        uint32                 // unix gid
-	uid        uint32                 // unix uid
-	suppgids   []uint32               // supplementary unix gids
-	configFile string                 // configuration file path
-	config     map[string]interface{} // cached config data
-	homedir    string                 // home directory
-	ua         string                 // user agent
-	ip         string                 // ip
-	expires    time.Time              // time when this user's login expires
+	user       string         // username
+	gid        uint32         // unix gid
+	uid        uint32         // unix uid
+	suppgids   []uint32       // supplementary unix gids
+	configFile string         // configuration file path
+	config     map[string]any // cached config data
+	homedir    string         // home directory
+	ua         string         // user agent
+	ip         string         // ip
+	expires    time.Time      // time when this user's login expires
 }
 
 var (
@@ -89,7 +89,7 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// config logic
-		var configData map[string]interface{}
+		var configData map[string]any
 		configFile := fmt.Sprintf("%s/.config/summit.json", u.HomeDir)
 
 		if _, err := os.Stat(configFile); os.IsNotExist(err) {

@@ -11,7 +11,7 @@ import (
 const GC_Path string = "/etc/summit.json"
 
 // cached global config
-var GC_Config map[string]interface{}
+var GC_Config map[string]any
 
 // copies global config template to GC_Path
 func GC_Create() error {
@@ -31,7 +31,7 @@ func GC_Create() error {
 }
 
 // sets a value in GC_Config
-func GC_SetValue(key string, val interface{}) error {
+func GC_SetValue(key string, val any) error {
 	return IT_Set(GC_Config, key, val)
 }
 

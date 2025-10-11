@@ -29,7 +29,7 @@ func C_Create(configFile string, uid uint32, gid uint32) error {
 }
 
 // sets a user config value
-func C_SetValue(userId string, key string, val interface{}) error {
+func C_SetValue(userId string, key string, val any) error {
 	A_SessionsMutex.Lock()
 	defer A_SessionsMutex.Unlock()
 

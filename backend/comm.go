@@ -58,9 +58,9 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			usageValue, usageUnit := H_HumanReadableSplit(virtualMem.Used)
 
 			// assemble stats into a comm object
-			stats := map[string]interface{}{
+			stats := map[string]any{
 				"t": "stat.basic",
-				"data": map[string]interface{}{
+				"data": map[string]any{
 					"memTotal":     H_HumanReadable(virtualMem.Total),
 					"memUsage":     math.Round(usageValue),
 					"memUsageUnit": usageUnit,
@@ -98,14 +98,14 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// decode comm object
-		var decoded map[string]interface{}
+		var decoded map[string]any
 		if err := msgpack.Unmarshal(msg, &decoded); err != nil {
 			log.Println("REST_Comm: Could not read data")
 			continue
 		}
 
 		// pre-assemble our response data
-		data := map[string]interface{}{
+		data := map[string]any{
 			"t":  decoded["t"],
 			"id": decoded["id"],
 		}
@@ -114,7 +114,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 		switch decoded["t"] {
 		case "config.set":
 			// get data
-			keys, ok := decoded["data"].(map[string]interface{})
+			keys, ok := decoded["data"].(map[string]any)
 			if !ok {
 				Comm_BR(data, "Data doesn't exist or isn't an object")
 				break
@@ -135,7 +135,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// return success
-			data["data"] = map[string]interface{}{}
+			data["data"] = map[string]any{}
 		case "log.read":
 			source := IT_Must[string](decoded, "data.source", "all")
 			amount := IT_MustNumber[uint16](decoded, "data.amount", 50)
@@ -148,10 +148,10 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 
-			thedata := []map[string]interface{}{}
+			thedata := []map[string]any{}
 
 			for _, e := range events {
-				thedata = append(thedata, map[string]interface{}{
+				thedata = append(thedata, map[string]any{
 					"time":   e.Time.Unix(),
 					"source": e.Source,
 					"msg":    e.Message,
@@ -171,7 +171,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 }
 
 // encodes and sends a comm message
-func Comm_Send(data map[string]interface{}, connection *websocket.Conn) error {
+func Comm_Send(data map[string]any, connection *websocket.Conn) error {
 	// encode
 	encodedData, err := msgpack.Marshal(data)
 	if err != nil {
@@ -188,17 +188,17 @@ func Comm_Send(data map[string]interface{}, connection *websocket.Conn) error {
 }
 
 // prints log message and sets data["error"]
-func Comm_Error(data map[string]interface{}, code int, msg string) {
-	data["error"] = map[string]interface{}{"code": code, "msg": msg}
+func Comm_Error(data map[string]any, code int, msg string) {
+	data["error"] = map[string]any{"code": code, "msg": msg}
 	log.Printf("%s: %s.\n", data["t"], msg)
 }
 
 // Comm_Error(data, http.StatusInternalServerError, msg)
-func Comm_ISE(data map[string]interface{}, msg string) {
+func Comm_ISE(data map[string]any, msg string) {
 	Comm_Error(data, http.StatusInternalServerError, msg)
 }
 
 // Comm_Error(data, http.StatusBadRequest, msg)
-func Comm_BR(data map[string]interface{}, msg string) {
+func Comm_BR(data map[string]any, msg string) {
 	Comm_Error(data, http.StatusBadRequest, msg)
 }
