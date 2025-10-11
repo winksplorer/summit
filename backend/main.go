@@ -55,7 +55,7 @@ func main() {
 	}
 
 	// set port from config
-	port := fmt.Sprintf(":%d", IT_MustNumber[uint16](GC_Config, "port", 7070))
+	port := fmt.Sprintf(":%d", IT_MustNumber(GC_Config, "port", uint16(7070)))
 
 	// call init functions
 	REST_Init()

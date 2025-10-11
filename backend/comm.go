@@ -137,9 +137,9 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			// return success
 			data["data"] = map[string]any{}
 		case "log.read":
-			source := IT_Must[string](decoded, "data.source", "all")
-			amount := IT_MustNumber[uint16](decoded, "data.amount", 50)
-			page := IT_MustNumber[uint16](decoded, "data.page", 1)
+			source := IT_Must(decoded, "data.source", "all")
+			amount := IT_MustNumber(decoded, "data.amount", uint16(50))
+			page := IT_MustNumber(decoded, "data.page", uint16(50))
 
 			// actual read
 			events, err := L_Read(source, page*amount, amount)
