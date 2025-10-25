@@ -4,7 +4,6 @@ GO ?= go
 TAR ?= tar
 SED ?= sed
 MINIFIER ?= minify -q
-UPX ?= upx -9 --lzma
 
 PREFIX ?= /usr/local
 
@@ -17,17 +16,15 @@ endif
 
 .PHONY: backend frontend all sea clean install
 
-all: frontend backend
+all: backend frontend sea
 
 clean:
 	rm -rf summit-server summit summit.tar.xz summit.tar.xz.o frontend-dist
 
 # backend server build with go
 backend:
-	@echo "     GO ($(GO)) summit"
-	@$(GO) mod tidy && $(GO) build -o summit $(GOFLAGS) -ldflags="$(GO_LDFLAGS)"
-	@echo "     UPX ($(UPX)) summit"
-	@$(UPX) summit
+	@echo "     GO (${GO}) backend -> summit-server"
+	@cd backend && $(GO) mod tidy && $(GO) build -o ../summit-server $(GOFLAGS) -ldflags="$(GO_LDFLAGS)"
 
 # bundle + minify frontend
 frontend:

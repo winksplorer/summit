@@ -61,7 +61,7 @@ pkg install go gmake binutils libarchive git openssl minify gsed \
 
 ## Code structure
 
-### *.go
+### backend
 
 The backend server code. It serves the frontend, and provides a simple API using [WebSockets + MessagePack](doc/COMMUNICATION.md). Written in Go.
 
@@ -69,8 +69,13 @@ The backend server code. It serves the frontend, and provides a simple API using
 
 The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
 
+### sea.c
+
+The self-extracting archive code so that the entire server is distributed as one file. Written in C.
+
 ## TODO
 
+- [X] SEA
 - [X] HTTP/2
 - [X] TLS
 - [X] Login
@@ -78,6 +83,7 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
     - [X] Login page
     - [X] Cookies
     - [X] Admin system
+    - [X] Slight refactoring (use my other login impl instead)
 - [X] Stats
     - [X] Basic numerical stats
     - [X] Implement Odometer
@@ -85,10 +91,20 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
 - [X] WebSocket terminal
     - [X] Switch to xterm.js
     - [X] Firefox compatibility
+    - [X] Fix the fucking thing
     - [X] Fix doas
 - [X] UI Notifications
 - [X] Implement templates
-- [X] WebSocket + MessagePack API
+- [X] Use a WebSocket connection instead of HTTP endpoints
+    - [X] Proof of concept (Stats test)
+    - [X] Fully switch to WebSockets
+- [X] Simplify entire frontend
+    - [X] Simplify HTML using templates
+    - [X] Simplify JS
+        - [X] Use `window._`
+        - [X] Bundling
+        - [X] Minification
+    - [X] Simplify CSS
 - [X] Settings
     - [X] Settings page
     - [X] Backend settings system
@@ -111,7 +127,6 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
     - [X] Sync with system dark/light theme
 - [X] Global config
 - [X] 404 page
-- [X] Go embedding
 - [ ] Logging
     - [ ] Backend
         - [ ] Application-specific logs?

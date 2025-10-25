@@ -3,12 +3,9 @@
 package main
 
 import (
-	"embed"
 	"fmt"
 	"log"
 	"os"
-	"sync"
-	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -18,16 +15,10 @@ var (
 	Version     string = "undefined"
 	BuildString string = "undefined"
 
-	// FrontendDir string = "/tmp/summit/frontend-dist"
-	Hostname string = "undefined"
+	FrontendDir string = "/tmp/summit/frontend-dist"
+	Hostname    string = "undefined"
 
 	WS_Upgrader = websocket.Upgrader{}
-
-	//go:embed frontend-dist/*
-	Frontend      embed.FS
-	FrontendCache = map[string][]byte{}
-	FrontendMu    sync.RWMutex
-	StartTime     = time.Now()
 )
 
 // entry point
@@ -42,7 +33,7 @@ func main() {
 	// select where the frontend is. SEA will pass all args.
 	if len(os.Args) > 1 && os.Args[1] == "dev" {
 		log.Println("Using ./frontend for frontend directory.")
-		// FrontendDir = "frontend"
+		FrontendDir = "frontend"
 	}
 
 	// get the hostname

@@ -12,12 +12,7 @@ func C_Create(configFile string, uid uint32, gid uint32) error {
 	log.Printf("C_Create: Creating new configuration at %s.", configFile)
 
 	// copy the defaults
-	defaultConfig, err := Frontend.ReadFile("frontend-dist/assets/defaultconfig.json")
-	if err != nil {
-		return err
-	}
-
-	if err := os.WriteFile(configFile, defaultConfig, 0664); err != nil {
+	if err := H_CopyFile(fmt.Sprintf("%s/assets/defaultconfig.json", FrontendDir), configFile); err != nil {
 		return err
 	}
 
