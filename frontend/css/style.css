@@ -44,20 +44,38 @@
     --sidebar-text: #181514;
 }
 
-    /* very generic shit */
+    /* the "foundation" of the page */
 body {
     background: var(--page-bg);
     color: var(--text);
 
     display: flex;
     height: 100vh;
-    overflow-y: hidden;
-    overflow-x: hidden;
+    overflow: hidden;
     margin: 0;
 
     font-size: 1.5em;
     font-family: var(--font), sans-serif;
 }
+
+@supports (-moz-appearance: none) {
+    select { border-right: none; }
+    html, body { scrollbar-color: var(--text) var(--line); } /* also do firefox-specific scrollbars */
+}
+
+main {
+    background: var(--main-bg);
+    flex-grow: 1;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+    padding-top: 1em;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--line); }
+::-webkit-scrollbar-thumb { background: var(--text); }
 
     /* generic "ui elements" */
 .container {
@@ -101,13 +119,26 @@ hr {
     background: var(--line);
 }
 
+.input-pair {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.separator {
+    width: 1px;
+    height: 1.1em;
+    background: var(--line);
+}
+
     /* inputs */
 
 /* buttons, dropdowns, and text inputs */
-button:hover, input[type="submit"]:hover, select:hover, input[type="text"]:hover { background: var(--s2); }
-button:active, input[type="submit"]:active { background: var(--s1); }
-button:disabled, input[type="submit"]:disabled, select:disabled, input[type="text"]:disabled { color: var(--s5); background: var(--s3); }
-button, input[type="submit"], select, input[type="text"] {
+button:hover, select:hover, input[type="text"]:hover          { background: var(--s2); }
+button:active                                                 { background: var(--s1); }
+button:disabled, select:disabled, input[type="text"]:disabled { color: var(--s5); background: var(--s3); }
+button, select, input[type="text"] {
     font-size: 0.85em;
     font-family: var(--font), sans-serif;
 
@@ -125,21 +156,13 @@ input[type="text"] {
     width: 20vw;
 }
 
-/* dropdowns. this is cursed as hell, and probably the absolute worst hack i've ever seen (the border-right).
- * the hack is so the arrow has proper padding. we disable the hack on firefox because it *does* have proper arrow padding.
- * just because a browser isn't firefox doesn't mean it has broken padding. but, it is most of them (webkit dominates), so it's likely fine.
- */
+/* dropdowns. border-right is an extremely terrible hack (i even have to disable it on firefox). LMK if there's a better way */
 select {
     font-size: 0.7em;
     padding: 0.1em 0;
     padding-right: 1em;
     padding-left: 0.25em;
     border-right: 0.3em solid transparent;
-}
-
-@supports (-moz-appearance: none) {
-    select { border-right: none; }
-    html, body { scrollbar-color: var(--text) var(--line); } /* also do firefox-specific scrollbars */
 }
 
 /* checkboxes and color selectors */
@@ -185,7 +208,6 @@ input[type="color"] {
 }
 
 /* ranges */
-/* WHY, BROWSER GODS */
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
@@ -208,7 +230,6 @@ input[type="range"]::-moz-range-track {
 }
 
 /* range thumbs */
-input[type="range"]::-webkit-slider-thumb:hover { background: var(--a0); }
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -221,7 +242,6 @@ input[type="range"]::-webkit-slider-thumb {
     transition: background 0.07s ease-in-out;
 }
 
-input[type="range"]::-moz-range-thumb:hover { background: var(--a0); }
 input[type="range"]::-moz-range-thumb {
     width: 0.6em;
     height: 1.3em;
@@ -234,13 +254,8 @@ input[type="range"]::-moz-range-thumb {
     transition: background 0.07s ease-in-out;
 }
 
-
-.input-pair {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
+input[type="range"]::-webkit-slider-thumb:hover { background: var(--a0); }
+input[type="range"]::-moz-range-thumb:hover { background: var(--a0); }
 
 .range-pair { align-items: flex-start; }
 .range-wrapper {
@@ -296,7 +311,6 @@ input[type="range"]::-moz-range-thumb {
 #navbar-items { 
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
     gap: 0.5em;
     white-space: nowrap;
     width: 100%;
@@ -309,8 +323,7 @@ input[type="range"]::-moz-range-thumb {
 
 #stats { visibility: hidden; }
 
-/* all animated text in stats */
-/* oh fucking god. TODO: not this. */
+/* all animated text in stats. TODO: not this. */
 .odometer {
     margin-right: -5px;
     margin-bottom: 3px;
@@ -324,12 +337,7 @@ input[type="range"]::-moz-range-thumb {
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-.separator {
-    width: 1px;
-    height: 1.1em;
-    background: var(--line);
+    margin-top: 0.5em;
 }
 
     /* messages */
@@ -371,26 +379,12 @@ input[type="range"]::-moz-range-thumb {
 
     /* misc */
 
-/* the main part of each page */
-main {
-    background: var(--main-bg);
-    flex-grow: 1;
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5em;
-    padding-top: 1em;
-}
-
 .nopadding { padding: 0; }
+.separator_0-2 { margin-right: 0.2em; }
 
 .bottom {
     margin-top: auto;
     margin-bottom: 0.5em;
-
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
 }
 
 .right {
@@ -398,9 +392,3 @@ main {
     flex-direction: column;
     width: 100%;
 }
-
-.separator_0-2 { margin-right: 0.2em; }
-
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--line); }
-::-webkit-scrollbar-thumb { background: var(--text); }
