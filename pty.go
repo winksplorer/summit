@@ -3,7 +3,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os/exec"
@@ -67,10 +66,10 @@ func REST_Pty(w http.ResponseWriter, r *http.Request) {
 
 	// env variables & directory
 	cmd.Env = append(cmd.Env,
-		fmt.Sprintf("HOME=%s", u.homedir),
-		fmt.Sprintf("USER=%s", u.user),
-		fmt.Sprintf("LOGNAME=%s", u.user),
-		fmt.Sprintf("SHELL=%s", shell),
+		"HOME="+u.homedir,
+		"USER="+u.user,
+		"LOGNAME="+u.user,
+		"SHELL="+shell,
 		"TERM=xterm-256color",
 	)
 

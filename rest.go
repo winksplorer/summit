@@ -72,12 +72,12 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 	pageName := strings.TrimSuffix(path, ".html")
 
 	// template together base + the page
-	tmpl, err := template.ParseFS(Frontend, "frontend-dist/template/base.html", fmt.Sprintf("frontend-dist/template/%s.html", pageName))
+	tmpl, err := template.ParseFS(Frontend, "frontend-dist/template/base.html", "frontend-dist/template/"+pageName+".html")
 	if err != nil && strings.Contains(err.Error(), "pattern matches no files") {
 		HTTP_NotFound(w, r, path)
 		return
 	} else if err != nil {
-		H_ISE(w, fmt.Sprintf("REST_Origin: Template parse error for %s", path), err)
+		H_ISE(w, "REST_Origin: Template parse error for "+path, err)
 	}
 
 	// get user. if not found then redirect to login
@@ -112,7 +112,7 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 		BuildString: BuildString,
 	})
 	if err != nil {
-		H_ISE(w, fmt.Sprintf("REST_Origin: Template exec error for %s", path), err)
+		H_ISE(w, "REST_Origin: Template exec error for "+path, err)
 		return
 	}
 }

@@ -9,7 +9,7 @@ import (
 
 // copies user config template to `configFile`, and sets permissions
 func C_Create(configFile string, uid uint32, gid uint32) error {
-	log.Printf("C_Create: Creating new configuration at %s.", configFile)
+	log.Println("C_Create: Creating new configuration at", configFile+".")
 
 	// copy the defaults
 	defaultConfig, err := Frontend.ReadFile("frontend-dist/assets/defaultconfig.json")

@@ -15,7 +15,7 @@ var GC_Config map[string]any
 
 // copies global config template to GC_Path
 func GC_Create() error {
-	log.Printf("GC_Create: Creating new configuration at %s.", GC_Path)
+	log.Println("GC_Create: Creating new configuration at", GC_Path+".")
 
 	// copy the defaults
 	defaultGC, err := Frontend.ReadFile("frontend-dist/assets/defaultgc.json")

@@ -68,7 +68,6 @@ func HTTP_ServeStatic(w http.ResponseWriter, r *http.Request, path string) {
 	if !ok {
 		FrontendMu.RLock()
 		defer FrontendMu.RUnlock()
-		log.Printf("Cache miss: %s", path)
 		b, err := Frontend.ReadFile("frontend-dist/" + path)
 		if err != nil {
 			HTTP_NotFound(w, r, path)

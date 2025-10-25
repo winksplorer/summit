@@ -4,7 +4,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -90,7 +89,7 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 
 		// config logic
 		var configData map[string]any
-		configFile := fmt.Sprintf("%s/.config/summit.json", u.HomeDir)
+		configFile := u.HomeDir + "/.config/summit.json"
 
 		if _, err := os.Stat(configFile); os.IsNotExist(err) {
 			if err = C_Create(configFile, uid, gid); err != nil {
@@ -140,7 +139,7 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true,
 		})
 
-		log.Printf("REST_Login: Authenticated a client from %s\n", H_ClientIP(r))
+		log.Println("REST_Login: Authenticated a client from", H_ClientIP(r))
 	}
 	http.Redirect(w, r, "/terminal.html", http.StatusFound)
 }

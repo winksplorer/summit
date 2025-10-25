@@ -36,14 +36,8 @@ func main() {
 	log.SetFlags(0)
 	log.SetOutput(new(logWriter))
 
-	BuildString = fmt.Sprintf("summit v%s (built on %s)", Version, BuildDate)
+	BuildString = "summit v" + Version + " (built on " + BuildDate + ")"
 	log.Println(BuildString)
-
-	// select where the frontend is. SEA will pass all args.
-	if len(os.Args) > 1 && os.Args[1] == "dev" {
-		log.Println("Using ./frontend for frontend directory.")
-		// FrontendDir = "frontend"
-	}
 
 	// get the hostname
 	var err error
@@ -79,7 +73,7 @@ func main() {
 		log.Fatalf("HTTP_Init: %s.", err)
 	}
 
-	log.Printf("Initialized summit on port %s.\n", port)
+	log.Println("Initialized summit on port", port)
 
 	// start server
 	if err := srv.ListenAndServeTLS("/etc/ssl/certs/summit.crt", "/etc/ssl/private/summit.key"); err != nil {
