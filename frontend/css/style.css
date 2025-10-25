@@ -80,28 +80,19 @@ body {
     margin-bottom:0.2em;
 }
 
-.sticky-header {
+header, footer {
     position: sticky;
-    top:0;
     padding: 0.5em 1em;
-
-    background: var(--main-bg);
-    border-bottom: 0.05em solid var(--line);
-
-    /* god hates me */
+    background: var(--sidebar-bg);
     display: flex;
     align-items: center;
     gap: 0.3em;
 }
 
-.sticky-footer {
-    position: sticky;
+header { top:0; }
+footer {
     bottom:0;
     margin-top: auto;
-    padding: 0.5em 1em;
-
-    background: var(--main-bg);
-    border-top: 0.05em solid var(--line);
 }
 
 hr {
@@ -289,6 +280,7 @@ input[type="range"]::-moz-range-thumb {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: 2em;
 }
 
 /* navbar item links */
@@ -369,10 +361,10 @@ input[type="range"]::-moz-range-thumb {
 #logging_no-entries > * { margin: 0; }
 
 /* logging events */
-.logging_e_time, .logging_e_source { color: var(--text-gray) }
-.logging_e_source { margin-left: auto; }
+.logging_event_list > div > .time, .logging_event_list > div > .source { color: var(--text-gray) }
+.logging_event_list > div > .source { margin-left: auto; }
 
-.logging_e {
+.logging_event_list > div {
     display: flex;
     gap: 1em;
 }
@@ -380,7 +372,7 @@ input[type="range"]::-moz-range-thumb {
     /* misc */
 
 /* the main part of each page */
-.main {
+main {
     background: var(--main-bg);
     flex-grow: 1;
     overflow: auto;

@@ -1,5 +1,8 @@
 // summit frontend/js/page/logging.js - handles the logging page
 
+// in format of {"2025-10-24": [{"time": 1761364590, "source": "test", "msg": "message"}]}
+_.page.events = {};
+
 _.page.testLogging = () => {
     let source = _.helpers.getInputValue($('source'));
 

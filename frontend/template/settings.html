@@ -7,8 +7,8 @@
 {{end}}
 
 {{define "main"}}
-<div class="main">
-    <div class="container">
+<main>
+    <section class="container">
         <h3>appearance</h3>
         <div class="input-pair">
             <label for="theme">theme</label>
@@ -43,25 +43,25 @@
             <label for="terminalFont">terminal font</label>
             <input type="text" id="terminalFont" data-key="terminal.font">
         </div>
-    </div>
+    </section>
 
-    <div class="container">
+    <section class="container">
         <h3>behavior</h3>
         <div class="input-pair">
             <label for="odometerStats">animate stats</label>
             <input type="checkbox" id="odometerStats" data-key="ui.odometerStats">
         </div>
-    </div>
+    </section>
 
-    <div class="container">
+    <section class="container">
         <h3>about summit</h3>
         <p>{{.BuildString}}</p>
         <button onclick="location.href='https://github.com/winksplorer/summit'">see repository</button>
         <button onclick="location.href='https://github.com/winksplorer/summit/issues/new'">report a bug</button>
-    </div>
+    </section>
 
-    <div class="sticky-footer">
+    <footer>
         <button disabled id="save-button" onclick="_.page.saveSettings()">save changes</button>
-    </div>
-</div>
+    </footer>
+</main>
 {{end}}

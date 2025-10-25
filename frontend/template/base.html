@@ -30,10 +30,10 @@
         {{template "head" .}}
     </head>
     <body>
-        <div id="sidebar">
+        <nav id="sidebar">
             <h1 class="hostname">{{.Hostname}}</h1>
-            <div id="navbar-items"></div>
-            <div class="bottom">
+            <section id="navbar-items"></section>
+            <section class="bottom">
                 <div id="stats">
                     <div>
                         <span class="odometer" id="stats-cpu"></span>
@@ -52,8 +52,8 @@
                     <div class="separator"></div>
                     <a href="/api/logout">⇒</a>
                 </div>
-            </div>
-        </div>
+            </section>
+        </nav>
 
         <div class="right">
             <div id="message">
