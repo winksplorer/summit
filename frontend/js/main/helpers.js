@@ -32,5 +32,5 @@ _.helpers.rgb2hsl = (r, g, b) => {
     else if (max === b) h = (r - g) / d + 4;
     let l = (min + max) / 2;
     let s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
-    return [h * 60, s, l];
+    return [(h * 60).toFixed(2), s.toFixed(2), l.toFixed(2)];
 }
