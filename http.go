@@ -1,17 +1,19 @@
 package main
 
 import (
+	"bytes"
 	"crypto/tls"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/NYTimes/gziphandler"
 	"github.com/bddjr/hlfhr"
 	"golang.org/x/net/http2"
 )
+
+var HTTP_NotFoundPage []byte
 
 // inits http server
 func HTTP_Init(port string) (*hlfhr.Server, error) {
@@ -39,16 +41,43 @@ func HTTP_Init(port string) (*hlfhr.Server, error) {
 		return nil, err
 	}
 
+	// cache 404 page
+	var err error
+	HTTP_NotFoundPage, err = Frontend.ReadFile("frontend-dist/404.html")
+	if err != nil {
+		return nil, err
+	}
+
 	return srv, nil
 }
 
-func HTTP_NotFound(w http.ResponseWriter, path string) {
-	notFoundPage, err := os.ReadFile(fmt.Sprintf("%s/404.html", FrontendDir))
-	if path == "404.html" || err != nil {
+func HTTP_NotFound(w http.ResponseWriter, r *http.Request, path string) {
+	if path == "404.html" {
 		http.Error(w, "Not Found", http.StatusNotFound)
 	} else {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(w, string(notFoundPage))
+		fmt.Fprint(w, HTTP_NotFoundPage)
 	}
+}
+
+func HTTP_ServeStatic(w http.ResponseWriter, r *http.Request, path string) {
+	FrontendMu.RLock()
+	data, ok := FrontendCache[path]
+	FrontendMu.RUnlock()
+	if !ok {
+		FrontendMu.RLock()
+		defer FrontendMu.RUnlock()
+		log.Printf("Cache miss: %s", path)
+		b, err := Frontend.ReadFile("frontend-dist/" + path)
+		if err != nil {
+			HTTP_NotFound(w, r, path)
+			return
+		}
+		FrontendCache[path] = b
+		data = b
+	}
+
+	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+	http.ServeContent(w, r, path, StartTime, bytes.NewReader(data))
 }
