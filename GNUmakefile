@@ -13,11 +13,12 @@ GO_LDFLAGS = -s -w -buildid= -X main.BuildDate=$(shell date -I) -X main.Version=
 
 ifeq ($(SMALL),1)
 	GOFLAGS += -gcflags=all=-l
+	UPX = upx --best --lzma
 endif
 
-.PHONY: backend frontend all sea clean install
+.PHONY: backend frontend all upx clean install
 
-all: frontend backend
+all: frontend backend upx
 
 clean:
 	rm -rf summit frontend-dist
@@ -26,8 +27,6 @@ clean:
 backend:
 	@echo "     GO ($(GO)) summit"
 	@$(GO) mod tidy && $(GO) build -o summit $(GOFLAGS) -ldflags="$(GO_LDFLAGS)"
-	@echo "     UPX ($(UPX)) summit"
-	@$(UPX) summit
 
 # bundle + minify frontend
 frontend:
@@ -53,6 +52,11 @@ frontend:
 	@$(SED) -i '/<!-- JS_BUNDLE_START -->/,/<!-- JS_BUNDLE_END -->/c\<script src="js/bundle.min.js" defer></script>' frontend-dist/template/base.html
 	@echo "REPLACE (${SED}) remove markers"
 	@find frontend-dist/template -type f ! -name "base.html" -exec $(SED) -i '/<!-- REMOVE_MARKER_START -->/,/<!-- REMOVE_MARKER_END -->/d' {} +
+
+# runs upx
+upx:
+	@echo "     UPX ($(UPX)) summit"
+	@$(UPX) -qq summit
 
 # installs to prefix
 install:

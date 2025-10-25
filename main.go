@@ -13,31 +13,37 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+const LicensingMsg = "summit is licensed under Apache-2.0 and includes third-party components under MIT and OFL licenses. Copyright (c) 2025 winksplorer et al."
+
 var (
-	BuildDate   string = "undefined"
-	Version     string = "undefined"
-	BuildString string = "undefined"
+	BuildDate   string
+	Version     string
+	BuildString string
 
-	// FrontendDir string = "/tmp/summit/frontend-dist"
-	Hostname string = "undefined"
-
+	Hostname    string
 	WS_Upgrader = websocket.Upgrader{}
+	StartTime   = time.Now()
 
 	//go:embed frontend-dist/*
 	Frontend      embed.FS
 	FrontendCache = map[string][]byte{}
 	FrontendMu    sync.RWMutex
-	StartTime     = time.Now()
 )
 
 // entry point
 func main() {
 	// custom logging
 	log.SetFlags(0)
-	log.SetOutput(new(logWriter))
+	log.SetOutput(new(LogWriter))
 
 	BuildString = "summit v" + Version + " (built on " + BuildDate + ")"
 	log.Println(BuildString)
+
+	log.Println(LicensingMsg)
+
+	if os.Geteuid() != 0 {
+		log.Fatalln("Root permissions are required for summit to work correctly.")
+	}
 
 	// get the hostname
 	var err error

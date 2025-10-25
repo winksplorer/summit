@@ -22,14 +22,14 @@ import (
 
 // used for humanReadable functions
 const (
-	kib = 1024
-	mib = kib * 1024
-	gib = mib * 1024
-	tib = gib * 1024
+	Kib = 1024
+	Mib = Kib * 1024
+	Gib = Mib * 1024
+	Tib = Gib * 1024
 )
 
 type (
-	logWriter struct{}
+	LogWriter struct{}
 	Number    interface {
 		~int | ~uint | ~int8 | ~uint8 | ~int16 | ~uint16 | ~int32 | ~uint32 | ~int64 | ~uint64 | ~float32 | ~float64
 	}
@@ -60,14 +60,14 @@ func H_PamAuth(serviceName, userName, passwd string) error {
 // human readable byte sizes, split unit and value
 func H_HumanReadableSplit(bytes uint64) (float64, string) {
 	switch {
-	case bytes >= tib:
-		return float64(bytes) / float64(tib), "t"
-	case bytes >= gib:
-		return float64(bytes) / float64(gib), "g"
-	case bytes >= mib:
-		return float64(bytes) / float64(mib), "m"
-	case bytes >= kib:
-		return float64(bytes) / float64(kib), "k"
+	case bytes >= Tib:
+		return float64(bytes) / float64(Tib), "t"
+	case bytes >= Gib:
+		return float64(bytes) / float64(Gib), "g"
+	case bytes >= Mib:
+		return float64(bytes) / float64(Mib), "m"
+	case bytes >= Kib:
+		return float64(bytes) / float64(Kib), "k"
 	default:
 		return float64(bytes), "b"
 	}
@@ -113,7 +113,7 @@ func H_Execute(args ...string) (string, error) {
 }
 
 // logging format
-func (lw *logWriter) Write(bs []byte) (int, error) {
+func (lw *LogWriter) Write(bs []byte) (int, error) {
 	if strings.Contains(string(bs), ": remote error: tls: unknown certificate") || strings.Contains(string(bs), "websocket: close 1001 (going away)") {
 		return 0, nil
 	}
