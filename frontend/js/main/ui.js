@@ -46,7 +46,7 @@ _.ui.updateStats = (data) => {
 
 // sets theme
 _.ui.setTheme = (theme) => {
-    if (theme === 'sync') effectiveTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (theme === 'sync' && window.matchMedia) effectiveTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     else effectiveTheme = theme;
 
     document.documentElement.dataset.theme = effectiveTheme;
