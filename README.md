@@ -34,7 +34,7 @@ The final compiled output is simply `./summit`. By default, summit installs to `
 > Make sure you have the community repo enabled
 
 ```sh
-apk add go make clang binutils libarchive-dev linux-pam-dev git openssl minify xz \
+apk add go make linux-pam-dev git openssl minify xz upx \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
     && make all install
@@ -43,7 +43,7 @@ apk add go make clang binutils libarchive-dev linux-pam-dev git openssl minify x
 ### Debian
 
 ```sh
-apt install golang-go make clang binutils libarchive-dev libpam0g-dev git openssl minify \
+apt install golang-go make libpam0g-dev git openssl minify upx-ucl \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
     && make all install
@@ -52,10 +52,10 @@ apt install golang-go make clang binutils libarchive-dev libpam0g-dev git openss
 ### FreeBSD
 
 ```sh
-pkg install go gmake binutils libarchive git openssl minify gsed \
+pkg install go gmake git openssl minify gsed upx \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
-    && gmake all install LD=ld.gold SED=gsed \
+    && gmake all install SED=gsed \
     && mkdir -p /etc/ssl/private
 ```
 

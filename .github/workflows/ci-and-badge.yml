@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install deps
-      run: sudo apt update && sudo apt install -y golang-go make clang binutils libarchive-dev libpam0g-dev git openssl minify
+      run: sudo apt update && sudo apt install -y golang-go make libpam0g-dev git openssl minify upx-ucl
 
     - name: Build
       run: make

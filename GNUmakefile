@@ -20,7 +20,7 @@ endif
 all: frontend backend
 
 clean:
-	rm -rf summit-server summit summit.tar.xz summit.tar.xz.o frontend-dist
+	rm -rf summit frontend-dist
 
 # backend server build with go
 backend:
@@ -53,15 +53,6 @@ frontend:
 	@$(SED) -i '/<!-- JS_BUNDLE_START -->/,/<!-- JS_BUNDLE_END -->/c\<script src="js/bundle.min.js" defer></script>' frontend-dist/template/base.html
 	@echo "REPLACE (${SED}) remove markers"
 	@find frontend-dist/template -type f ! -name "base.html" -exec $(SED) -i '/<!-- REMOVE_MARKER_START -->/,/<!-- REMOVE_MARKER_END -->/d' {} +
-
-# compress frontend+backend, then embeds it into a binary combined with compiled SEA
-sea:
-	@echo "     XZ ($(TAR)) summit-server + frontend-dist -> summit.tar.xz"
-	@$(TAR) -cJf summit.tar.xz summit-server frontend-dist
-	@echo "     LD ($(LD)) summit.tar.xz -> summit.tar.xz.o"
-	@$(LD) -r -b binary -o summit.tar.xz.o summit.tar.xz
-	@echo "     CC ($(CC)) sea.c + summit.tar.xz.o -> summit"
-	@$(CC) -o summit sea.c summit.tar.xz.o -larchive
 
 # installs to prefix
 install:
