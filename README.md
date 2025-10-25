@@ -9,8 +9,7 @@ summit is a portable and self-contained server management web dashboard for Linu
 > A lot of features (storage, networking, containers, updates, etc.) are missing currently.
 
 ## Features
-- All of summit is distributed as one file
-- As of July 29th, 2025, the entire final executable is ~3.0 MB
+- All of summit is distributed as one small file
 - Portability (Tested with Debian, Alpine, and FreeBSD so far)
 - Fast page loads
 - PAM-based login system

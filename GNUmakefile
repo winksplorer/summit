@@ -21,7 +21,7 @@ all: backend frontend sea
 clean:
 	rm -rf summit-server summit summit.tar.xz summit.tar.xz.o frontend-dist
 
-# backend server build with go (and also run panic safeguard)
+# backend server build with go
 backend:
 	@echo "     GO (${GO}) backend -> summit-server"
 	@cd backend && $(GO) mod tidy && $(GO) build -o ../summit-server $(GOFLAGS) -ldflags="$(GO_LDFLAGS)"
@@ -60,5 +60,6 @@ sea:
 	@echo "     CC ($(CC)) sea.c + summit.tar.xz.o -> summit"
 	@$(CC) -o summit sea.c summit.tar.xz.o -larchive
 
+# installs to prefix
 install:
 	install -m 755 summit $(PREFIX)/bin
