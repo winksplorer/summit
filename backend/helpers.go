@@ -118,7 +118,7 @@ func (lw *logWriter) Write(bs []byte) (int, error) {
 		return 0, nil
 	}
 
-	return fmt.Printf("[%s] %s", time.Now().Format("02 Jan 2006 15:04:05 MST"), string(bs))
+	return fmt.Printf("[%s] %s", time.Now().Format("2006-01-02 15:04:05Z0700"), string(bs))
 }
 
 // gets user ip
