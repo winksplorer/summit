@@ -13,8 +13,6 @@ import (
 	"golang.org/x/net/http2"
 )
 
-var HTTP_NotFoundPage []byte
-
 // inits http server
 func HTTP_Init(port string) (*hlfhr.Server, error) {
 	log.Println("HTTP_Init: Init HTTP server.")
@@ -42,11 +40,11 @@ func HTTP_Init(port string) (*hlfhr.Server, error) {
 	}
 
 	// cache 404 page
-	var err error
-	HTTP_NotFoundPage, err = G_Frontend.ReadFile("frontend-dist/404.html")
+	data, err := G_Frontend.ReadFile("frontend-dist/404.html")
 	if err != nil {
 		return nil, err
 	}
+	G_FrontendCache["404.html"] = data
 
 	return srv, nil
 }
@@ -57,7 +55,7 @@ func HTTP_NotFound(w http.ResponseWriter, r *http.Request, path string) {
 	} else {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(w, HTTP_NotFoundPage)
+		fmt.Fprint(w, string(G_FrontendCache["404.html"]))
 	}
 }
 
