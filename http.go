@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/NYTimes/gziphandler"
@@ -60,19 +61,33 @@ func HTTP_NotFound(w http.ResponseWriter, r *http.Request, path string) {
 }
 
 func HTTP_ServeStatic(w http.ResponseWriter, r *http.Request, path string) {
-	G_FrontendMu.RLock()
-	data, ok := G_FrontendCache[path]
-	G_FrontendMu.RUnlock()
-	if !ok {
+	var data []byte
+
+	if G_FrontendOverride == "" {
+		var ok bool
 		G_FrontendMu.RLock()
-		defer G_FrontendMu.RUnlock()
-		b, err := G_Frontend.ReadFile("frontend-dist/" + path)
+		data, ok = G_FrontendCache[path]
+		G_FrontendMu.RUnlock()
+
+		if !ok {
+			G_FrontendMu.RLock()
+			defer G_FrontendMu.RUnlock()
+			b, err := G_Frontend.ReadFile("frontend-dist/" + path)
+			if err != nil {
+				HTTP_NotFound(w, r, path)
+				return
+			}
+			G_FrontendCache[path] = b
+			data = b
+		}
+	} else {
+		var err error
+		data, err = os.ReadFile(G_FrontendOverride + "/" + path)
 		if err != nil {
+			log.Println("HTTP_ServeStatic:", err)
 			HTTP_NotFound(w, r, path)
 			return
 		}
-		G_FrontendCache[path] = b
-		data = b
 	}
 
 	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")

@@ -25,9 +25,10 @@ var (
 	G_StartTime  = time.Now()
 
 	//go:embed frontend-dist/*
-	G_Frontend      embed.FS
-	G_FrontendCache = map[string][]byte{}
-	G_FrontendMu    sync.RWMutex
+	G_Frontend         embed.FS
+	G_FrontendCache    = map[string][]byte{}
+	G_FrontendMu       sync.RWMutex
+	G_FrontendOverride string
 )
 
 // entry point
@@ -43,6 +44,11 @@ func main() {
 
 	if os.Geteuid() != 0 {
 		log.Fatalln("Root permissions are required for summit to work correctly.")
+	}
+
+	if len(os.Args) > 1 {
+		G_FrontendOverride = os.Args[1]
+		log.Println("Using", G_FrontendOverride, "for frontend directory.")
 	}
 
 	// get the hostname

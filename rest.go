@@ -72,7 +72,17 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 	pageName := strings.TrimSuffix(path, ".html")
 
 	// template together base + the page
-	tmpl, err := template.ParseFS(G_Frontend, "frontend-dist/template/base.html", "frontend-dist/template/"+pageName+".html")
+	var (
+		tmpl *template.Template
+		err  error
+	)
+
+	if G_FrontendOverride == "" {
+		tmpl, err = template.ParseFS(G_Frontend, "frontend-dist/template/base.html", "frontend-dist/template/"+pageName+".html")
+	} else {
+		tmpl, err = template.ParseFiles(G_FrontendOverride+"/template/base.html", G_FrontendOverride+"/template/"+pageName+".html")
+	}
+
 	if err != nil && strings.Contains(err.Error(), "pattern matches no files") {
 		HTTP_NotFound(w, r, path)
 		return
