@@ -72,7 +72,7 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 	pageName := strings.TrimSuffix(path, ".html")
 
 	// template together base + the page
-	tmpl, err := template.ParseFS(Frontend, "frontend-dist/template/base.html", "frontend-dist/template/"+pageName+".html")
+	tmpl, err := template.ParseFS(G_Frontend, "frontend-dist/template/base.html", "frontend-dist/template/"+pageName+".html")
 	if err != nil && strings.Contains(err.Error(), "pattern matches no files") {
 		HTTP_NotFound(w, r, path)
 		return
@@ -104,12 +104,12 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = tmpl.ExecuteTemplate(w, pageName, REST_TemplateData{
-		Title:    pageName + " - " + Hostname,
+		Title:    pageName + " - " + G_Hostname,
 		Config:   template.JS(data),
-		Hostname: Hostname,
+		Hostname: G_Hostname,
 
 		// page specific shit
-		BuildString: BuildString,
+		BuildString: G_BuildString,
 	})
 	if err != nil {
 		H_ISE(w, "REST_Origin: Template exec error for "+path, err)
@@ -140,7 +140,7 @@ func REST_Hostname(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/plain")
-	fmt.Fprintln(w, Hostname)
+	fmt.Fprintln(w, G_Hostname)
 }
 
 // handles /api/suid

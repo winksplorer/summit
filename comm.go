@@ -30,7 +30,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// upgrade to ws
-	conn, err := WS_Upgrader.Upgrade(w, r, nil)
+	conn, err := G_WSUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("REST_Comm: Couldn't upgrade to websockets:", err)
 		return

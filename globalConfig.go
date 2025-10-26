@@ -18,7 +18,7 @@ func GC_Create() error {
 	log.Println("GC_Create: Creating new configuration at", GC_Path+".")
 
 	// copy the defaults
-	defaultGC, err := Frontend.ReadFile("frontend-dist/assets/defaultgc.json")
+	defaultGC, err := G_Frontend.ReadFile("frontend-dist/assets/defaultgc.json")
 	if err != nil {
 		return err
 	}

@@ -43,7 +43,7 @@ func HTTP_Init(port string) (*hlfhr.Server, error) {
 
 	// cache 404 page
 	var err error
-	HTTP_NotFoundPage, err = Frontend.ReadFile("frontend-dist/404.html")
+	HTTP_NotFoundPage, err = G_Frontend.ReadFile("frontend-dist/404.html")
 	if err != nil {
 		return nil, err
 	}
@@ -62,21 +62,21 @@ func HTTP_NotFound(w http.ResponseWriter, r *http.Request, path string) {
 }
 
 func HTTP_ServeStatic(w http.ResponseWriter, r *http.Request, path string) {
-	FrontendMu.RLock()
-	data, ok := FrontendCache[path]
-	FrontendMu.RUnlock()
+	G_FrontendMu.RLock()
+	data, ok := G_FrontendCache[path]
+	G_FrontendMu.RUnlock()
 	if !ok {
-		FrontendMu.RLock()
-		defer FrontendMu.RUnlock()
-		b, err := Frontend.ReadFile("frontend-dist/" + path)
+		G_FrontendMu.RLock()
+		defer G_FrontendMu.RUnlock()
+		b, err := G_Frontend.ReadFile("frontend-dist/" + path)
 		if err != nil {
 			HTTP_NotFound(w, r, path)
 			return
 		}
-		FrontendCache[path] = b
+		G_FrontendCache[path] = b
 		data = b
 	}
 
 	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
-	http.ServeContent(w, r, path, StartTime, bytes.NewReader(data))
+	http.ServeContent(w, r, path, G_StartTime, bytes.NewReader(data))
 }

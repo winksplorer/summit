@@ -9,7 +9,7 @@ UPX ?= upx -9 --lzma
 PREFIX ?= /usr/local
 
 GOFLAGS = -buildvcs=false -trimpath
-GO_LDFLAGS = -s -w -buildid= -X main.BuildDate=$(shell date -I) -X main.Version=$(SUMMIT_VERSION)
+GO_LDFLAGS = -s -w -buildid= -X main.G_BuildDate=$(shell date -I) -X main.G_Version=$(SUMMIT_VERSION)
 
 ifeq ($(SMALL),1)
 	GOFLAGS += -gcflags=all=-l

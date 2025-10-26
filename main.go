@@ -13,21 +13,21 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const LicensingMsg = "summit is licensed under Apache-2.0 and includes third-party components under MIT and OFL licenses. Copyright (c) 2025 winksplorer et al."
+const G_LicensingMsg = "summit is licensed under Apache-2.0 and includes third-party components under MIT and OFL licenses. Copyright (c) 2025 winksplorer et al."
 
 var (
-	BuildDate   string
-	Version     string
-	BuildString string
+	G_BuildDate   string
+	G_Version     string
+	G_BuildString string
 
-	Hostname    string
-	WS_Upgrader = websocket.Upgrader{}
-	StartTime   = time.Now()
+	G_Hostname   string
+	G_WSUpgrader = websocket.Upgrader{}
+	G_StartTime  = time.Now()
 
 	//go:embed frontend-dist/*
-	Frontend      embed.FS
-	FrontendCache = map[string][]byte{}
-	FrontendMu    sync.RWMutex
+	G_Frontend      embed.FS
+	G_FrontendCache = map[string][]byte{}
+	G_FrontendMu    sync.RWMutex
 )
 
 // entry point
@@ -36,10 +36,10 @@ func main() {
 	log.SetFlags(0)
 	log.SetOutput(new(LogWriter))
 
-	BuildString = "summit v" + Version + " (built on " + BuildDate + ")"
-	log.Println(BuildString)
+	G_BuildString = "summit v" + G_Version + " (built on " + G_BuildDate + ")"
+	log.Println(G_BuildString)
 
-	log.Println(LicensingMsg)
+	log.Println(G_LicensingMsg)
 
 	if os.Geteuid() != 0 {
 		log.Fatalln("Root permissions are required for summit to work correctly.")
@@ -47,7 +47,7 @@ func main() {
 
 	// get the hostname
 	var err error
-	Hostname, err = os.Hostname()
+	G_Hostname, err = os.Hostname()
 	if err != nil {
 		log.Fatalf("os.Hostname: %s.", err)
 	}

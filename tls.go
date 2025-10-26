@@ -24,7 +24,7 @@ func TLS_Init() error {
 			"-newkey", "rsa:2048",
 			"-keyout", "/etc/ssl/private/summit.key",
 			"-out", "/etc/ssl/certs/summit.crt",
-			"-subj", ("/C=US/ST=Washington/O=winksplorer & contributors/CN=summit (" + Hostname + ")"),
+			"-subj", ("/C=US/ST=Washington/O=winksplorer & contributors/CN=summit (" + G_Hostname + ")"),
 		); err != nil {
 			return err
 		}
