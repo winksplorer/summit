@@ -64,7 +64,9 @@ func main() {
 	}
 
 	// set port from config
+	GC_ConfigMu.RLock()
 	port := fmt.Sprintf(":%d", IT_MustNumber(GC_Config, "port", uint16(7070)))
+	GC_ConfigMu.RUnlock()
 
 	// call init functions
 	REST_Init()

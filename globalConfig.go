@@ -5,13 +5,17 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 )
 
 // the path to the global config
 const GC_Path string = "/etc/summit.json"
 
 // cached global config
-var GC_Config map[string]any
+var (
+	GC_Config   map[string]any
+	GC_ConfigMu sync.RWMutex
+)
 
 // copies global config template to GC_Path
 func GC_Create() error {
@@ -37,6 +41,8 @@ func GC_Create() error {
 
 // sets a value in GC_Config
 func GC_SetValue(key string, val any) error {
+	GC_ConfigMu.Lock()
+	defer GC_ConfigMu.Unlock()
 	return IT_Set(GC_Config, key, val)
 }
 
@@ -46,6 +52,9 @@ func GC_Read() error {
 	if err != nil {
 		return err
 	}
+
+	GC_ConfigMu.Lock()
+	defer GC_ConfigMu.Unlock()
 
 	err = json.Unmarshal(config, &GC_Config)
 	if err != nil {
@@ -61,6 +70,9 @@ func GC_Save() error {
 	if err != nil {
 		return fmt.Errorf("config serialization error: %s", err)
 	}
+
+	GC_ConfigMu.RLock()
+	defer GC_ConfigMu.RUnlock()
 
 	if err := os.WriteFile(GC_Path, data, 0664); err != nil {
 		return fmt.Errorf("config write error: %s", err)
