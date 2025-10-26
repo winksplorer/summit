@@ -55,7 +55,7 @@ frontend:
 
 # runs upx
 upx:
-	@echo "     UPX ($(UPX)) summit"
+	@echo "    UPX ($(UPX)) summit"
 	@$(UPX) -qq summit
 
 # installs to prefix
