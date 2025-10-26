@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -46,13 +47,17 @@ func main() {
 		log.Fatalln("Root permissions are required for summit to work correctly.")
 	}
 
+	var err error
 	if len(os.Args) > 1 {
-		G_FrontendOverride = os.Args[1]
+		G_FrontendOverride, err = filepath.Abs(os.Args[1])
+		if err != nil {
+			log.Fatalln("filepath.Abs:", err)
+		}
+
 		log.Println("Using", G_FrontendOverride, "for frontend directory.")
 	}
 
 	// get the hostname
-	var err error
 	G_Hostname, err = os.Hostname()
 	if err != nil {
 		log.Fatalf("os.Hostname: %s.", err)
