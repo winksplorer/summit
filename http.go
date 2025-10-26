@@ -45,7 +45,10 @@ func HTTP_Init(port string) (*hlfhr.Server, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	G_FrontendCacheMu.Lock()
 	G_FrontendCache["404.html"] = data
+	G_FrontendCacheMu.Unlock()
 
 	return srv, nil
 }
@@ -65,19 +68,21 @@ func HTTP_ServeStatic(w http.ResponseWriter, r *http.Request, path string) {
 
 	if G_FrontendOverride == "" {
 		var ok bool
-		G_FrontendMu.RLock()
+		G_FrontendCacheMu.RLock()
 		data, ok = G_FrontendCache[path]
-		G_FrontendMu.RUnlock()
+		G_FrontendCacheMu.RUnlock()
 
 		if !ok {
-			G_FrontendMu.RLock()
-			defer G_FrontendMu.RUnlock()
 			b, err := G_Frontend.ReadFile("frontend-dist/" + path)
 			if err != nil {
 				HTTP_NotFound(w, r, path)
 				return
 			}
+
+			G_FrontendCacheMu.Lock()
 			G_FrontendCache[path] = b
+			G_FrontendCacheMu.Unlock()
+
 			data = b
 		}
 	} else {

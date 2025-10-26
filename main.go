@@ -27,7 +27,7 @@ var (
 	//go:embed frontend-dist/*
 	G_Frontend         embed.FS
 	G_FrontendCache    = map[string][]byte{}
-	G_FrontendMu       sync.RWMutex
+	G_FrontendCacheMu  sync.RWMutex
 	G_FrontendOverride string
 )
 
