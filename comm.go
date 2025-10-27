@@ -152,8 +152,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			thedata := map[string][]map[string]any{}
 
 			for _, e := range events {
-				key := time.Unix(int64(e.Time.Unix()), 0).Format("2006-01-02")
-
+				key := e.Time.Format("2006-01-02")
 				thedata[key] = append(thedata[key], map[string]any{
 					"time":   e.Time.Unix(),
 					"source": e.Source,

@@ -6,10 +6,12 @@ _.page.displayEvents = (events) => {
     const container = $('events-container')
     container.replaceChildren();
 
+    // iterate through days
     for (const [day, list] of Object.entries(events).sort(([a], [b]) => b.localeCompare(a))) {
         const dayContainer = _.helpers.newEl('section', 'container logging_event_list', '');
         dayContainer.appendChild(_.helpers.newEl('h3', '', day))
 
+        // iterate through events
         const frag = document.createDocumentFragment();
         for (const {time, msg, source} of list) {
             const div = _.helpers.newEl('div', '', '');
