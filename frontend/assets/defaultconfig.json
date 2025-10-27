@@ -4,7 +4,8 @@
         "theme": "sync",
         "sidebarWidth": 170,
         "accentColor": "#99c8ff",
-        "odometerStats": true
+        "odometerStats": true,
+        "timeFormat": "en-uk"
     },
     "terminal": {
         "font": "'JetBrains Mono', 'Menlo', 'Liberation Mono', 'Courier New', monospace",

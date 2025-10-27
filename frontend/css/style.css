@@ -54,7 +54,7 @@ body {
     overflow: hidden;
     margin: 0;
 
-    font-size: 1.5em;
+    font-size: 1.4em;
     font-family: var(--font), sans-serif;
 }
 
@@ -378,7 +378,10 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--a0); }
 
 /* logging events */
 .logging_event_list > div > .time, .logging_event_list > div > .source { color: var(--text-gray) }
-.logging_event_list > div > .source { margin-left: auto; }
+.logging_event_list > div > .source {
+    margin-left: auto;
+    padding-left: 1em;
+}
 
 .logging_event_list > div {
     display: flex;
@@ -386,7 +389,10 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--a0); }
     gap: 1em;
 }
 
-.msg { word-break: break-word; }
+.msg {
+    flex: 1;
+    word-break: break-word;
+}
 
     /* misc */
 

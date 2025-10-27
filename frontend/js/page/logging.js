@@ -14,7 +14,7 @@ _.page.displayEvents = (events) => {
         for (const {time, msg, source} of list) {
             const div = _.helpers.newEl('div', '', '');
             div.append(
-                _.helpers.newEl('span', 'time', new Date(time*1000).toLocaleTimeString("en-uk")),
+                _.helpers.newEl('span', 'time', new Date(time*1000).toLocaleTimeString(_CONFIG.ui?.timeFormat || 'en-uk', _.timeOptions)),
                 _.helpers.newEl('span', 'msg', msg),
                 _.helpers.newEl('span', 'source', source)
             )
