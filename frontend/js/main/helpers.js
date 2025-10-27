@@ -1,5 +1,6 @@
 // summit frontend/js/main/helpers.js - helper functions
 
+_.helpers.newEl = (tag, classes, content) => Object.assign(document.createElement(tag), {className: classes, textContent: content})
 _.helpers.getInputValue = (el) => el.type === 'checkbox' ? el.checked : el.value;
 _.helpers.setInputValue = (el, val) => el.type === 'checkbox' ? (el.checked = val) : (el.value = val);
 _.helpers.getObjectValue = (obj, key) => {

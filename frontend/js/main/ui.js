@@ -12,16 +12,18 @@ _.ui.shouldInitOdometerStats = (afterValueSet) =>
 _.ui.updateNavItems = () => {
     // empty the group first
     navItemsEl = $('navbar-items');
-    navItemsEl.innerHTML = '';
+    navItemsEl.replaceChildren();
     
     // then add pages
-    for(const page of _CONFIG.ui?.pages || []) {
-        navItemsEl.appendChild(Object.assign(document.createElement("a"), {
+    const frag = document.createDocumentFragment();
+    for(const page of _CONFIG.ui?.pages || [])
+        frag.appendChild(Object.assign(document.createElement("a"), {
             href: `${page}.html`,
             textContent: page,
             className: location.pathname.split("/").pop() === `${page}.html` ? "current" : "" // if entry is the current page then highlight it
         }));
-    };
+
+    navItemsEl.appendChild(frag);
 }
 
 // dispatches ui message

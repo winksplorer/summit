@@ -102,6 +102,7 @@ header, footer {
     position: sticky;
     padding: 0.5em 1em;
     background: var(--sidebar-bg);
+    z-index: 999;
     display: flex;
     align-items: center;
     gap: 0.3em;
@@ -368,14 +369,24 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--a0); }
 
 #logging_no-entries > * { margin: 0; }
 
+/* event container */
+#events-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+}
+
 /* logging events */
 .logging_event_list > div > .time, .logging_event_list > div > .source { color: var(--text-gray) }
 .logging_event_list > div > .source { margin-left: auto; }
 
 .logging_event_list > div {
     display: flex;
+    flex-wrap: nowrap;
     gap: 1em;
 }
+
+.msg { word-break: break-word; }
 
     /* misc */
 

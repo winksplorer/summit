@@ -139,7 +139,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 		case "log.read":
 			source := IT_Must(decoded, "data.source", "all")
 			amount := IT_MustNumber(decoded, "data.amount", uint16(50))
-			page := IT_MustNumber(decoded, "data.page", uint16(50))
+			page := IT_MustNumber(decoded, "data.page", uint16(0))
 
 			// actual read
 			events, err := L_Read(source, page*amount, amount)
@@ -148,10 +148,13 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 
-			thedata := []map[string]any{}
+			// lovecraftian computing
+			thedata := map[string][]map[string]any{}
 
 			for _, e := range events {
-				thedata = append(thedata, map[string]any{
+				key := time.Unix(int64(e.Time.Unix()), 0).Format("2006-01-02")
+
+				thedata[key] = append(thedata[key], map[string]any{
 					"time":   e.Time.Unix(),
 					"source": e.Source,
 					"msg":    e.Message,
