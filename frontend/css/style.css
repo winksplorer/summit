@@ -108,6 +108,7 @@ header, footer {
     gap: 0.3em;
 }
 
+header > p, footer > p { margin: 0; }
 header { top:0; }
 footer {
     bottom:0;
@@ -397,7 +398,7 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--a0); }
     /* misc */
 
 .nopadding { padding: 0; }
-.separator_0-2 { margin-right: 0.2em; }
+.spacer { flex: 1; }
 
 .bottom {
     margin-top: auto;

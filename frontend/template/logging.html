@@ -17,9 +17,23 @@
             <option value="test2">test2</option>
         </select>
 
-        <div class="separator_0-2"></div>
+        <label for="amount">amount per page</label>
+        <select id="amount">
+            <option>25</option>
+            <option>50</option>
+            <option>75</option>
+            <option>100</option>
+            <option>150</option>
+            <option>200</option>
+        </select>
+
+        <div class="spacer"></div>
 
         <button onclick="_.page.testLogging()">PROTOTYPE: test logging</button>
+
+        <button onclick="_.page.updatePageCounter(false)">prev</button>
+        <p id="pageCounter">page 1/x</p>
+        <button onclick="_.page.updatePageCounter(true)">next</button>
     </header>
 
     <section id="events-container">

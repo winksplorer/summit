@@ -1,5 +1,7 @@
 // summit frontend/js/page/logging.js - handles the logging page
 
+_.page.page = 0;
+
 // events are in format of {"2025-10-24": [{"time": 1761364590, "source": "test", "msg": "message"}]}
 _.page.displayEvents = (events) => {
     if (!events) throw new Error('no events to display')
@@ -29,14 +31,15 @@ _.page.displayEvents = (events) => {
     }
 }
 
+_.page.updatePageCounter = (increase) => {
+    increase ? _.page.page++ : _.page.page--;
+    $('pageCounter').textContent = `page ${_.page.page}/x`;
+}
+
 _.page.testLogging = () => {
-    let source = _.helpers.getInputValue($('source'));
-
-    console.log(source);
-
     _.comm.request('log.read', {
-        "source": source,
-        "amount": 25,
-        "page": 0
+        "source": _.helpers.getInputValue($('source')),
+        "amount": parseInt(_.helpers.getInputValue($('amount'))),
+        "page": _.page.page
     }).then(evs => _.page.displayEvents(evs))
 }
