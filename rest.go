@@ -83,7 +83,7 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 		tmpl, err = template.ParseFiles(G_FrontendOverride+"/template/base.html", G_FrontendOverride+"/template/"+pageName+".html")
 	}
 
-	if err != nil && strings.Contains(err.Error(), "pattern matches no files") {
+	if err != nil && (strings.Contains(err.Error(), "pattern matches no files") || strings.Contains(err.Error(), "no such file or directory")) {
 		HTTP_NotFound(w, r, path)
 		return
 	} else if err != nil {
