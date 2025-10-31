@@ -3,14 +3,14 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/winksplorer/summit)
 ![x64 glibc compiled size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/winksplorer/6afa57f72db1f0883a5a9782a9718ffe/raw/x64_glibc_size.json)
 
-summit is a portable and self-contained server management web dashboard for Linux and BSD that fits in 3MB.
+summit is a portable and self-contained Linux server management web dashboard that fits in 3MB.
 
 > [!IMPORTANT]
 > A lot of features (storage, networking, containers, updates, etc.) are missing currently.
 
 ## Features
 - All of summit is distributed as one small file
-- Portability (Tested with Debian, Alpine, and FreeBSD so far)
+- Portability across init systems and libcs (Tested with Debian and Alpine so far)
 - Fast page loads
 - PAM-based login system
 - xterm.js-based terminal
@@ -47,16 +47,6 @@ apt install golang-go make libpam0g-dev git openssl minify upx-ucl \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
     && make all install
-```
-
-### FreeBSD
-
-```sh
-pkg install go gmake git openssl minify gsed upx \
-    && git clone https://github.com/winksplorer/summit \
-    && cd summit \
-    && gmake all install SED=gsed \
-    && mkdir -p /etc/ssl/private
 ```
 
 ## Code structure
@@ -135,7 +125,6 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
     - [ ] Backend
         - [ ] apt support
         - [ ] apk support
-        - [ ] pkg support
         - [ ] other package managers
     - [ ] Updates page
 - [ ] Service files
