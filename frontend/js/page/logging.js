@@ -31,15 +31,18 @@ _.page.displayEvents = (events) => {
     }
 }
 
-_.page.updatePageCounter = (increase) => {
-    increase ? _.page.page++ : _.page.page--;
-    $('pageCounter').textContent = `page ${_.page.page}/x`;
-}
-
-_.page.testLogging = () => {
+_.page.readLogs = () => {
     _.comm.request('log.read', {
         "source": _.helpers.getInputValue($('source')),
         "amount": parseInt(_.helpers.getInputValue($('amount'))),
         "page": _.page.page
     }).then(evs => _.page.displayEvents(evs))
 }
+
+_.page.updatePageCounter = (increase) => {
+    increase ? _.page.page++ : _.page.page--;
+    $('pageCounter').textContent = `page ${_.page.page+1}/x`;
+    _.page.readLogs();
+}
+
+_.onReady(() => ['source', 'amount'].forEach(input => $(input).addEventListener('change', _.page.readLogs)));

@@ -12,9 +12,9 @@
     <header>
         <label for="source">log source</label>
         <select id="source">
-            <option value="all">all</option>
-            <option value="test">test</option>
-            <option value="test2">test2</option>
+            <option>all</option>
+            <option>test</option>
+            <option>kernel</option>
         </select>
 
         <label for="amount">amount per page</label>
@@ -28,8 +28,6 @@
         </select>
 
         <div class="spacer"></div>
-
-        <button onclick="_.page.testLogging()">PROTOTYPE: test logging</button>
 
         <button onclick="_.page.updatePageCounter(false)">prev</button>
         <p id="pageCounter">page 1/x</p>

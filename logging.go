@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"time"
+
+	"github.com/euank/go-kmsg-parser/v3/kmsgparser"
 )
 
 // maximum amount of events that can be read at once
@@ -39,6 +42,35 @@ func L_Read(source string, offset uint16, amount uint16) ([]L_Event, error) {
 				Source:  source,
 				Message: string(b),
 			})
+		}
+	case "kernel":
+		var opts []kmsgparser.Option
+		opts = append(opts, kmsgparser.WithNoFollow())
+		parser, err := kmsgparser.NewParser(opts...)
+		if err != nil {
+			panic(err)
+		}
+		defer parser.Close()
+
+		msgs := make(chan kmsgparser.Message)
+		parseErr := make(chan error, 1)
+		go func() {
+			parseErr <- parser.Parse(msgs)
+		}()
+		for msg := range msgs {
+			if len(events) >= int(amount) {
+				parser.Close()
+				break
+			}
+
+			events = append(events, L_Event{
+				Time:    msg.Timestamp,
+				Source:  source,
+				Message: msg.Message,
+			})
+		}
+		if err := <-parseErr; err != nil {
+			fmt.Fprintf(os.Stderr, "parse exited with error: %v\n", err)
 		}
 	}
 

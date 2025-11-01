@@ -371,10 +371,14 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--a0); }
 #logging_no-entries > * { margin: 0; }
 
 /* event container */
-#events-container {
+#events-container, .logging_event_list {
     display: flex;
     flex-direction: column;
     gap: 1.5em;
+}
+
+.logging_event_list {
+    gap: 0.5em;
 }
 
 /* logging events */
