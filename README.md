@@ -102,12 +102,6 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
 - [X] Global config
 - [X] 404 page
 - [X] Go embedding
-- [ ] Logging
-    - [ ] Backend
-        - [ ] Application-specific logs?
-        - [ ] Init system logs
-        - [ ] Kernel logs
-    - [ ] Logging page
 - [ ] Storage page
 - [ ] Networking page
 - [ ] Containers
@@ -129,3 +123,9 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
     - [ ] Updates page
 - [ ] Service files
 - [ ] Installer shell script
+- [ ] Logging
+    - [ ] Backend
+        - [ ] Application-specific logs?
+        - [ ] Init system logs
+        - [ ] Kernel logs
+    - [ ] Logging page
