@@ -18,9 +18,9 @@ _.ui.updateNavItems = () => {
     const frag = document.createDocumentFragment();
     for(const page of _CONFIG.ui?.pages || [])
         frag.appendChild(Object.assign(document.createElement("a"), {
-            href: `${page}.html`,
+            href: page,
             textContent: page,
-            className: location.pathname.split("/").pop() === `${page}.html` ? "current" : "" // if entry is the current page then highlight it
+            className: location.pathname.split("/").pop() === page ? "current" : "" // if entry is the current page then highlight it
         }));
 
     navItemsEl.appendChild(frag);

@@ -62,13 +62,6 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 		path = "index.html"
 	}
 
-	// if it doesn't need templating, then directly serve it
-	// oh boy. TODO: make this not horrific
-	if !strings.HasSuffix(path, ".html") || path == "index.html" || path == "admin.html" || path == "404.html" {
-		HTTP_ServeStatic(w, r, path)
-		return
-	}
-
 	pageName := strings.TrimSuffix(path, ".html")
 
 	// template together base + the page
@@ -84,7 +77,8 @@ func REST_Origin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil && (strings.Contains(err.Error(), "pattern matches no files") || strings.Contains(err.Error(), "no such file or directory")) {
-		HTTP_NotFound(w, r, path)
+		// directly serve the file without any templating
+		HTTP_ServeStatic(w, r, path)
 		return
 	} else if err != nil {
 		H_ISE(w, "REST_Origin: Template parse error for "+path, err)

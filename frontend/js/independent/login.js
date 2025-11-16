@@ -12,7 +12,7 @@ const msgEl = document.getElementById('msg')
 const hostnameEl = document.getElementById('hostname');
 
 // go to terminal page if already logged in
-fetch('/api/authenticated').then(res => res.ok && window.location.replace('/terminal.html'));
+fetch('/api/authenticated').then(res => res.ok && window.location.replace('/terminal'));
 
 // set hostname element
 fetch('/api/hostname')

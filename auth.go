@@ -141,7 +141,7 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 
 		log.Println("REST_Login: Authenticated a client from", H_ClientIP(r))
 	}
-	http.Redirect(w, r, "/terminal.html", http.StatusFound)
+	http.Redirect(w, r, "/terminal", http.StatusFound)
 }
 
 // handles /api/logout
