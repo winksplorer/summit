@@ -161,6 +161,9 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			}
 
 			data["data"] = thedata
+		case "storage.getdevs":
+			S_GetDevices()
+			data["data"] = 0
 		default:
 			// if t is not recognized, then throw error
 			Comm_Error(data, http.StatusNotFound, "Unknown type")
