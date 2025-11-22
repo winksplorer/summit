@@ -20,7 +20,7 @@ _.comm.socket.onmessage = async (event) => {
 
     // attempt to match id with any pending requests
     if (msg.id && _.comm.pending[msg.id]) {
-        if (msg.error) _.comm.pending[msg.id].reject(`error ${msg.error.code}: ${msg.error.msg}`);
+        if (msg.error.code) _.comm.pending[msg.id].reject(`error ${msg.error.code}: ${msg.error.msg}`);
         
         _.comm.pending[msg.id].resolve(msg.data);
         delete _.comm.pending[msg.id];

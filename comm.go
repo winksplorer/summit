@@ -16,13 +16,27 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
-var (
-	Comm_Handlers = map[string]func(map[string]any, string) (any, error){
-		"config.set":      Comm_ConfigSet,
-		"log.read":        Comm_LogRead,
-		"storage.getdevs": Comm_StorageGetdevs,
+const Comm_ReadLimit int64 = 2048
+
+type (
+	Comm_ErrorT struct {
+		Code int    `msgpack:"code"`
+		Msg  string `msgpack:"msg"`
+	}
+
+	Comm_Message struct {
+		T     string      `msgpack:"t"`
+		ID    uint32      `msgpack:"id"`
+		Data  any         `msgpack:"data"`
+		Error Comm_ErrorT `msgpack:"error"`
 	}
 )
+
+var Comm_Handlers = map[string]func(Comm_Message, string) (any, error){
+	"config.set":      Comm_ConfigSet,
+	"log.read":        Comm_LogRead,
+	"storage.getdevs": Comm_StorageGetdevs,
+}
 
 // comm websockets. handles /api/comm
 func REST_Comm(w http.ResponseWriter, r *http.Request) {
@@ -46,57 +60,13 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
+	conn.SetReadLimit(Comm_ReadLimit)
+	conn.SetReadDeadline(time.Now().Add(A_SessionExpireTime))
+
 	ctx, cancel := context.WithCancel(context.Background())
 
 	// send to frontend
-	go func(ctx context.Context) {
-		for {
-			// calculate stats
-			percentages, err := cpu.Percent(0, false)
-			if err != nil {
-				log.Println("REST_Comm: Couldn't get CPU usage:", err)
-				return
-			}
-
-			virtualMem, err := mem.VirtualMemory()
-			if err != nil {
-				log.Println("REST_Comm: Couldn't get memory usage:", err)
-				return
-			}
-
-			usageValue, usageUnit := H_HumanReadableSplit(virtualMem.Used)
-
-			// assemble stats into a comm object
-			stats := map[string]any{
-				"t": "stat.basic",
-				"data": map[string]any{
-					"memTotal":     H_HumanReadable(virtualMem.Total),
-					"memUsage":     math.Round(usageValue),
-					"memUsageUnit": usageUnit,
-					"cpuUsage":     math.Round(percentages[0]),
-				},
-			}
-
-			if err := Comm_Send(stats, conn); err != nil {
-				log.Println("REST_Comm: Couldn't send stats:", err)
-				return
-			}
-
-			// wait for next round
-			delay := time.NewTimer(5 * time.Second)
-
-			select {
-			case <-ctx.Done():
-				if !delay.Stop() {
-					<-delay.C
-				}
-				return
-
-			case <-delay.C:
-				// loop back and do again
-			}
-		}
-	}(ctx)
+	go Comm_StatsTimer(ctx, conn)
 
 	// read from frontend
 	for {
@@ -108,44 +78,41 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// decode comm object
-		var decoded map[string]any
+		var decoded Comm_Message
 		if err := msgpack.Unmarshal(msg, &decoded); err != nil {
 			log.Println("REST_Comm: Could not read data")
 			continue
 		}
 
 		// pre-assemble our response data
-		data := map[string]any{
-			"t":  decoded["t"],
-			"id": decoded["id"],
+		data := Comm_Message{
+			T:  decoded.T,
+			ID: decoded.ID,
 		}
 
-		msgType, ok := decoded["t"].(string)
-		if !ok {
-			Comm_Error(data, http.StatusNotFound, "Unknown type")
-		} else if handler, ok := Comm_Handlers[msgType]; !ok {
-			Comm_Error(data, http.StatusNotFound, "Unknown type")
+		if handler, ok := Comm_Handlers[decoded.T]; !ok {
+			Comm_Error(&data, http.StatusNotFound, "Unknown type")
 		} else {
 			answer, err := handler(decoded, sc.Value)
 			if err != nil {
-				Comm_ISE(data, err.Error())
+				Comm_ISE(&data, err.Error())
 			} else {
-				data["data"] = answer
+				data.Data = answer
 			}
 		}
 
 		if err := Comm_Send(data, conn); err != nil {
-			log.Println("REST_Comm: Could not send data for", decoded["t"])
+			log.Println("REST_Comm: Could not send data for", data.T)
 		}
 	}
 }
 
 // encodes and sends a comm message
-func Comm_Send(data map[string]any, connection *websocket.Conn) error {
+func Comm_Send(data Comm_Message, connection *websocket.Conn) error {
 	// encode
 	encodedData, err := msgpack.Marshal(data)
 	if err != nil {
-		log.Printf("Comm_Send: %v: Couldn't format with MessagePack: %s", data["t"], err)
+		log.Printf("Comm_Send: %v: Couldn't format with MessagePack: %s", data.T, err)
 		return fmt.Errorf("couldn't format with MessagePack: %s", err)
 	}
 
@@ -158,17 +125,69 @@ func Comm_Send(data map[string]any, connection *websocket.Conn) error {
 }
 
 // prints log message and sets data["error"]
-func Comm_Error(data map[string]any, code int, msg string) {
-	data["error"] = map[string]any{"code": code, "msg": msg}
-	log.Printf("%s: %s.\n", data["t"], msg)
+func Comm_Error(data *Comm_Message, code int, msg string) {
+	data.Error = Comm_ErrorT{
+		Code: code,
+		Msg:  msg,
+	}
+	log.Printf("%s: error %d: %s.\n", data.T, code, msg)
 }
 
 // Comm_Error(data, http.StatusInternalServerError, msg)
-func Comm_ISE(data map[string]any, msg string) {
+func Comm_ISE(data *Comm_Message, msg string) {
 	Comm_Error(data, http.StatusInternalServerError, msg)
 }
 
 // Comm_Error(data, http.StatusBadRequest, msg)
-func Comm_BR(data map[string]any, msg string) {
+func Comm_BR(data *Comm_Message, msg string) {
 	Comm_Error(data, http.StatusBadRequest, msg)
+}
+
+func Comm_StatsTimer(ctx context.Context, conn *websocket.Conn) {
+	// 0s
+	if err := Comm_SendStats(conn); err != nil {
+		log.Println("Comm_StatsTimer: Couldn't send stats:", err)
+		return
+	}
+
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			if err := Comm_SendStats(conn); err != nil {
+				log.Println("Comm_StatsTimer: Couldn't send stats:", err)
+				return
+			}
+		}
+	}
+}
+
+func Comm_SendStats(conn *websocket.Conn) error {
+	percentages, err := cpu.Percent(0, false)
+	if err != nil {
+		return err
+	}
+
+	virtualMem, err := mem.VirtualMemory()
+	if err != nil {
+		return err
+	}
+
+	usageValue, usageUnit := H_HumanReadableSplit(virtualMem.Used)
+
+	stats := Comm_Message{
+		T: "stat.basic",
+		Data: map[string]any{
+			"memTotal":     H_HumanReadable(virtualMem.Total),
+			"memUsage":     math.Round(usageValue),
+			"memUsageUnit": usageUnit,
+			"cpuUsage":     math.Round(percentages[0]),
+		},
+	}
+
+	return Comm_Send(stats, conn)
 }

@@ -69,9 +69,9 @@ func C_Save(userId string) error {
 }
 
 // handles config.set
-func Comm_ConfigSet(data map[string]any, keyCookie string) (any, error) {
+func Comm_ConfigSet(data Comm_Message, keyCookie string) (any, error) {
 	// get data
-	keys, ok := data["data"].(map[string]any)
+	keys, ok := data.Data.(map[string]any)
 	if !ok {
 		return nil, fmt.Errorf("data doesn't exist or isn't an object")
 	}

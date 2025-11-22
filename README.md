@@ -102,6 +102,7 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
 - [X] Global config
 - [X] 404 page
 - [X] Go embedding
+- [ ] Extend session + connection length on activity
 - [ ] Storage page
 - [ ] Networking page
 - [ ] Containers

@@ -45,10 +45,15 @@ func L_Read(source string, offset uint16, amount uint16) ([]L_Event, error) {
 	return events, nil
 }
 
-func Comm_LogRead(data map[string]any, keyCookie string) (any, error) {
-	source := IT_Must(data, "data.source", "all")
-	amount := IT_MustNumber(data, "data.amount", uint16(50))
-	page := IT_MustNumber(data, "data.page", uint16(0))
+func Comm_LogRead(data Comm_Message, keyCookie string) (any, error) {
+	request, ok := data.Data.(map[string]any)
+	if !ok {
+		return nil, fmt.Errorf("data doesn't exist or isn't an object")
+	}
+
+	source := IT_Must(request, "source", "all")
+	amount := IT_MustNumber(request, "amount", uint16(50))
+	page := IT_MustNumber(request, "page", uint16(0))
 
 	// actual read
 	events, err := L_Read(source, page*amount, amount)
