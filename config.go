@@ -67,3 +67,27 @@ func C_Save(userId string) error {
 
 	return nil
 }
+
+// handles config.set
+func Comm_ConfigSet(data map[string]any, keyCookie string) (any, error) {
+	// get data
+	keys, ok := data["data"].(map[string]any)
+	if !ok {
+		return nil, fmt.Errorf("data doesn't exist or isn't an object")
+	}
+
+	// loop through and set value
+	for key, value := range keys {
+		if err := C_SetValue(keyCookie, key, value); err != nil {
+			return nil, err
+		}
+	}
+
+	// save json
+	if err := C_Save(keyCookie); err != nil {
+		return nil, err
+	}
+
+	// return success
+	return map[string]any{}, nil
+}

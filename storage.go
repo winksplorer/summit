@@ -61,3 +61,8 @@ func S_GetDevices() ([]S_Device, error) {
 
 	return devs, nil
 }
+
+func Comm_StorageGetdevs(data map[string]any, keyCookie string) (any, error) {
+	S_GetDevices()
+	return map[string]any{}, nil
+}

@@ -44,3 +44,29 @@ func L_Read(source string, offset uint16, amount uint16) ([]L_Event, error) {
 
 	return events, nil
 }
+
+func Comm_LogRead(data map[string]any, keyCookie string) (any, error) {
+	source := IT_Must(data, "data.source", "all")
+	amount := IT_MustNumber(data, "data.amount", uint16(50))
+	page := IT_MustNumber(data, "data.page", uint16(0))
+
+	// actual read
+	events, err := L_Read(source, page*amount, amount)
+	if err != nil {
+		return nil, err
+	}
+
+	// lovecraftian computing
+	thedata := map[string][]map[string]any{}
+
+	for _, e := range events {
+		key := e.Time.Format("2006-01-02")
+		thedata[key] = append(thedata[key], map[string]any{
+			"time":   e.Time.Unix(),
+			"source": e.Source,
+			"msg":    e.Message,
+		})
+	}
+
+	return thedata, nil
+}

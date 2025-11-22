@@ -4,6 +4,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math"
 	"net/http"
@@ -13,6 +14,14 @@ import (
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/mem"
 	"github.com/vmihailenco/msgpack/v5"
+)
+
+var (
+	Comm_Handlers = map[string]func(map[string]any, string) (any, error){
+		"config.set":      Comm_ConfigSet,
+		"log.read":        Comm_LogRead,
+		"storage.getdevs": Comm_StorageGetdevs,
+	}
 )
 
 // comm websockets. handles /api/comm
@@ -67,6 +76,7 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 					"cpuUsage":     math.Round(percentages[0]),
 				},
 			}
+
 			if err := Comm_Send(stats, conn); err != nil {
 				log.Println("REST_Comm: Couldn't send stats:", err)
 				return
@@ -110,63 +120,18 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 			"id": decoded["id"],
 		}
 
-		// choose data based on t
-		switch decoded["t"] {
-		case "config.set":
-			// get data
-			keys, ok := decoded["data"].(map[string]any)
-			if !ok {
-				Comm_BR(data, "Data doesn't exist or isn't an object")
-				break
-			}
-
-			// loop through and set value
-			for key, value := range keys {
-				if err := C_SetValue(sc.Value, key, value); err != nil {
-					Comm_ISE(data, err.Error())
-					break
-				}
-			}
-
-			// save json
-			if err := C_Save(sc.Value); err != nil {
-				Comm_ISE(data, err.Error())
-				break
-			}
-
-			// return success
-			data["data"] = map[string]any{}
-		case "log.read":
-			source := IT_Must(decoded, "data.source", "all")
-			amount := IT_MustNumber(decoded, "data.amount", uint16(50))
-			page := IT_MustNumber(decoded, "data.page", uint16(0))
-
-			// actual read
-			events, err := L_Read(source, page*amount, amount)
+		msgType, ok := decoded["t"].(string)
+		if !ok {
+			Comm_Error(data, http.StatusNotFound, "Unknown type")
+		} else if handler, ok := Comm_Handlers[msgType]; !ok {
+			Comm_Error(data, http.StatusNotFound, "Unknown type")
+		} else {
+			answer, err := handler(decoded, sc.Value)
 			if err != nil {
 				Comm_ISE(data, err.Error())
-				break
+			} else {
+				data["data"] = answer
 			}
-
-			// lovecraftian computing
-			thedata := map[string][]map[string]any{}
-
-			for _, e := range events {
-				key := e.Time.Format("2006-01-02")
-				thedata[key] = append(thedata[key], map[string]any{
-					"time":   e.Time.Unix(),
-					"source": e.Source,
-					"msg":    e.Message,
-				})
-			}
-
-			data["data"] = thedata
-		case "storage.getdevs":
-			S_GetDevices()
-			data["data"] = 0
-		default:
-			// if t is not recognized, then throw error
-			Comm_Error(data, http.StatusNotFound, "Unknown type")
 		}
 
 		if err := Comm_Send(data, conn); err != nil {
@@ -180,15 +145,15 @@ func Comm_Send(data map[string]any, connection *websocket.Conn) error {
 	// encode
 	encodedData, err := msgpack.Marshal(data)
 	if err != nil {
-		log.Println("Comm_Send: Couldn't format with MessagePack:", err)
-		return err
+		log.Printf("Comm_Send: %v: Couldn't format with MessagePack: %s", data["t"], err)
+		return fmt.Errorf("couldn't format with MessagePack: %s", err)
 	}
 
 	// send
 	if err := connection.WriteMessage(websocket.BinaryMessage, encodedData); err != nil {
-		log.Println("Comm_Send: Couldn't send to WebSocket:", err)
-		return err
+		return fmt.Errorf("couldn't send to WebSocket: %s", err)
 	}
+
 	return nil
 }
 
