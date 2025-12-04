@@ -103,8 +103,20 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
 - [X] 404 page
 - [X] Go embedding
 - [ ] Extend session + connection length on activity
-- [ ] Storage page
-- [ ] Networking page
+- [ ] Storage
+    - [ ] Backend
+        - [X] ID/name
+        - [X] Readonly
+        - [X] Size
+        - [X] Model/serial
+        - [X] Parents/children
+        - [ ] SMART
+        - [ ] FS type
+        - [ ] Mountpoint
+    - [ ] Storage page
+- [ ] Networking
+    - [ ] Backend
+    - [ ] Networking page
 - [ ] Containers
     - [ ] Backend
         - [ ] Podman support
