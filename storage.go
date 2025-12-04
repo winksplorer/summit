@@ -12,14 +12,14 @@ import (
 const S_BlockDevDir = "/sys/dev/block"
 
 type S_Device struct {
-	id       string   // maj:min format
-	name     string   // device name (nvme0n1, loop0, etc.)
-	parent   string   // id of parent device. empty if device is a parent
-	children []string // ids of child devices. empty if no children
-	size     uint64   // device size
-	ro       bool     // readonly?
-	model    string   // device's model string. only on some parents
-	serial   string   // device's serial. only on some parents
+	ID       string   `msgpack:"id"`       // maj:min format
+	Name     string   `msgpack:"name"`     // device name (nvme0n1, loop0, etc.)
+	Parent   string   `msgpack:"parent"`   // id of parent device. empty if device is a parent
+	Children []string `msgpack:"children"` // ids of child devices. empty if no children
+	Size     uint64   `msgpack:"size"`     // device size
+	Readonly bool     `msgpack:"ro"`       // readonly?
+	Model    string   `msgpack:"model"`    // device's model string. only on some parents
+	Serial   string   `msgpack:"serial"`   // device's serial. only on some parents
 }
 
 func S_GetDevices() (map[string]S_Device, error) {
@@ -39,8 +39,8 @@ func S_GetDevices() (map[string]S_Device, error) {
 		}
 
 		// get id and name
-		dev.id = filepath.Base(path)
-		dev.name = filepath.Base(realPath)
+		dev.ID = filepath.Base(path)
+		dev.Name = filepath.Base(realPath)
 
 		// read size
 		sizeVal, err := os.ReadFile(filepath.Join(realPath, "size"))
@@ -48,11 +48,11 @@ func S_GetDevices() (map[string]S_Device, error) {
 			return err
 		}
 
-		dev.size, err = strconv.ParseUint(strings.TrimSpace(string(sizeVal)), 10, 64)
+		dev.Size, err = strconv.ParseUint(strings.TrimSpace(string(sizeVal)), 10, 64)
 		if err != nil {
 			return err
 		}
-		dev.size *= 512
+		dev.Size *= 512
 
 		// readonly?
 		roVal, err := os.ReadFile(filepath.Join(realPath, "ro"))
@@ -61,25 +61,25 @@ func S_GetDevices() (map[string]S_Device, error) {
 		}
 
 		if strings.TrimSpace(string(roVal)) == "1" {
-			dev.ro = true
+			dev.Readonly = true
 		}
 
 		// get parent
 		if _, err = os.Stat(filepath.Join(realPath, "partition")); !os.IsNotExist(err) {
 			parentVal, _ := os.ReadFile(filepath.Join(filepath.Dir(realPath), "dev"))
-			dev.parent = strings.TrimSpace(string(parentVal))
+			dev.Parent = strings.TrimSpace(string(parentVal))
 		}
 
 		// get model & serial
 		if _, err = os.Stat(filepath.Join(realPath, "device")); !os.IsNotExist(err) {
 			modelVal, _ := os.ReadFile(filepath.Join(filepath.Dir(realPath), "model"))
-			dev.model = strings.TrimSpace(string(modelVal))
+			dev.Model = strings.TrimSpace(string(modelVal))
 
 			serialVal, _ := os.ReadFile(filepath.Join(filepath.Dir(realPath), "serial"))
-			dev.serial = strings.TrimSpace(string(serialVal))
+			dev.Serial = strings.TrimSpace(string(serialVal))
 		}
 
-		devs[dev.id] = dev
+		devs[dev.ID] = dev
 		return nil
 	})
 	if err != nil {
@@ -89,33 +89,33 @@ func S_GetDevices() (map[string]S_Device, error) {
 
 	// set children
 	for k, v := range devs {
-		if v.parent != "" {
-			if dev, ok := devs[v.parent]; ok {
-				dev.children = append(devs[v.parent].children, k)
-				devs[v.parent] = dev
+		if v.Parent != "" {
+			if dev, ok := devs[v.Parent]; ok {
+				dev.Children = append(devs[v.Parent].Children, k)
+				devs[v.Parent] = dev
 			}
 		}
 	}
 
 	// debug
 	for k, v := range devs {
-		if v.parent != "" {
+		if v.Parent != "" {
 			continue
 		}
 
 		ro := ""
-		if v.ro {
+		if v.Readonly {
 			ro = " READONLY"
 		}
 
-		log.Print(k + " [" + v.name + "] (" + H_HumanReadable(v.size) + ") \"" + v.model + "\" {" + v.serial + "}" + ro)
-		for _, c := range v.children {
+		log.Print(k + " [" + v.Name + "] (" + H_HumanReadable(v.Size) + ") \"" + v.Model + "\" {" + v.Serial + "}" + ro)
+		for _, c := range v.Children {
 			ro := ""
-			if devs[c].ro {
+			if devs[c].Readonly {
 				ro = " READONLY"
 			}
 
-			log.Print("- " + c + " [" + devs[c].name + "] (" + H_HumanReadable(devs[c].size) + ") \"" + devs[c].model + "\" {" + devs[c].serial + "}" + ro)
+			log.Print("- " + c + " [" + devs[c].Name + "] (" + H_HumanReadable(devs[c].Size) + ") \"" + devs[c].Model + "\" {" + devs[c].Serial + "}" + ro)
 		}
 	}
 
