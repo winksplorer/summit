@@ -1,110 +1,75 @@
 package main
 
 import (
-	"io/fs"
-	"log"
-	"os"
-	"path/filepath"
-	"strconv"
-	"strings"
+	"github.com/jaypipes/ghw"
 )
 
-const S_BlockDevDir = "/sys/dev/block"
-
-type S_Device struct {
-	ID       string   `msgpack:"id"`       // maj:min format
-	Name     string   `msgpack:"name"`     // device name (nvme0n1, loop0, etc.)
-	Parent   string   `msgpack:"parent"`   // id of parent device. empty if device is a parent
-	Children []string `msgpack:"children"` // ids of child devices. empty if no children
-	Size     string   `msgpack:"size"`     // device size, human readable
-	Readonly bool     `msgpack:"ro"`       // readonly?
-	Model    string   `msgpack:"model"`    // device's model string. only on some parents
-	Serial   string   `msgpack:"serial"`   // device's serial. only on some parents
+type S_Disk struct {
+	Name       string        `msgpack:"name"`       // name (nvme0n1, loop0, etc.)
+	Size       string        `msgpack:"size"`       // size, human readable
+	Type       string        `msgpack:"type"`       // hdd, fdd, odd, or ssd
+	Controller string        `msgpack:"controller"` // scsi, ide, virtio, mmc, or nvme
+	Removable  bool          `msgpack:"removable"`  // removable?
+	Vendor     string        `msgpack:"vendor"`     // vendor string
+	Model      string        `msgpack:"model"`      // model string
+	Serial     string        `msgpack:"serial"`     // serial number
+	Partitions []S_Partition `msgpack:"partitions"` // partitions
 }
 
-func S_GetDevices() (map[string]S_Device, error) {
-	devs := make(map[string]S_Device)
+type S_Partition struct {
+	Name       string `msgpack:"name"`       // device name (nvme0n1p1, sda1, etc.)
+	FsLabel    string `msgpack:"fsLabel"`    // filesystem label
+	Size       string `msgpack:"size"`       // device size, human readable
+	Type       string `msgpack:"type"`       // filesystem type
+	Mountpoint string `msgpack:"mountpoint"` // mount point
+	Readonly   bool   `msgpack:"ro"`         // readonly?
+	UUID       string `msgpack:"uuid"`       // part uuid
+}
 
-	err := filepath.WalkDir(S_BlockDevDir, func(path string, d fs.DirEntry, err error) error {
-		if path == S_BlockDevDir || err != nil {
-			return nil
-		}
+func S_GetDevices() ([]S_Disk, error) {
+	var disks []S_Disk
 
-		dev := S_Device{}
-
-		// get real path
-		realPath, err := filepath.EvalSymlinks(path)
-		if err != nil {
-			return err
-		}
-
-		// get id and name
-		dev.ID = filepath.Base(path)
-		dev.Name = filepath.Base(realPath)
-
-		// read size
-		sizeVal, err := os.ReadFile(filepath.Join(realPath, "size"))
-		if err != nil {
-			return err
-		}
-
-		size, err := strconv.ParseUint(strings.TrimSpace(string(sizeVal)), 10, 64)
-		if err != nil {
-			return err
-		}
-		dev.Size = H_HumanReadable(size * 512)
-
-		// readonly?
-		roVal, err := os.ReadFile(filepath.Join(realPath, "ro"))
-		if err != nil {
-			return err
-		}
-
-		if strings.TrimSpace(string(roVal)) == "1" {
-			dev.Readonly = true
-		}
-
-		// get parent
-		if _, err = os.Stat(filepath.Join(realPath, "partition")); !os.IsNotExist(err) {
-			parentVal, _ := os.ReadFile(filepath.Join(filepath.Dir(realPath), "dev"))
-			dev.Parent = strings.TrimSpace(string(parentVal))
-		}
-
-		// get model & serial
-		if _, err = os.Stat(filepath.Join(realPath, "device")); !os.IsNotExist(err) {
-			modelVal, _ := os.ReadFile(filepath.Join(filepath.Dir(realPath), "model"))
-			dev.Model = strings.TrimSpace(string(modelVal))
-
-			serialVal, _ := os.ReadFile(filepath.Join(filepath.Dir(realPath), "serial"))
-			dev.Serial = strings.TrimSpace(string(serialVal))
-		}
-
-		devs[dev.ID] = dev
-		return nil
-	})
+	blocks, err := ghw.Block()
 	if err != nil {
-		log.Printf("cannot walk directories: %s", err)
 		return nil, err
 	}
 
-	// set children
-	for k, v := range devs {
-		if v.Parent != "" {
-			if dev, ok := devs[v.Parent]; ok {
-				dev.Children = append(devs[v.Parent].Children, k)
-				devs[v.Parent] = dev
-			}
+	for _, disk := range blocks.Disks {
+		var parts []S_Partition
+
+		for _, part := range disk.Partitions {
+			parts = append(parts, S_Partition{
+				Name:       part.Name,
+				FsLabel:    part.FilesystemLabel,
+				Size:       H_HumanReadable(part.SizeBytes),
+				Type:       part.Type,
+				Mountpoint: part.MountPoint,
+				Readonly:   part.IsReadOnly,
+				UUID:       part.UUID,
+			})
 		}
+
+		disks = append(disks, S_Disk{
+			Name:       disk.Name,
+			Size:       H_HumanReadable(disk.SizeBytes),
+			Type:       disk.DriveType.String(),
+			Controller: disk.StorageController.String(),
+			Removable:  disk.IsRemovable,
+			Vendor:     disk.Vendor,
+			Model:      disk.Model,
+			Serial:     disk.SerialNumber,
+			Partitions: parts,
+		})
 	}
 
-	return devs, nil
+	return disks, nil
 }
 
 func Comm_StorageGetdevs(data Comm_Message, keyCookie string) (any, error) {
-	devs, err := S_GetDevices()
+	disks, err := S_GetDevices()
 	if err != nil {
 		return nil, err
 	}
 
-	return devs, nil
+	return disks, nil
 }
