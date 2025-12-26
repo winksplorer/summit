@@ -399,6 +399,33 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--a0); }
     word-break: break-word;
 }
 
+/* storage device container */
+.storage_dev-container {
+    display: flex;
+    padding: 0;
+}
+
+.storage_dev-container > table {
+    flex: 1;
+    padding: 0.5em 1em;
+}
+
+.storage_dev-container > h3 {
+    margin-left: 1em;
+}
+
+.storage_parent-dev {
+    margin: -1em 0;
+    padding: 1em;
+    min-width: 20%;
+}
+
+.storage_container-divider {
+    width: 0.05em;
+    height: 100%;
+    background: var(--line);
+}
+
 
     /* misc */
 
