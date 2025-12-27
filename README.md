@@ -109,19 +109,15 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
         - [X] Readonly
         - [X] Size
         - [X] Model/serial
-        - [X] Parents/children
+        - [X] Partitions
+        - [X] FS type
+        - [X] Mountpoint
         - [ ] SMART
-        - [ ] FS type
-        - [ ] Mountpoint
     - [ ] Storage page
+    - [ ] Handle unpartitioned disks
 - [ ] Networking
     - [ ] Backend
     - [ ] Networking page
-- [ ] Containers
-    - [ ] Backend
-        - [ ] Podman support
-        - [ ] Docker support
-    - [ ] Container page
 - [ ] Services
     - [ ] Backend
         - [ ] OpenRC support
@@ -136,6 +132,11 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
     - [ ] Updates page
 - [ ] Service files
 - [ ] Installer shell script
+- [ ] Containers
+    - [ ] Backend
+        - [ ] Podman support
+        - [ ] Docker support
+    - [ ] Container page
 - [ ] Logging
     - [ ] Backend
         - [ ] Application-specific logs?

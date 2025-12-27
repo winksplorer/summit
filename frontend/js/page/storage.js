@@ -11,11 +11,7 @@ _.onReady(() => {
 
             // parent section
             const parent = _.helpers.newEl('div', 'storage_parent-dev', '');
-            parent.appendChild(_.helpers.newEl(
-                'p',
-                '',
-                `${dev.model} (${dev.serial})\n${dev.size} ${dev.controller} ${dev.type}\n${dev.partitions?.length} partitions`
-            ));
+            parent.appendChild(_.helpers.newEl('p', '', _.page.constructParentString(dev)));
 
             // partition section
             const parts = _.helpers.newEl('table', '', '');
@@ -27,8 +23,8 @@ _.onReady(() => {
             if (dev.partitions) {
                 for (const part of dev.partitions) {
                     const row = parts.insertRow();
-                    for (const x of Object.keys(part)) 
-                        row.insertCell().textContent = part[x];
+                    for (const i of Object.keys(part)) 
+                        row.insertCell().textContent = part[i] !== 'unknown' ? part[i] : '';
                 }
             }
 
@@ -46,3 +42,13 @@ _.onReady(() => {
         document.querySelector('main').appendChild(frag);
     });
 });
+
+_.page.constructParentString = (dev) => {
+    let line1 = `${dev.model} (${_.helpers.shortenText(dev.serial)})\n`;
+    if (line1 === 'unknown (unknown)\n') line1 = '';
+
+    const line2 = `${dev.size} ${dev.removable ? 'removable' : ''} ${dev.controller} ${dev.type}\n`;
+    const line3 = `${dev.partitions ? dev.partitions?.length : '0'} partitions`;
+
+    return line1+line2+line3
+}

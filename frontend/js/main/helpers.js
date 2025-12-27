@@ -30,6 +30,7 @@ _.helpers.getObjectValue = (obj, key) => {
 _.helpers.getCSSVar = (varName) => getComputedStyle(document.documentElement).getPropertyValue(`--${varName}`).trim();
 _.helpers.hex2rgb = (hex) => hex.match(/\w\w/g).map(x => parseInt(x, 16));
 _.helpers.formatHslAsCSS = (h, s, l) => `hsl(${h}, ${s}%, ${l}%)`;
+_.helpers.shortenText = (str, head = 14, tail = 4) => (str.length <= head + tail + 1) ? str : `${str.slice(0, head)}...${str.slice(-tail)}`;
 
 // https://gist.github.com/vahidk/05184faf3d92a0aa1b46aeaa93b07786
 _.helpers.rgb2hsl = (r, g, b) => {
