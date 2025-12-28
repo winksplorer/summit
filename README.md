@@ -97,7 +97,6 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
     - [X] Messages
     - [X] Input elements
     - [X] Light mode
-    - [X] User choosable accent color
     - [X] Sync with system dark/light theme
 - [X] Global config
 - [X] 404 page

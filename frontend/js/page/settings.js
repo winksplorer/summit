@@ -17,7 +17,7 @@ _.onReady(() => {
 
             _.helpers.setInputValue(setting, og)
 
-            setting.addEventListener(['color', 'text'].includes(setting.type) ? 'input' : 'change', e => {
+            setting.addEventListener(setting.type === 'text' ? 'input' : 'change', e => {
                 const val = _.helpers.getInputValue(e.target);
 
                 if (key in _.page.changedSettings && og === val)

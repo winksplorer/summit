@@ -3,7 +3,6 @@
         "pages": ["terminal", "logging", "storage", "networking", "containers", "services", "updates", "settings"],
         "theme": "sync",
         "sidebarWidth": 170,
-        "accentColor": "#99c8ff",
         "odometerStats": true,
         "timeFormat": "en-uk"
     },

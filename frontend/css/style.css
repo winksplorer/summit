@@ -10,9 +10,6 @@
     --s4: #303436;
     --s5: #484e51;
 
-    --a0: #479cff;
-    --a1: #99c8ff;
-
     --main-bg: var(--s0);
     --text: #e8e6e3;
     --text-gray: #787673;
@@ -36,9 +33,6 @@
     --s3: #b6b8ba;
     --s4: #abadb0;
     --s5: #94969c;
-
-    --a0: #0063cc;
-    --a1: #479cff;
 
     --text: #181514;
     --sidebar-text: #181514;
@@ -168,8 +162,8 @@ select {
 }
 
 /* checkboxes and color selectors */
-input[type="checkbox"]:hover, input[type="color"]:hover { border-color: var(--s5); }
-input[type="checkbox"], input[type="color"] {
+input[type="checkbox"]:hover { border-color: var(--s5); }
+input[type="checkbox"] {
     appearance: none;
     -webkit-appearance: none;
     height: 1.5em;
@@ -194,19 +188,9 @@ input[type="checkbox"]::before {
     height: 0.9em;
     transform: scale(0);
 
-    background: var(--a1);
+    background: var(--text);
 
     transition: transform 0.07s ease-in-out;
-}
-
-/* color selectors. i want to find the address of the guy who designed this. */
-input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-input[type="color"]::-webkit-color-swatch { border: none; }
-input[type="color"]::-moz-color-swatch { border: none; }
-input[type="color"] {
-    width: 3.5em;
-    padding: 2px;
-    background: transparent;
 }
 
 /* ranges */
@@ -240,7 +224,7 @@ input[type="range"]::-webkit-slider-thumb {
     height: 1.3em;
     margin-top: -0.5em;
 
-    background: var(--a1);
+    background: var(--text);
     transition: background 0.07s ease-in-out;
 }
 
@@ -252,12 +236,12 @@ input[type="range"]::-moz-range-thumb {
     border: none;
     border-radius: 0;
 
-    background: var(--a1);
+    background: var(--text);
     transition: background 0.07s ease-in-out;
 }
 
-input[type="range"]::-webkit-slider-thumb:hover { background: var(--a0); }
-input[type="range"]::-moz-range-thumb:hover { background: var(--a0); }
+input[type="range"]::-webkit-slider-thumb:hover { background: var(--text-gray); }
+input[type="range"]::-moz-range-thumb:hover { background: var(--text-gray); }
 
 .range-pair { align-items: flex-start; }
 .range-wrapper {
