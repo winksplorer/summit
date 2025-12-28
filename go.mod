@@ -4,6 +4,7 @@ go 1.23.4
 
 require (
 	github.com/NYTimes/gziphandler v1.1.1
+	github.com/anatol/smart.go v0.0.0-20241126061019-f03d79b340d2
 	github.com/bddjr/hlfhr v1.3.8
 	github.com/creack/pty v1.1.24
 	github.com/gorilla/websocket v1.5.3

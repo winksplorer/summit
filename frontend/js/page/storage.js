@@ -11,7 +11,8 @@ _.onReady(() => {
 
             // parent section
             const parent = _.helpers.newEl('div', 'storage_parent-dev', '');
-            parent.appendChild(_.helpers.newEl('p', '', _.page.constructParentString(dev)));
+            parent.appendChild(_.helpers.newEl('p', dev.temperature ? 'storage_before-smart' : '', _.page.constructParentString(dev)));
+            dev.temperature && parent.appendChild(_.page.getSmartList(dev));
 
             // partition section
             const parts = _.helpers.newEl('table', '', '');
@@ -49,6 +50,21 @@ _.page.constructParentString = (dev) => {
 
     const line2 = `${dev.size} ${dev.removable ? 'removable' : ''} ${dev.controller} ${dev.type}\n`;
     const line3 = `${dev.partitions ? dev.partitions?.length : '0'} partitions`;
+    const line4 = dev.temperature ? '\n\nSMART data:' : '';
 
-    return line1+line2+line3
+    return line1+line2+line3+line4
+}
+
+_.page.getSmartList = (dev) => {
+    const list = _.helpers.newEl('ul', 'storage_smart', '');
+
+    for (const v of [
+            `temperature: ${dev.temperature}°C`,
+            `blocks read: ${dev.read}`,
+            `blocks written: ${dev.written}`,
+            `power on hours: ${dev.power_on_hours}`,
+            `power cycles: ${dev.power_cycles}`
+        ]) list.appendChild(_.helpers.newEl('li', '', v));
+
+    return list
 }

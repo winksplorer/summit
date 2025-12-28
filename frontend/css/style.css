@@ -404,6 +404,14 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--text-gray); }
     margin-left: 1em;
 }
 
+.storage_before-smart {
+    margin-bottom:0;
+}
+
+.storage_smart {
+    margin-top: 0;
+}
+
 .storage_parent-dev {
     margin: -1em 0;
     padding: 1em;

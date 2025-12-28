@@ -20,14 +20,6 @@ import (
 	"github.com/msteinert/pam"
 )
 
-// used for humanReadable functions
-const (
-	Kib = 1024
-	Mib = Kib * 1024
-	Gib = Mib * 1024
-	Tib = Gib * 1024
-)
-
 type (
 	LogWriter struct{}
 	Number    interface {
@@ -58,25 +50,40 @@ func H_PamAuth(serviceName, userName, passwd string) error {
 }
 
 // human readable byte sizes, split unit and value
-func H_HumanReadableSplit(bytes uint64) (float64, string) {
+func H_HumanReadableSplit(bytes uint64, base uint64) (float64, string) {
+	k := base
+	m := base * base
+	g := base * base * base
+	t := base * base * base * base
+
 	switch {
-	case bytes >= Tib:
-		return float64(bytes) / float64(Tib), "t"
-	case bytes >= Gib:
-		return float64(bytes) / float64(Gib), "g"
-	case bytes >= Mib:
-		return float64(bytes) / float64(Mib), "m"
-	case bytes >= Kib:
-		return float64(bytes) / float64(Kib), "k"
+	case bytes >= t:
+		return float64(bytes) / float64(t), "t"
+	case bytes >= g:
+		return float64(bytes) / float64(g), "g"
+	case bytes >= m:
+		return float64(bytes) / float64(m), "m"
+	case bytes >= k:
+		return float64(bytes) / float64(k), "k"
 	default:
 		return float64(bytes), "b"
 	}
 }
 
-// human readable byte sizes, combined string
-func H_HumanReadable(bytes uint64) string {
-	value, unit := H_HumanReadableSplit(bytes)
+// human readable byte sizes, combined string. rounded to int, with b suffix
+func H_HumanReadableBytes(bytes uint64, base uint64) string {
+	value, unit := H_HumanReadableSplit(bytes, base)
 	return fmt.Sprintf("%d%s", int(math.Round(value)), unit)
+}
+
+// human readable byte sizes, combined string. rounded tenths, no b suffix, base=1000
+func H_HumanReadable(bytes uint64) string {
+	value, unit := H_HumanReadableSplit(bytes, 1000)
+	if unit == "b" {
+		unit = ""
+	}
+
+	return fmt.Sprintf("%g%s", math.Round(value*10)/10, unit)
 }
 
 // generates random b64 str

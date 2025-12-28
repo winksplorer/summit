@@ -111,7 +111,8 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
         - [X] Partitions
         - [X] FS type
         - [X] Mountpoint
-        - [ ] SMART
+        - [X] Basic SMART data (Temperature, power cycles, power on hours, etc.)
+        - [ ] Advanced SMART data (Reallocated_Sector_Ct, Percent_Lifetime_Remain, etc.)
     - [ ] Storage page
     - [ ] Handle unpartitioned disks
 - [ ] Networking
