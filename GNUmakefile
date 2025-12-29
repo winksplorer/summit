@@ -4,7 +4,6 @@ GO ?= go
 TAR ?= tar
 SED ?= sed
 MINIFIER ?= minify -q
-UPX ?= upx -9 --lzma
 
 PREFIX ?= /usr/local
 
@@ -13,12 +12,11 @@ GO_LDFLAGS = -s -w -buildid= -X main.G_BuildDate=$(shell date -I) -X main.G_Vers
 
 ifeq ($(SMALL),1)
 	GOFLAGS += -gcflags=all=-l
-	UPX = upx --best --lzma
 endif
 
-.PHONY: backend frontend all upx clean install
+.PHONY: backend frontend all clean install
 
-all: frontend backend upx
+all: frontend backend
 
 clean:
 	rm -rf summit frontend-dist
@@ -52,11 +50,6 @@ frontend:
 	@$(SED) -i '/<!-- JS_BUNDLE_START -->/,/<!-- JS_BUNDLE_END -->/c\<script src="js/bundle.min.js" defer></script>' frontend-dist/template/base.html
 	@echo "REPLACE (${SED}) remove markers"
 	@find frontend-dist/template -type f ! -name "base.html" -exec $(SED) -i '/<!-- REMOVE_MARKER_START -->/,/<!-- REMOVE_MARKER_END -->/d' {} +
-
-# runs upx
-upx:
-	@echo "    UPX ($(UPX)) summit"
-	@$(UPX) -qq summit
 
 # installs to prefix
 install:

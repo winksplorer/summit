@@ -3,7 +3,7 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/winksplorer/summit)
 ![x64 glibc compiled size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/winksplorer/6afa57f72db1f0883a5a9782a9718ffe/raw/x64_glibc_size.json)
 
-summit is a portable and self-contained Linux server management web dashboard that fits in 3MB.
+summit is a portable and self-contained Linux server management web dashboard that fits in 10MB.
 
 > [!IMPORTANT]
 > A lot of features (storage, networking, containers, updates, etc.) are missing currently.
@@ -34,7 +34,7 @@ The final compiled output is simply `./summit`. By default, summit installs to `
 > Make sure you have the community repo enabled
 
 ```sh
-apk add go make linux-pam-dev git openssl minify xz upx \
+apk add go make linux-pam-dev git openssl minify \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
     && make all install
@@ -43,7 +43,7 @@ apk add go make linux-pam-dev git openssl minify xz upx \
 ### Debian
 
 ```sh
-apt install golang-go make libpam0g-dev git openssl minify upx-ucl \
+apt install golang-go make libpam0g-dev git openssl minify \
     && git clone https://github.com/winksplorer/summit \
     && cd summit \
     && make all install

@@ -1,13 +1,5 @@
 # summit Developer Documentation
 
-## Building the backend without UPX
-
-UPX compresses the final binary by a lot, but it slows down the build process and can hurt debugging sometimes. To build the final binary without UPX compression just run:
-
-```
-make frontend backend
-```
-
 ## Hot reloading the frontend
 
 By default, the backend uses a frontend embedded in the binary, but you can pass a directory as an argument and it will try to use that. This can be used for hot reloads or for completely custom frontends.
