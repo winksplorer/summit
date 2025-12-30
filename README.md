@@ -1,7 +1,7 @@
 # summit
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/winksplorer/summit/ci-and-badge.yml)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/winksplorer/summit)
-![x64 glibc compiled size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/winksplorer/6afa57f72db1f0883a5a9782a9718ffe/raw/x64_glibc_size.json)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/prescott2m/summit/ci-and-badge.yml)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/prescott2m/summit)
+![x64 glibc compiled size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/prescott2m/6afa57f72db1f0883a5a9782a9718ffe/raw/x64_glibc_size.json)
 
 summit is a portable and self-contained Linux server management web dashboard that fits in 10MB.
 
@@ -35,7 +35,7 @@ The final compiled output is simply `./summit`. By default, summit installs to `
 
 ```sh
 apk add go make linux-pam-dev git openssl minify \
-    && git clone https://github.com/winksplorer/summit \
+    && git clone https://github.com/prescott2m/summit \
     && cd summit \
     && make all install
 ```
@@ -44,7 +44,7 @@ apk add go make linux-pam-dev git openssl minify \
 
 ```sh
 apt install golang-go make libpam0g-dev git openssl minify \
-    && git clone https://github.com/winksplorer/summit \
+    && git clone https://github.com/prescott2m/summit \
     && cd summit \
     && make all install
 ```

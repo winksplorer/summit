@@ -14,7 +14,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const G_LicensingMsg = "summit is licensed under Apache-2.0 and includes third-party components under MIT and OFL licenses. Copyright (c) 2025 winksplorer et al."
+const G_LicensingMsg = "summit is licensed under Apache-2.0 and includes third-party components under MIT and OFL licenses. Copyright (c) 2025 prescott2m."
 
 var (
 	G_BuildDate   string

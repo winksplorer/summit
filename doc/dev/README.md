@@ -15,5 +15,5 @@ This lets you update a file and see it change when you refresh, rather than havi
 You can confirm that it's using the correct frontend by checking if something like this appeared in the startup logs:
 
 ```
-[2025-10-26 15:45:18-0700] Using /home/wink/repos/summit/frontend for frontend directory.
+[2025-10-26 15:45:18-0700] Using /home/p2m/repos/summit/frontend for frontend directory.
 ```
