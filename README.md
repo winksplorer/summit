@@ -103,7 +103,7 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
 - [X] Go embedding
 - [ ] Extend session + connection length on activity
 - [ ] Storage
-    - [ ] Backend
+    - [X] Backend
         - [X] ID/name
         - [X] Readonly
         - [X] Size
@@ -112,7 +112,7 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
         - [X] FS type
         - [X] Mountpoint
         - [X] Basic SMART data (Temperature, power cycles, power on hours, etc.)
-        - [ ] Advanced SMART data (Reallocated_Sector_Ct, Percent_Lifetime_Remain, etc.)
+        - [X] Advanced SMART data (Reallocated_Sector_Ct, Percent_Lifetime_Remain, etc.)
     - [ ] Storage page
     - [ ] Handle unpartitioned disks
 - [ ] Networking
