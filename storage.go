@@ -59,56 +59,56 @@ func S_AssembleSMART(diskPath string) (S_SMART, error) {
 	dev, err := smart.Open(diskPath)
 	if err != nil {
 		return S_SMART{}, err
-	} else {
-		// generic attrs
-		if a, err = dev.ReadGenericAttributes(); err != nil {
+	}
+
+	// generic attrs
+	if a, err = dev.ReadGenericAttributes(); err != nil {
+		return S_SMART{}, err
+	}
+
+	// base struct
+	SMART = S_SMART{
+		DataAvailable: true,
+		Temperature:   a.Temperature,
+		Read:          H_HumanReadable(a.Read),
+		Written:       H_HumanReadable(a.Written),
+		PowerOnHours:  a.PowerOnHours,
+		PowerCycles:   a.PowerCycles,
+	}
+
+	// controller-specific attrs
+	switch sm := dev.(type) {
+	case *smart.SataDevice: // ATA
+		data, err := sm.ReadSMARTData()
+		if err != nil {
 			return S_SMART{}, err
 		}
 
-		// base struct
-		SMART = S_SMART{
-			DataAvailable: true,
-			Temperature:   a.Temperature,
-			Read:          H_HumanReadable(a.Read),
-			Written:       H_HumanReadable(a.Written),
-			PowerOnHours:  a.PowerOnHours,
-			PowerCycles:   a.PowerCycles,
+		for _, attr := range data.Attrs {
+			switch attr.Name {
+			case "Reallocate_NAND_Blk_Cnt":
+				fallthrough
+			case "Reallocated_Sector_Ct":
+				SMART.AtaReallocSectors = attr.ValueRaw
+			case "Offline_Uncorrectable":
+				fallthrough
+			case "Reported_Uncorrectable_Errors":
+				fallthrough
+			case "Uncorrectable_Error_Cnt":
+				SMART.AtaUncorrectableErrs = attr.ValueRaw
+			}
+		}
+	case *smart.NVMeDevice: // NVMe
+		data, err := sm.ReadSMART()
+		if err != nil {
+			return S_SMART{}, err
 		}
 
-		// controller-specific attrs
-		switch sm := dev.(type) {
-		case *smart.SataDevice: // ATA
-			data, err := sm.ReadSMARTData()
-			if err != nil {
-				return S_SMART{}, err
-			}
-
-			for _, attr := range data.Attrs {
-				switch attr.Name {
-				case "Reallocate_NAND_Blk_Cnt":
-					fallthrough
-				case "Reallocated_Sector_Ct":
-					SMART.AtaReallocSectors = attr.ValueRaw
-				case "Offline_Uncorrectable":
-					fallthrough
-				case "Reported_Uncorrectable_Errors":
-					fallthrough
-				case "Uncorrectable_Error_Cnt":
-					SMART.AtaUncorrectableErrs = attr.ValueRaw
-				}
-			}
-		case *smart.NVMeDevice: // NVMe
-			data, err := sm.ReadSMART()
-			if err != nil {
-				return S_SMART{}, err
-			}
-
-			SMART.NvmeCritWarning = data.CritWarning
-			SMART.NvmeAvailSpare = data.AvailSpare
-			SMART.NvmePercentUsed = data.PercentUsed
-			SMART.NvmeUnsafeShutdowns = data.UnsafeShutdowns.Val[0]
-			SMART.NvmeMediaErrs = data.MediaErrors.Val[0]
-		}
+		SMART.NvmeCritWarning = data.CritWarning
+		SMART.NvmeAvailSpare = data.AvailSpare
+		SMART.NvmePercentUsed = data.PercentUsed
+		SMART.NvmeUnsafeShutdowns = data.UnsafeShutdowns.Val[0]
+		SMART.NvmeMediaErrs = data.MediaErrors.Val[0]
 	}
 
 	return SMART, nil

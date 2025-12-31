@@ -74,7 +74,7 @@ _.page.getSmartList = (dev) => {
             `unsafe shutdowns: ${dev.smart.nvme_unsafe_shutdowns}`,
             `media and data integrity errors: ${dev.smart.nvme_media_errs}`
         ]) list.appendChild(_.helpers.newEl('li', '', v));
-    } else if (dev.controller === 'IDE') { // TODO: test
+    } else if (['IDE', 'SCSI'].includes(dev.controller)) {
         for (const v of [
             `reallocated sectors: ${dev.smart.ata_realloc_sectors}`,
             `uncorrectable errors: ${dev.smart.ata_uncorrectable_errs}`,

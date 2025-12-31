@@ -36,7 +36,7 @@ frontend:
 		! -path 'frontend/js/page/*' \
 		! -path 'frontend/js/lib/page/*' \
 		! -path 'frontend/js/independent/*' \
-		! -path 'frontend/js/main/core.js' -print0 | sort -z) | xargs -0 cat | $(MINIFIER) --type=application/javascript > frontend-dist/js/bundle.min.js
+		! -path 'frontend/js/main/core.js' -print0 | sort -z) | xargs -0 cat | $(MINIFIER) --type=js > frontend-dist/js/bundle.min.js
 	@echo "   COPY ($(TAR)) frontend (exclude js/main & js/lib, BUT include js/lib/page) -> frontend-dist"
 	@cd frontend && find . -type f \
 		\( -path './js/main*' -o -path './js/lib*' \) \
