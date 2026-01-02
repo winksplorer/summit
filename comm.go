@@ -8,6 +8,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -17,6 +18,8 @@ import (
 )
 
 const Comm_ReadLimit int64 = 2048
+
+var Comm_ConnMu sync.Mutex
 
 type (
 	Comm_ErrorT struct {
@@ -136,7 +139,9 @@ func Comm_Send(data Comm_Message, connection *websocket.Conn) error {
 		return fmt.Errorf("couldn't format with MessagePack: %s", err)
 	}
 
-	// TODO: USE A MUTEX!!!!!!!
+	Comm_ConnMu.Lock()
+	defer Comm_ConnMu.Unlock()
+
 	// send
 	if err := connection.WriteMessage(websocket.BinaryMessage, encodedData); err != nil {
 		return fmt.Errorf("couldn't send to WebSocket: %s", err)
