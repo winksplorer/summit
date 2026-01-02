@@ -4,6 +4,7 @@
         "theme": "sync",
         "sidebarWidth": 170,
         "odometerStats": true,
+        "binaryUnits": true,
         "timeFormat": "en-uk"
     },
     "terminal": {

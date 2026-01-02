@@ -15,13 +15,13 @@ _.helpers.newEl = (tag, classes, content) =>
 
 _.helpers.getCSSVar = (varName) => getComputedStyle(document.documentElement).getPropertyValue(`--${varName}`).trim();
 _.helpers.shortenText = (str, head = 14, tail = 4) => (str.length <= head + tail + 1) ? str : `${str.slice(0, head)}...${str.slice(-tail)}`;
-_.helpers.humanReadableSplit = (size, places = 2, baseUnit = false, base = 1000) => {
+_.helpers.humanReadableSplit = (size, places = 2, baseUnit = false, base = _CONFIG.ui.binaryUnits ? 1024 : 1000) => {
     const units = baseUnit ? ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB'] : ['', 'k', 'm', 'g', 't', 'p', 'e']
     const i = size && Math.floor(Math.log(size) / Math.log(base));
     return {'n': +(size / Math.pow(base, i)).toFixed(places), 'unit': units[i]};
 }
 
-_.helpers.humanReadable = (size, places = 2, baseUnit = false, base = 1000) => {
+_.helpers.humanReadable = (size, places = 2, baseUnit = false, base = _CONFIG.ui.binaryUnits ? 1024 : 1000) => {
     const split = _.helpers.humanReadableSplit(size,places,baseUnit,base);
     return split.n + split.unit;
 }
