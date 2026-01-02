@@ -25,16 +25,38 @@ _.onReady(() => {
             frag.appendChild(container);
         }
 
-        document.querySelector('.grid').appendChild(frag);
+        $('networking_nics').appendChild(frag);
     });
+
+    // canvas logic
+    const canvas = $('networking_traffic');
+    _.helpers.resizeCanvas(canvas);
+    const ro = new ResizeObserver(() => _.helpers.resizeCanvas(canvas));
+    ro.observe(canvas);
+
+    // graph
+    let rxSeries = new TimeSeries();
+    let txSeries = new TimeSeries();
+
+    let chart = new SmoothieChart({ grid: {strokeStyle: _.helpers.getCSSVar('line')}, tooltip: true, fps:30 });
+    chart.addTimeSeries(rxSeries, { strokeStyle: '#00ff00' });
+    chart.addTimeSeries(txSeries, { strokeStyle: '#ff0000' });
+    chart.streamTo($('networking_traffic'), 1000);
     
     // subscribe to net.stats
     _.comm.subscribe('net.stats', null, nics => {
         if (_.page.statsLast.length) {
+            let totalRx = 0, totalTx = 0;
+
             for (const nic of nics) {
                 const old = _.page.statsLast.find(x => x.name === nic.name);
-                $(`${nic.name}-stats`).textContent = `RX: ${_.helpers.humanReadable(nic.rx_bytes - old.rx_bytes,1,true)}/s - TX: ${_.helpers.humanReadable(nic.tx_bytes - old.tx_bytes,1,true)}/s`
+                $(`${nic.name}-stats`).textContent = `RX: ${_.helpers.humanReadable(nic.rx_bytes - old.rx_bytes,1,true)}/s - TX: ${_.helpers.humanReadable(nic.tx_bytes - old.tx_bytes,1,true)}/s`;
+                totalRx += (nic.rx_bytes - old.rx_bytes) / 1000;
+                totalTx += (nic.tx_bytes - old.tx_bytes) / 1000;
             }
+
+            rxSeries.append(Date.now(), totalRx);
+            txSeries.append(Date.now(), totalTx);
         }
 
         _.page.statsLast = nics;

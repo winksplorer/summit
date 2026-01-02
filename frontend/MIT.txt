@@ -4,6 +4,7 @@ The following components are included in this distribution under the MIT License
 - js/lib/page/xterm-addon-fit.min.js
 - js/lib/odometer.min.js
 - js/lib/msgpack.min.js
+- js/lib/smoothie.min.js
 - css/lib/odometer-ts.css
 - css/lib/xterm.css
 

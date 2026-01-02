@@ -26,6 +26,17 @@ _.helpers.humanReadable = (size, places = 2, baseUnit = false, base = _CONFIG.ui
     return split.n + split.unit;
 }
 
+_.helpers.resizeCanvas = (canvas) => {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
 _.helpers.getInputValue = (el) => el.type === 'checkbox' ? el.checked : el.value;
 _.helpers.setInputValue = (el, val) => el.type === 'checkbox' ? (el.checked = val) : (el.value = val);
 _.helpers.getObjectValue = (obj, key) => {
