@@ -34,7 +34,7 @@ _.page.displayEvents = (events) => {
 _.page.readLogs = () => {
     _.comm.request('log.read', {
         "source": _.helpers.getInputValue($('source')),
-        "amount": parseInt(_.helpers.getInputValue($('amount'))),
+        "amount": +_.helpers.getInputValue($('amount')),
         "page": _.page.page
     }).then(evs => _.page.displayEvents(evs))
 }

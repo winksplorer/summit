@@ -203,16 +203,14 @@ func Comm_SendStats(conn *websocket.Conn, id uint32) error {
 		return err
 	}
 
-	usageValue, usageUnit := H_HumanReadableSplit(virtualMem.Used, 1024)
-
 	stats := Comm_Message{
 		ID: id,
 		T:  "stat.basic",
+		// TODO: use a struct
 		Data: map[string]any{
-			"memTotal":     H_HumanReadableBytes(virtualMem.Total, 1024),
-			"memUsage":     math.Round(usageValue),
-			"memUsageUnit": usageUnit,
-			"cpuUsage":     math.Round(percentages[0]),
+			"memTotal": virtualMem.Total,
+			"memUsed":  virtualMem.Used,
+			"cpuUsage": math.Round(percentages[0]),
 		},
 	}
 

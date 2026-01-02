@@ -33,7 +33,7 @@ _.onReady(() => {
         if (_.page.statsLast.length) {
             for (const nic of nics) {
                 const old = _.page.statsLast.find(x => x.name === nic.name);
-                $(`${nic.name}-stats`).textContent = `RX: ${nic.rx_bytes - old.rx_bytes} B/s - TX: ${nic.tx_bytes - old.tx_bytes} B/s`
+                $(`${nic.name}-stats`).textContent = `RX: ${_.helpers.humanReadable(nic.rx_bytes - old.rx_bytes,1,true)}/s - TX: ${_.helpers.humanReadable(nic.tx_bytes - old.tx_bytes,1,true)}/s`
             }
         }
 

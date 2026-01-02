@@ -25,7 +25,7 @@ _.onReady(() => {
                 for (const part of dev.partitions) {
                     const row = parts.insertRow();
                     for (const i of Object.keys(part)) 
-                        row.insertCell().textContent = part[i] !== 'unknown' ? part[i] : '';
+                        row.insertCell().textContent = part[i] !== 'unknown' ? (i === 'size' ? _.helpers.humanReadable(part[i],0) : part[i]) : '';
                 }
             }
 
@@ -48,7 +48,7 @@ _.page.constructParentString = (dev) => {
     let line1 = `${dev.model} (${_.helpers.shortenText(dev.serial)})\n`;
     if (line1 === 'unknown (unknown)\n') line1 = '';
 
-    const line2 = `${dev.size} ${dev.removable ? 'removable' : ''} ${dev.controller} ${dev.type}\n`;
+    const line2 = `${_.helpers.humanReadable(dev.size,0)} ${dev.removable ? 'removable' : ''} ${dev.controller} ${dev.type}\n`;
     const line3 = `${dev.partitions ? dev.partitions?.length : '0'} partitions`;
     const line4 = dev.smart.available ? '\n\nSMART data:' : '';
 

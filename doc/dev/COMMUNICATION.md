@@ -110,7 +110,7 @@ The frontend (and backend, if it ever requests data from the frontend) will alwa
         "vendor": "unknown",
         "partitions": [
             {
-                "fsLabel": "unknown",
+                "fs_label": "unknown",
                 "mountpoint": "/boot/efi",
                 "name": "nvme0n1p1",
                 "ro": false,

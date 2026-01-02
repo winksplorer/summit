@@ -9,7 +9,7 @@ import (
 
 type S_Disk struct {
 	Name       string `msgpack:"name"`       // name (nvme0n1, loop0, etc.)
-	Size       string `msgpack:"size"`       // size, human readable
+	Size       uint64 `msgpack:"size"`       // size
 	Type       string `msgpack:"type"`       // hdd, fdd, odd, or ssd
 	Controller string `msgpack:"controller"` // scsi, ide, virtio, mmc, or nvme
 	Removable  bool   `msgpack:"removable"`  // removable?
@@ -22,9 +22,9 @@ type S_Disk struct {
 }
 
 type S_Partition struct {
-	Name       string `msgpack:"name"`       // device name (nvme0n1p1, sda1, etc.)
-	FsLabel    string `msgpack:"fsLabel"`    // filesystem label
-	Size       string `msgpack:"size"`       // device size, human readable
+	Name       string `msgpack:"name"`       // name (nvme0n1p1, sda1, etc.)
+	FsLabel    string `msgpack:"fs_label"`   // filesystem label
+	Size       uint64 `msgpack:"size"`       // size
 	Type       string `msgpack:"type"`       // filesystem type
 	Mountpoint string `msgpack:"mountpoint"` // mount point
 	Readonly   bool   `msgpack:"ro"`         // readonly?
@@ -35,8 +35,8 @@ type S_SMART struct {
 	// generic
 	DataAvailable bool   `msgpack:"available"`      // Is SMART data even available for this disk?
 	Temperature   uint64 `msgpack:"temperature"`    // SMART: Temperature in Celsius
-	Read          string `msgpack:"read"`           // SMART: Data units (LBA) read, human readable
-	Written       string `msgpack:"written"`        // SMART: Data units (LBA) written, human readable
+	Read          uint64 `msgpack:"read"`           // SMART: Data units (LBA) read
+	Written       uint64 `msgpack:"written"`        // SMART: Data units (LBA) written
 	PowerOnHours  uint64 `msgpack:"power_on_hours"` // SMART: Power on time in hours
 	PowerCycles   uint64 `msgpack:"power_cycles"`   // SMART: Power cycles
 
@@ -70,8 +70,8 @@ func S_AssembleSMART(diskPath string) (S_SMART, error) {
 	SMART = S_SMART{
 		DataAvailable: true,
 		Temperature:   a.Temperature,
-		Read:          H_HumanReadable(a.Read),
-		Written:       H_HumanReadable(a.Written),
+		Read:          a.Read,
+		Written:       a.Written,
 		PowerOnHours:  a.PowerOnHours,
 		PowerCycles:   a.PowerCycles,
 	}
@@ -86,15 +86,9 @@ func S_AssembleSMART(diskPath string) (S_SMART, error) {
 
 		for _, attr := range data.Attrs {
 			switch attr.Name {
-			case "Reallocate_NAND_Blk_Cnt":
-				fallthrough
-			case "Reallocated_Sector_Ct":
+			case "Reallocate_NAND_Blk_Cnt", "Reallocated_Sector_Ct":
 				SMART.AtaReallocSectors = attr.ValueRaw
-			case "Offline_Uncorrectable":
-				fallthrough
-			case "Reported_Uncorrectable_Errors":
-				fallthrough
-			case "Uncorrectable_Error_Cnt":
+			case "Offline_Uncorrectable", "Reported_Uncorrectable_Errors", "Uncorrectable_Error_Cnt":
 				SMART.AtaUncorrectableErrs = attr.ValueRaw
 			}
 		}
@@ -134,7 +128,7 @@ func S_GetDevices() ([]S_Disk, error) {
 			parts = append(parts, S_Partition{
 				Name:       part.Name,
 				FsLabel:    part.FilesystemLabel,
-				Size:       H_HumanReadableBytes(part.SizeBytes, 1024),
+				Size:       part.SizeBytes,
 				Type:       part.Type,
 				Mountpoint: part.MountPoint,
 				Readonly:   part.IsReadOnly,
@@ -144,7 +138,7 @@ func S_GetDevices() ([]S_Disk, error) {
 
 		disks = append(disks, S_Disk{
 			Name:       disk.Name,
-			Size:       H_HumanReadableBytes(disk.SizeBytes, 1024),
+			Size:       disk.SizeBytes,
 			Type:       disk.DriveType.String(),
 			Controller: disk.StorageController.String(),
 			Removable:  disk.IsRemovable,
