@@ -38,9 +38,16 @@ _.onReady(() => {
     let rxSeries = new TimeSeries();
     let txSeries = new TimeSeries();
 
-    let chart = new SmoothieChart({ grid: {strokeStyle: _.helpers.getCSSVar('line')}, tooltip: true, fps:30 });
-    chart.addTimeSeries(rxSeries, { strokeStyle: '#00ff00' });
-    chart.addTimeSeries(txSeries, { strokeStyle: '#ff0000' });
+    let chart = new SmoothieChart({
+        grid: { strokeStyle: _.helpers.getCSSVar('line'), fillStyle: _.helpers.getCSSVar('s0') },
+        tooltip: true,
+        fps: 30,
+        minValue: 0,
+        labels: { fillStyle: _.ui.isDarkTheme() ? '#fff' : '#000', fontSize: 15, fontFamily: 'Archivo Narrow' }
+    });
+
+    chart.addTimeSeries(rxSeries, { strokeStyle: _.ui.isDarkTheme() ? '#0f0' : '#070' });
+    chart.addTimeSeries(txSeries, { strokeStyle: _.ui.isDarkTheme() ? '#f00' : '#700' });
     chart.streamTo($('networking_traffic'), 1000);
     
     // subscribe to net.stats

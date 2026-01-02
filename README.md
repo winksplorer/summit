@@ -117,7 +117,7 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
         - [ ] Partitioning
     - [ ] Storage page
     - [ ] Handle unpartitioned disks
-- [ ] Networking
+- [X] Networking
     - [X] Backend
         - [X] Name
         - [X] MAC address
@@ -125,8 +125,8 @@ The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
         - [X] Speed
         - [X] Duplex
         - [X] IPs
-        - [ ] Usage meter
-    - [ ] Networking page
+        - [X] Usage meter
+    - [X] Networking page
 - [ ] Services
     - [ ] Backend
         - [ ] OpenRC support
