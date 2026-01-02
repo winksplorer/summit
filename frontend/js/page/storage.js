@@ -69,7 +69,7 @@ _.page.getSmartList = (dev) => {
     if (dev.controller === 'NVMe') {
         for (const v of [
             `critical warning: 0x${dev.smart.nvme_crit_warning.toString(16)}`,
-            `available spare: ${dev.smart.nvme_avail_spare}`,
+            `available spare: ${dev.smart.nvme_avail_spare}%`,
             `percent used: ${dev.smart.nvme_percent_used}%`,
             `unsafe shutdowns: ${dev.smart.nvme_unsafe_shutdowns}`,
             `media and data integrity errors: ${dev.smart.nvme_media_errs}`

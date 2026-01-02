@@ -36,6 +36,7 @@ var Comm_Handlers = map[string]func(Comm_Message, string) (any, error){
 	"config.set":      Comm_ConfigSet,
 	"log.read":        Comm_LogRead,
 	"storage.getdevs": Comm_StorageGetdevs,
+	"net.getnics":     Comm_NetGetnics,
 }
 
 // comm websockets. handles /api/comm

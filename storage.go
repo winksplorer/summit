@@ -160,10 +160,5 @@ func S_GetDevices() ([]S_Disk, error) {
 }
 
 func Comm_StorageGetdevs(data Comm_Message, keyCookie string) (any, error) {
-	disks, err := S_GetDevices()
-	if err != nil {
-		return nil, err
-	}
-
-	return disks, nil
+	return S_GetDevices()
 }
