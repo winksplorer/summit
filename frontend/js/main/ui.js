@@ -38,11 +38,11 @@ _.ui.updateStats = (data) => {
     if (!_.ui.odometerInitialized) $('stats').style.visibility = 'visible';
     if (_.ui.shouldInitOdometerStats(false)) Odometer.init();
 
-    const memUsed = _.helpers.humanReadableSplit(data.memUsed,1);
+    const memUsed = _.helpers.humanReadableSplit(data.mem_used,1);
 
-    $('stats-cpu').textContent = data.cpuUsage;
+    $('stats-cpu').textContent = data.cpu_usage;
     $('stats-memused').textContent = memUsed.n;
-    $('stats-memrest').textContent = `${memUsed.unit}/${_.helpers.humanReadable(data.memTotal,0)} ram`;
+    $('stats-memrest').textContent = `${memUsed.unit}/${_.helpers.humanReadable(data.mem_total,0)} ram`;
 
     if (_.ui.shouldInitOdometerStats(true)) Odometer.init();
     if (!_.ui.odometerInitialized) _.ui.odometerInitialized = true;

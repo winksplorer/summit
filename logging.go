@@ -11,9 +11,9 @@ const L_MaxReadAmount = 200
 
 // an event
 type L_Event struct {
-	Time    time.Time
-	Source  string
-	Message string
+	Time    int64  `msgpack:"time"`
+	Source  string `msgpack:"source"`
+	Message string `msgpack:"msg"`
 }
 
 // reads `amount` events from `source`, starting from `offset`
@@ -35,7 +35,7 @@ func L_Read(source string, offset uint16, amount uint16) ([]L_Event, error) {
 				b[j] = byte('a' + (i+j)%26)
 			}
 			events = append(events, L_Event{
-				Time:    time.Unix(rand.Int63n(1<<31), 0),
+				Time:    rand.Int63n(1 << 31),
 				Source:  source,
 				Message: string(b),
 			})
@@ -61,16 +61,11 @@ func Comm_LogRead(data Comm_Message, keyCookie string) (any, error) {
 		return nil, err
 	}
 
-	// lovecraftian computing
-	thedata := map[string][]map[string]any{}
+	thedata := map[string][]L_Event{}
 
 	for _, e := range events {
-		key := e.Time.Format("2006-01-02")
-		thedata[key] = append(thedata[key], map[string]any{
-			"time":   e.Time.Unix(),
-			"source": e.Source,
-			"msg":    e.Message,
-		})
+		key := time.Unix(e.Time, 0).Format("2006-01-02")
+		thedata[key] = append(thedata[key], e)
 	}
 
 	return thedata, nil

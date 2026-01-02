@@ -33,6 +33,12 @@ type (
 		Data  any         `msgpack:"data"`
 		Error Comm_ErrorT `msgpack:"error"`
 	}
+
+	Comm_StatsMsg struct {
+		MemTotal uint64 `msgpack:"mem_total"`
+		MemUsed  uint64 `msgpack:"mem_used"`
+		CpuUsage uint8  `msgpack:"cpu_usage"`
+	}
 )
 
 var Comm_Handlers = map[string]func(Comm_Message, string) (any, error){
@@ -206,11 +212,10 @@ func Comm_SendStats(conn *websocket.Conn, id uint32) error {
 	stats := Comm_Message{
 		ID: id,
 		T:  "stat.basic",
-		// TODO: use a struct
-		Data: map[string]any{
-			"memTotal": virtualMem.Total,
-			"memUsed":  virtualMem.Used,
-			"cpuUsage": math.Round(percentages[0]),
+		Data: Comm_StatsMsg{
+			MemTotal: virtualMem.Total,
+			MemUsed:  virtualMem.Used,
+			CpuUsage: uint8(math.Round(percentages[0])),
 		},
 	}
 
