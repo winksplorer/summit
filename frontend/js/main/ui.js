@@ -65,6 +65,9 @@ _.onReady(() => {
     // message dismiss button will close message
     $('messageDismiss').addEventListener('click', () => $('message').style.display = 'none');
 
+    // subscribe to stats
+    _.comm.subscribe('stat.basic', null, _.ui.updateStats);
+
     // config shit
     _.ui.setTheme(_CONFIG.ui?.theme || 'sync');
     _.ui.setSidebarWidth(_CONFIG.ui?.sidebarWidth || 170);

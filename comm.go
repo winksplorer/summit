@@ -39,6 +39,11 @@ var Comm_Handlers = map[string]func(Comm_Message, string) (any, error){
 	"net.getnics":     Comm_NetGetnics,
 }
 
+var Comm_Events = map[string]func(ctx context.Context, conn *websocket.Conn, id uint32){
+	"stat.basic": Comm_StatsTimer,
+	"net.stats":  Comm_NetStats,
+}
+
 // comm websockets. handles /api/comm
 func REST_Comm(w http.ResponseWriter, r *http.Request) {
 	// if not authed, then close connection
@@ -66,9 +71,6 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	// send to frontend
-	go Comm_StatsTimer(ctx, conn)
-
 	// read from frontend
 	for {
 		_, msg, err := conn.ReadMessage()
@@ -82,6 +84,23 @@ func REST_Comm(w http.ResponseWriter, r *http.Request) {
 		var decoded Comm_Message
 		if err := msgpack.Unmarshal(msg, &decoded); err != nil {
 			log.Println("REST_Comm: Could not read data")
+			continue
+		}
+
+		if decoded.T == "subscribe" {
+			request, ok := decoded.Data.(map[string]any)
+			if !ok {
+				continue
+			}
+
+			requested := IT_Must(request, "t", "")
+
+			if handler, ok := Comm_Events[requested]; !ok {
+				log.Println("subscribe error: Unknown type \"" + requested + "\"")
+			} else {
+				go handler(ctx, conn, decoded.ID)
+			}
+
 			continue
 		}
 
@@ -117,6 +136,7 @@ func Comm_Send(data Comm_Message, connection *websocket.Conn) error {
 		return fmt.Errorf("couldn't format with MessagePack: %s", err)
 	}
 
+	// TODO: USE A MUTEX!!!!!!!
 	// send
 	if err := connection.WriteMessage(websocket.BinaryMessage, encodedData); err != nil {
 		return fmt.Errorf("couldn't send to WebSocket: %s", err)
@@ -144,9 +164,9 @@ func Comm_BR(data *Comm_Message, msg string) {
 	Comm_Error(data, http.StatusBadRequest, msg)
 }
 
-func Comm_StatsTimer(ctx context.Context, conn *websocket.Conn) {
+func Comm_StatsTimer(ctx context.Context, conn *websocket.Conn, id uint32) {
 	// 0s
-	if err := Comm_SendStats(conn); err != nil {
+	if err := Comm_SendStats(conn, id); err != nil {
 		log.Println("Comm_StatsTimer: Couldn't send stats:", err)
 		return
 	}
@@ -159,7 +179,7 @@ func Comm_StatsTimer(ctx context.Context, conn *websocket.Conn) {
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			if err := Comm_SendStats(conn); err != nil {
+			if err := Comm_SendStats(conn, id); err != nil {
 				log.Println("Comm_StatsTimer: Couldn't send stats:", err)
 				return
 			}
@@ -167,7 +187,7 @@ func Comm_StatsTimer(ctx context.Context, conn *websocket.Conn) {
 	}
 }
 
-func Comm_SendStats(conn *websocket.Conn) error {
+func Comm_SendStats(conn *websocket.Conn, id uint32) error {
 	percentages, err := cpu.Percent(0, false)
 	if err != nil {
 		return err
@@ -181,7 +201,8 @@ func Comm_SendStats(conn *websocket.Conn) error {
 	usageValue, usageUnit := H_HumanReadableSplit(virtualMem.Used, 1024)
 
 	stats := Comm_Message{
-		T: "stat.basic",
+		ID: id,
+		T:  "stat.basic",
 		Data: map[string]any{
 			"memTotal":     H_HumanReadableBytes(virtualMem.Total, 1024),
 			"memUsage":     math.Round(usageValue),

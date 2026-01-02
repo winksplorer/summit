@@ -1,5 +1,6 @@
 // summit frontend/js/main/helpers.js - helper functions
 
+_.helpers.newElWithID = (tag, classes, id) => Object.assign(document.createElement(tag), { className: classes, id: id});
 _.helpers.newEl = (tag, classes, content) => 
     Object.assign(document.createElement(tag),
         {

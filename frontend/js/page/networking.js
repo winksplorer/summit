@@ -1,5 +1,7 @@
 // summit frontend/js/page/networking.js - handles the networking page
 
+_.page.statsLast = []; // [{name, rx, tx}]
+
 _.onReady(() => {
     // ask for devices
     _.comm.request('net.getnics').then(nics => {
@@ -16,7 +18,8 @@ _.onReady(() => {
             container.append(
                 _.helpers.newEl('h3', '', nic.name),
                 _.helpers.newEl('p', '', _.page.constructInfoString(nic)),
-                list
+                list,
+                _.helpers.newElWithID('p', '', `${nic.name}-stats`)
             );
 
             frag.appendChild(container);
@@ -24,6 +27,18 @@ _.onReady(() => {
 
         document.querySelector('.grid').appendChild(frag);
     });
+    
+    // subscribe to net.stats
+    _.comm.subscribe('net.stats', null, nics => {
+        if (_.page.statsLast.length) {
+            for (const nic of nics) {
+                const old = _.page.statsLast.find(x => x.name === nic.name);
+                $(`${nic.name}-stats`).textContent = `RX: ${nic.rx_bytes - old.rx_bytes} B/s - TX: ${nic.tx_bytes - old.tx_bytes} B/s`
+            }
+        }
+
+        _.page.statsLast = nics;
+    })
 });
 
 _.page.constructInfoString = (nic) => {

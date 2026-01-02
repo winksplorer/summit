@@ -4,6 +4,7 @@
 _.comm.socket = new WebSocket(`wss://${location.host}/api/comm`); // actual websocket connection
 _.comm.pending = {}; // pending requests
 _.comm.socketReady = null; // if the socket is ready for data or not
+_.comm.subscribed = {}; // {id: cb}
 
 // wait for the socket to be open
 _.comm.socketWait = () => {
@@ -26,15 +27,11 @@ _.comm.socket.onmessage = async (event) => {
         delete _.comm.pending[msg.id];
     }
 
-    // handle unsolicited messages
-    switch (msg.t) {
-        case 'auth.status':
-            if (!msg.data.authed) window.location.replace('/');
-            return;
-        case 'stat.basic':
-            _.onReady(() => _.ui.updateStats(msg.data));
-            return;
-    }
+    // handle subscribed
+    if (msg.id && _.comm.subscribed[msg.id]) !msg.error.code && _.comm.subscribed[msg.id](msg.data);
+
+    // logout if srv says we're not welcome
+    if (msg.t === 'auth.status' && !msg.data.authed) window.location.replace('/');
 }
 
 _.comm.socket.onerror = async (err) => {
@@ -62,5 +59,14 @@ _.comm.request = (t, data) => {
             _.comm.pending[id] = { resolve, reject };
             _.comm.socket.send(msgpack.serialize({ id, t, data }));
         });
+    })
+}
+
+_.comm.subscribe = (t, data, cb) => {
+    // wait for socket to be open then send data
+    return _.comm.socketWait().then(() => {
+        const id = Math.floor(Math.random() * 2**32);
+        _.comm.socket.send(msgpack.serialize({ id, t: 'subscribe', data: {t, data} }));
+        _.comm.subscribed[id] = cb;
     })
 }
