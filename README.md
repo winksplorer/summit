@@ -6,25 +6,30 @@
 summit is a portable and self-contained Linux server management web dashboard that fits in 10MB.
 
 > [!IMPORTANT]
-> A lot of features (storage, networking, containers, updates, etc.) are missing currently.
+> A lot of features (containers, system updates, etc.) are missing currently.
 
 ## Features
-- All of summit is distributed as one small file
-- Portability across init systems and libcs (Tested with Debian and Alpine so far)
-- Fast page loads
+
+- Portability (Tested with Debian oldstable, Debian unstable/sid and Alpine Linux so far)
+- Single-file deployment with Go embedding
+- Custom WebSocket + MessagePack API
+- Config system + settings page
 - PAM-based login system
-- xterm.js-based terminal
 - HTTP/2 & HTTPS
+- xterm.js-based terminal
+- Storage page (disk info, part info, SMART)
+- Networking page (NIC info, live traffic graph)
 
 ## Screenshots
 
-<img src="doc/dark-terminal.png" width="750">
+<img src="doc/dark-networking.png" width="750">
 
 <img src="doc/light-settings.png" width="750">
 
 ## Building
 
-All of these commands assume you're running as root. summit will likely build & run on other systems, but I have not tested.
+> [!NOTE]
+> All of these commands assume you're running as root.
 
 The final compiled output is simply `./summit`. By default, summit installs to `/usr/local/bin`. 
 
@@ -53,11 +58,11 @@ apt install golang-go make libpam0g-dev git openssl minify \
 
 ### *.go
 
-The backend server code. It serves the frontend, and provides a simple API using [WebSockets + MessagePack](doc/COMMUNICATION.md). Written in Go.
+The backend server code. It serves the frontend, and provides a simple API using [WebSockets + MessagePack](doc/dev/COMMUNICATION.md). Written in Go.
 
 ### frontend
 
-The frontend web UI code. Written in HTML, vanilla CSS, and vanilla JS.
+The frontend web UI code. Written with HTML, CSS, and vanilla ES2020 JS.
 
 ## TODO
 
