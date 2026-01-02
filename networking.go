@@ -12,7 +12,7 @@ type N_NIC struct {
 	Virtual bool     `msgpack:"virtual"` // is this NIC virtual?
 	Speed   string   `msgpack:"speed"`   // speed, human readable
 	Duplex  string   `msgpack:"duplex"`  // duplex
-	IPs     []string `msgpack:"ip"`      // ip addr(s)
+	IPs     []string `msgpack:"ips"`     // ip addr(s)
 
 }
 

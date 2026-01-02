@@ -67,6 +67,17 @@ main {
     padding-top: 1em;
 }
 
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 1.5em;
+    margin: 0 1em;
+}
+
+.grid > .container {
+    margin:0;
+}
+
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--line); }
 ::-webkit-scrollbar-thumb { background: var(--text); }
@@ -126,6 +137,10 @@ hr {
     width: 1px;
     height: 1.1em;
     background: var(--line);
+}
+
+ul {
+    margin:0;
 }
 
     /* inputs */
@@ -409,7 +424,7 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--text-gray); }
 }
 
 .storage_smart {
-    margin-top: 0;
+    margin-bottom: 1em ;
 }
 
 .storage_parent-dev {
