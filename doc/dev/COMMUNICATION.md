@@ -7,8 +7,8 @@
 
 ### Protocols
 
-- Network protocol: `WebSocket`
-- Message protocol: `MessagePack`
+- Network protocol: WebSocket
+- Message protocol: MessagePack
 
 ### Cases
 
@@ -73,4 +73,56 @@ The frontend (and backend, if it ever requests data from the frontend) will alwa
 
 - Reads system logs.
 - Request: `{"source": "test", "amount": 100, "page": 2}`
-- Response: `[{"time": 1755330209, "source": "test", "msg": "Message"}, {"time": 1755330217, "source": "test", "msg": "Message 2"}]`
+- Response: `[{"time": 1755330209, "source": "test", "msg": "Message"}, ...]`
+
+### `storage.getdevs`
+
+- Lists block devices.
+- Request: `{}`
+- Response:
+```json
+[
+    {
+        "name": "nvme0n1",
+        "controller": "NVMe",
+        "model": "Samsung SSD 980 1TB",
+        "removable": false,
+        "serial": "<serial number>",
+        "size": "932g",
+        "type": "SSD",
+        "vendor": "unknown",
+        "partitions": [
+            {
+                "fsLabel": "unknown",
+                "mountpoint": "/boot/efi",
+                "name": "nvme0n1p1",
+                "ro": false,
+                "size": "1g",
+                "type": "vfat",
+                "uuid": "<fs uuid>"
+            }
+        ],
+        "smart": {
+            "ata_realloc_sectors": 0,
+            "ata_uncorrectable_errs": 0,
+            "available": true,
+            "nvme_avail_spare": 100,
+            "nvme_crit_warning": 0,
+            "nvme_media_errs": 0,
+            "nvme_percent_used": 7,
+            "nvme_unsafe_shutdowns": 91,
+            "power_cycles": 1042,
+            "power_on_hours": 2356,
+            "read": "26m",
+            "temperature": 43,
+            "written": "127.5m"
+        }
+    }, ...
+]
+```
+
+### `net.getnics`
+
+- Lists network interfaces.
+- Request: `{}`
+- Response: `[{"name": "enp5s0", "mac": "<mac addr>", "virtual": false, "speed": "1000Mb/s", "duplex": "full", "ips": ["192.168.1.42/24", "<ipv6 addr>/64"]}, ...]`
