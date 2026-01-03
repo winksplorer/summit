@@ -93,6 +93,10 @@ main {
     margin-top: -1em;
 }
 
+.grid > .container + .container {
+    margin-top:0;
+}
+
 .container > h3 {
     position: absolute;
     top: 0;
@@ -468,6 +472,10 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--text-gray); }
 
     /* misc */
 .spacer { flex: 1; }
+
+.no-bottom-margin {
+    margin-bottom: 0;
+}
 
 .bottom {
     margin-top: auto;
