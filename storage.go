@@ -7,7 +7,7 @@ import (
 	"github.com/jaypipes/ghw"
 )
 
-type S_Disk struct {
+type ST_Disk struct {
 	Name       string `msgpack:"name"`       // name (nvme0n1, loop0, etc.)
 	Size       uint64 `msgpack:"size"`       // size
 	Type       string `msgpack:"type"`       // hdd, fdd, odd, or ssd
@@ -17,13 +17,13 @@ type S_Disk struct {
 	Model      string `msgpack:"model"`      // model string
 	Serial     string `msgpack:"serial"`     // serial number
 
-	Partitions []S_Partition `msgpack:"partitions"` // partitions
-	SMART      S_SMART       `msgpack:"smart"`      // SMART data
+	Partitions []ST_Partition `msgpack:"partitions"` // partitions
+	SMART      ST_SMART       `msgpack:"smart"`      // SMART data
 }
 
-type S_Partition struct {
+type ST_Partition struct {
 	Name       string `msgpack:"name"`       // name (nvme0n1p1, sda1, etc.)
-	FsLabel    string `msgpack:"fs_label"`   // filesystem label
+	FsLabel    string `msgpack:"fST_label"`  // filesystem label
 	Size       uint64 `msgpack:"size"`       // size
 	Type       string `msgpack:"type"`       // filesystem type
 	Mountpoint string `msgpack:"mountpoint"` // mount point
@@ -31,7 +31,7 @@ type S_Partition struct {
 	UUID       string `msgpack:"uuid"`       // part uuid
 }
 
-type S_SMART struct {
+type ST_SMART struct {
 	// generic
 	DataAvailable bool   `msgpack:"available"`      // Is SMART data even available for this disk?
 	Temperature   uint64 `msgpack:"temperature"`    // SMART: Temperature in Celsius
@@ -52,22 +52,22 @@ type S_SMART struct {
 	NvmeMediaErrs       uint64 `msgpack:"nvme_media_errs"`       // SMART/NVMe: Media and Data Integrity Errors
 }
 
-func S_AssembleSMART(diskPath string) (S_SMART, error) {
-	var SMART S_SMART
+func ST_AssembleSMART(diskPath string) (ST_SMART, error) {
+	var SMART ST_SMART
 
 	a := &smart.GenericAttributes{}
 	dev, err := smart.Open(diskPath)
 	if err != nil {
-		return S_SMART{}, err
+		return ST_SMART{}, err
 	}
 
 	// generic attrs
 	if a, err = dev.ReadGenericAttributes(); err != nil {
-		return S_SMART{}, err
+		return ST_SMART{}, err
 	}
 
 	// base struct
-	SMART = S_SMART{
+	SMART = ST_SMART{
 		DataAvailable: true,
 		Temperature:   a.Temperature,
 		Read:          a.Read,
@@ -81,7 +81,7 @@ func S_AssembleSMART(diskPath string) (S_SMART, error) {
 	case *smart.SataDevice: // ATA
 		data, err := sm.ReadSMARTData()
 		if err != nil {
-			return S_SMART{}, err
+			return ST_SMART{}, err
 		}
 
 		for _, attr := range data.Attrs {
@@ -95,7 +95,7 @@ func S_AssembleSMART(diskPath string) (S_SMART, error) {
 	case *smart.NVMeDevice: // NVMe
 		data, err := sm.ReadSMART()
 		if err != nil {
-			return S_SMART{}, err
+			return ST_SMART{}, err
 		}
 
 		SMART.NvmeCritWarning = data.CritWarning
@@ -108,8 +108,8 @@ func S_AssembleSMART(diskPath string) (S_SMART, error) {
 	return SMART, nil
 }
 
-func S_GetDevices() ([]S_Disk, error) {
-	var disks []S_Disk
+func ST_GetDevices() ([]ST_Disk, error) {
+	var disks []ST_Disk
 
 	blocks, err := ghw.Block()
 	if err != nil {
@@ -117,15 +117,15 @@ func S_GetDevices() ([]S_Disk, error) {
 	}
 
 	for _, disk := range blocks.Disks {
-		var parts []S_Partition
+		var parts []ST_Partition
 
-		SMART, err := S_AssembleSMART("/dev/" + disk.Name)
+		SMART, err := ST_AssembleSMART("/dev/" + disk.Name)
 		if err != nil {
-			log.Println("S_AssembleSMART: /dev/"+disk.Name+":", err)
+			log.Println("ST_AssembleSMART: /dev/"+disk.Name+":", err)
 		}
 
 		for _, part := range disk.Partitions {
-			parts = append(parts, S_Partition{
+			parts = append(parts, ST_Partition{
 				Name:       part.Name,
 				FsLabel:    part.FilesystemLabel,
 				Size:       part.SizeBytes,
@@ -136,7 +136,7 @@ func S_GetDevices() ([]S_Disk, error) {
 			})
 		}
 
-		disks = append(disks, S_Disk{
+		disks = append(disks, ST_Disk{
 			Name:       disk.Name,
 			Size:       disk.SizeBytes,
 			Type:       disk.DriveType.String(),
@@ -154,5 +154,5 @@ func S_GetDevices() ([]S_Disk, error) {
 }
 
 func Comm_StorageGetdevs(data Comm_Message, keyCookie string) (any, error) {
-	return S_GetDevices()
+	return ST_GetDevices()
 }

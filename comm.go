@@ -46,6 +46,11 @@ var Comm_Handlers = map[string]func(Comm_Message, string) (any, error){
 	"log.read":        Comm_LogRead,
 	"storage.getdevs": Comm_StorageGetdevs,
 	"net.getnics":     Comm_NetGetnics,
+	"srv.initver":     Comm_SrvInitver,
+	"srv.list":        Comm_SrvList,
+	"srv.start":       Comm_SrvStart,
+	"srv.stop":        Comm_SrvStop,
+	"srv.restart":     Comm_SrvRestart,
 }
 
 var Comm_Events = map[string]func(ctx context.Context, conn *websocket.Conn, id uint32){

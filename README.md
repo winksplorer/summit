@@ -134,8 +134,8 @@ The frontend web UI code. Written with HTML, CSS, and vanilla ES2020 JS.
     - [X] Networking page
 - [ ] Services
     - [ ] Backend
-        - [ ] OpenRC support
-        - [ ] systemd support
+        - [X] OpenRC support
+        - [X] systemd support
         - [ ] other init systems
     - [ ] Services page
 - [ ] Updates
