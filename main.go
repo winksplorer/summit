@@ -92,6 +92,10 @@ func main() {
 		log.Fatalf("HTTP_Init: %s.", err)
 	}
 
+	if err := S_Init(); err != nil {
+		log.Fatalf("S_Init: %s.", err)
+	}
+
 	log.Println("Initialized summit on port", port)
 
 	// start server

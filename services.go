@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"slices"
 	"strings"
@@ -28,11 +29,27 @@ type (
 	}
 )
 
-var (
-	S_SrvMgr     S_ServiceManager
-	S_SrvMgrOnce sync.Once
-	S_SrvMgrErr  error
-)
+var S_SrvMgr S_ServiceManager
+
+func S_Init() error {
+	log.Println("S_Init: Init Storage Manager.")
+
+	initSystem, err := S_DetermineInitSystem()
+	if err != nil {
+		return err
+	}
+
+	switch initSystem {
+	case "systemd":
+		S_SrvMgr = &S_SystemdManager{}
+	case "openrc":
+		S_SrvMgr = &S_OpenRCManager{}
+	default:
+		return fmt.Errorf("unknown init system: %s", initSystem)
+	}
+
+	return nil
+}
 
 func S_DetermineInitSystem() (string, error) {
 	comm, err := os.ReadFile("/proc/1/comm")
@@ -58,113 +75,41 @@ func S_DetermineInitSystem() (string, error) {
 	return "", fmt.Errorf("unable to determine init system: %s", string(comm))
 }
 
-func S_GetServiceManager() (S_ServiceManager, error) {
-	S_SrvMgrOnce.Do(func() {
-		initSystem, err := S_DetermineInitSystem()
-		if err != nil {
-			S_SrvMgrErr = err
-			return
-		}
+func S_CommOp(data Comm_Message, f func(string) error) (any, error) {
+	str, ok := data.Data.(string)
+	if !ok {
+		return nil, fmt.Errorf("data: not a string")
+	}
 
-		switch initSystem {
-		case "systemd":
-			S_SrvMgr = &S_SystemdManager{}
-		case "openrc":
-			S_SrvMgr = &S_OpenRCManager{}
-		default:
-			S_SrvMgrErr = fmt.Errorf("unknown init system: %s", initSystem)
-		}
-	})
-
-	return S_SrvMgr, S_SrvMgrErr
+	return nil, f(str)
 }
 
 func Comm_SrvInitver(data Comm_Message, keyCookie string) (any, error) {
-	mgr, err := S_GetServiceManager()
-	if err != nil {
-		return nil, err
-	}
-
-	return mgr.Version(), nil
+	return S_SrvMgr.Version(), nil
 }
 
 func Comm_SrvList(data Comm_Message, keyCookie string) (any, error) {
-	mgr, err := S_GetServiceManager()
-	if err != nil {
-		return nil, err
-	}
-
-	return mgr.ListServices()
+	return S_SrvMgr.ListServices()
 }
 
 func Comm_SrvStart(data Comm_Message, keyCookie string) (any, error) {
-	mgr, err := S_GetServiceManager()
-	if err != nil {
-		return nil, err
-	}
-
-	service, ok := data.Data.(string)
-	if !ok {
-		return nil, err
-	}
-
-	return nil, mgr.StartService(service)
+	return S_CommOp(data, S_SrvMgr.StartService)
 }
 
 func Comm_SrvStop(data Comm_Message, keyCookie string) (any, error) {
-	mgr, err := S_GetServiceManager()
-	if err != nil {
-		return nil, err
-	}
-
-	service, ok := data.Data.(string)
-	if !ok {
-		return nil, err
-	}
-
-	return nil, mgr.StopService(service)
+	return S_CommOp(data, S_SrvMgr.StopService)
 }
 
 func Comm_SrvRestart(data Comm_Message, keyCookie string) (any, error) {
-	mgr, err := S_GetServiceManager()
-	if err != nil {
-		return nil, err
-	}
-
-	service, ok := data.Data.(string)
-	if !ok {
-		return nil, err
-	}
-
-	return nil, mgr.RestartService(service)
+	return S_CommOp(data, S_SrvMgr.RestartService)
 }
 
 func Comm_SrvEnable(data Comm_Message, keyCookie string) (any, error) {
-	mgr, err := S_GetServiceManager()
-	if err != nil {
-		return nil, err
-	}
-
-	service, ok := data.Data.(string)
-	if !ok {
-		return nil, err
-	}
-
-	return nil, mgr.EnableService(service)
+	return S_CommOp(data, S_SrvMgr.EnableService)
 }
 
 func Comm_SrvDisable(data Comm_Message, keyCookie string) (any, error) {
-	mgr, err := S_GetServiceManager()
-	if err != nil {
-		return nil, err
-	}
-
-	service, ok := data.Data.(string)
-	if !ok {
-		return nil, err
-	}
-
-	return nil, mgr.DisableService(service)
+	return S_CommOp(data, S_SrvMgr.DisableService)
 }
 
 // *** openrc
@@ -180,12 +125,13 @@ func (mgr *S_OpenRCManager) Version() string {
 }
 
 func (mgr *S_OpenRCManager) ListServices() ([]S_Service, error) {
-	// get the actual name list
+	// list of service names
 	srvListRaw, err := H_Execute(false, "rc-service", "-l")
 	if err != nil {
 		return nil, err
 	}
 
+	// list of enabled services (and other bs we dont care about)
 	enabledRaw, err := H_Execute(false, "rc-update", "show", "default")
 	if err != nil {
 		return nil, err
@@ -193,6 +139,7 @@ func (mgr *S_OpenRCManager) ListServices() ([]S_Service, error) {
 
 	srvList := strings.Split(strings.TrimSpace(srvListRaw), "\n")
 
+	// just get the names of enabled services
 	var enabledList []string
 	for _, line := range strings.Split(strings.TrimSpace(enabledRaw), "\n") {
 		enabledList = append(enabledList, strings.Fields(line)[0])
@@ -229,6 +176,7 @@ func (mgr *S_OpenRCManager) ListServices() ([]S_Service, error) {
 func (mgr *S_OpenRCManager) ServiceStatusAndDescription(name string, enabledList []string, srvChannel chan S_Service, errChannel chan error, wg *sync.WaitGroup) {
 	defer wg.Done()
 
+	// get data
 	info, err := H_Execute(false, "rc-service", name, "status", "describe")
 	if err != nil && !strings.Contains(err.Error(), "exit status 3") {
 		select {
@@ -238,8 +186,8 @@ func (mgr *S_OpenRCManager) ServiceStatusAndDescription(name string, enabledList
 		return
 	}
 
+	// create S_Service
 	infoLines := strings.Split(strings.TrimSpace(info), "\n")
-
 	srvChannel <- S_Service{
 		Name:        name,
 		Description: infoLines[1][3:],
@@ -286,11 +234,13 @@ func (mgr *S_SystemdManager) Version() string {
 }
 
 func (mgr *S_SystemdManager) ListServices() ([]S_Service, error) {
+	// list of service names, descs, and status
 	srvListRaw, err := H_Execute(false, "systemctl", "list-units", "--type=service", "--all", "--no-pager", "--no-legend")
 	if err != nil {
 		return nil, err
 	}
 
+	// list of enabled services (and other bs we dont care about)
 	enabledRaw, err := H_Execute(false, "systemctl", "list-unit-files", "--type=service", "--all", "--no-pager", "--no-legend", "--state=enabled")
 	if err != nil {
 		return nil, err
@@ -298,6 +248,7 @@ func (mgr *S_SystemdManager) ListServices() ([]S_Service, error) {
 
 	srvList := strings.Split(strings.TrimSpace(srvListRaw), "\n")
 
+	// just get the names of enabled services
 	var enabledList []string
 	for _, line := range strings.Split(strings.TrimSpace(enabledRaw), "\n") {
 		enabledList = append(enabledList, strings.Fields(line)[0])
@@ -305,12 +256,13 @@ func (mgr *S_SystemdManager) ListServices() ([]S_Service, error) {
 
 	var services []S_Service
 	for _, srv := range srvList {
+		// skip the unicode dot that shows up sometimes. TODO: handle this correctly, as the dot means we cant actually do anything
 		if srv[:3] == "\u25cf" {
 			srv = srv[3:]
 		}
 
+		// create S_Service
 		fields := strings.Fields(srv)
-
 		services = append(services, S_Service{
 			Name:        fields[0],
 			Description: strings.Join(fields[4:], " "),

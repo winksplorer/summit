@@ -137,7 +137,7 @@ The frontend web UI code. Written with HTML, CSS, and vanilla ES2020 JS.
         - [X] OpenRC support
         - [X] systemd support
         - [ ] other init systems
-    - [ ] Services page
+    - [X] Services page
 - [ ] Updates
     - [ ] Backend
         - [ ] apt support
