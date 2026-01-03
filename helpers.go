@@ -59,8 +59,8 @@ func H_RandomBase64(length int) (string, error) {
 	return base64.RawURLEncoding.EncodeToString(randomBytes)[:length], nil
 }
 
-// executes a command and prints output if failed. returns complete output.
-func H_Execute(args ...string) (string, error) {
+// executes a command and returns the complete output. on failure, prints out either first or last line, depending on lastLine
+func H_Execute(lastLine bool, args ...string) (string, error) {
 	if len(args) == 0 {
 		return "", fmt.Errorf("no command")
 	}
@@ -72,10 +72,14 @@ func H_Execute(args ...string) (string, error) {
 	if err != nil {
 		lines := strings.Split(strings.TrimSpace(strout), "\n")
 		if len(lines) > 0 {
-			lastLine := lines[len(lines)-1]
-			return strout, fmt.Errorf("%v: command execution failed: %v - last line: %v", strings.Join(args, " "), err, lastLine)
+			line := lines[0]
+			if lastLine {
+				line = lines[len(lines)-1]
+			}
+
+			return strout, fmt.Errorf("%s: command execution failed: %s: %s", strings.Join(args, " "), err, line)
 		}
-		return strout, fmt.Errorf("command execution failed: %v", err)
+		return strout, fmt.Errorf("command execution failed: %s", err)
 	}
 
 	return strout, nil

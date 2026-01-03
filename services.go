@@ -140,7 +140,7 @@ func Comm_SrvRestart(data Comm_Message, keyCookie string) (any, error) {
 type S_OpenRCManager struct{}
 
 func (mgr *S_OpenRCManager) Version() string {
-	v, err := H_Execute("openrc", "-V")
+	v, err := H_Execute(false, "openrc", "-V")
 	if err != nil {
 		return "unknown"
 	}
@@ -149,7 +149,7 @@ func (mgr *S_OpenRCManager) Version() string {
 }
 
 func (mgr *S_OpenRCManager) ListServices() ([]S_Service, error) {
-	list, err := H_Execute("rc-service", "-l")
+	list, err := H_Execute(false, "rc-service", "-l")
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +158,7 @@ func (mgr *S_OpenRCManager) ListServices() ([]S_Service, error) {
 	var services []S_Service
 
 	for _, srv := range srvList {
-		info, err := H_Execute("rc-service", srv, "status", "describe")
+		info, err := H_Execute(false, "rc-service", srv, "status", "describe")
 		if err != nil {
 			return nil, err
 		}
@@ -176,17 +176,17 @@ func (mgr *S_OpenRCManager) ListServices() ([]S_Service, error) {
 }
 
 func (mgr *S_OpenRCManager) StartService(name string) error {
-	_, err := H_Execute("rc-service", name, "start")
+	_, err := H_Execute(false, "rc-service", name, "start")
 	return err
 }
 
 func (mgr *S_OpenRCManager) StopService(name string) error {
-	_, err := H_Execute("rc-service", name, "stop")
+	_, err := H_Execute(false, "rc-service", name, "stop")
 	return err
 }
 
 func (mgr *S_OpenRCManager) RestartService(name string) error {
-	_, err := H_Execute("rc-service", name, "restart")
+	_, err := H_Execute(false, "rc-service", name, "restart")
 	return err
 }
 
@@ -194,7 +194,7 @@ func (mgr *S_OpenRCManager) RestartService(name string) error {
 type S_SystemdManager struct{}
 
 func (mgr *S_SystemdManager) Version() string {
-	v, err := H_Execute("systemctl", "--version")
+	v, err := H_Execute(false, "systemctl", "--version")
 	if err != nil {
 		return "unknown"
 	}
@@ -203,7 +203,7 @@ func (mgr *S_SystemdManager) Version() string {
 }
 
 func (mgr *S_SystemdManager) ListServices() ([]S_Service, error) {
-	list, err := H_Execute("systemctl", "list-units", "--type=service", "--all", "--no-pager", "--no-legend")
+	list, err := H_Execute(false, "systemctl", "list-units", "--type=service", "--all", "--no-pager", "--no-legend")
 	if err != nil {
 		return nil, err
 	}
@@ -229,16 +229,16 @@ func (mgr *S_SystemdManager) ListServices() ([]S_Service, error) {
 }
 
 func (mgr *S_SystemdManager) StartService(name string) error {
-	_, err := H_Execute("systemctl", "start", name)
+	_, err := H_Execute(false, "systemctl", "start", name)
 	return err
 }
 
 func (mgr *S_SystemdManager) StopService(name string) error {
-	_, err := H_Execute("systemctl", "stop", name)
+	_, err := H_Execute(false, "systemctl", "stop", name)
 	return err
 }
 
 func (mgr *S_SystemdManager) RestartService(name string) error {
-	_, err := H_Execute("systemctl", "restart", name)
+	_, err := H_Execute(false, "systemctl", "restart", name)
 	return err
 }

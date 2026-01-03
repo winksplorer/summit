@@ -16,6 +16,7 @@ func TLS_Init() error {
 
 		// create cert
 		if _, err := H_Execute(
+			true,
 			"openssl",
 			"req",
 			"-x509",
