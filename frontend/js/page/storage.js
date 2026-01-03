@@ -1,4 +1,4 @@
-// summit frontend/js/page/logging.js - handles the storage page
+// summit frontend/js/page/storage.js - handles the storage page
 
 _.onReady(() => {
     // ask for devices

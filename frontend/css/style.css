@@ -357,7 +357,7 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--text-gray); }
     align-items: center;
 }
 
-#message > h3 { color: var(--msg-error-color); }
+#message > h3 { color: var(--msg-error-color); white-space: nowrap; }
 #message > button { margin-left: auto; margin-right: 1em; font-size: 0.8em; }
 #message > * { margin: 0.25em 0.5em; }
 
@@ -430,7 +430,7 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--text-gray); }
 }
 
 .storage_smart {
-    margin-bottom: 1em ;
+    margin-bottom: 1em;
 }
 
 .storage_parent-dev {
@@ -445,6 +445,17 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--text-gray); }
     min-width: 0.05em;
     height: 100%;
     background: var(--line);
+}
+
+/* services */
+.services_stopped {
+    color: var(--msg-error-color);
+    transition: color 0.1s ease-in-out;
+}
+
+.services_actions {
+    display: flex;
+    gap: 0.25em;
 }
 
 

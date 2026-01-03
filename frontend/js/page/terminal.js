@@ -1,4 +1,4 @@
-// summit frontend/js/term.js - handles terminal
+// summit frontend/js/page/terminal.js - handles terminal
 
 // the basic terminal "theme" that guarantees contrast and matching backgrounds/text with ui
 _.page.baseTerminalTheme = {
