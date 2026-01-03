@@ -7,50 +7,52 @@ import (
 	"github.com/jaypipes/ghw"
 )
 
-type ST_Disk struct {
-	Name       string `msgpack:"name"`       // name (nvme0n1, loop0, etc.)
-	Size       uint64 `msgpack:"size"`       // size
-	Type       string `msgpack:"type"`       // hdd, fdd, odd, or ssd
-	Controller string `msgpack:"controller"` // scsi, ide, virtio, mmc, or nvme
-	Removable  bool   `msgpack:"removable"`  // removable?
-	Vendor     string `msgpack:"vendor"`     // vendor string
-	Model      string `msgpack:"model"`      // model string
-	Serial     string `msgpack:"serial"`     // serial number
+type (
+	ST_Disk struct {
+		Name       string `msgpack:"name"`       // name (nvme0n1, loop0, etc.)
+		Size       uint64 `msgpack:"size"`       // size
+		Type       string `msgpack:"type"`       // hdd, fdd, odd, or ssd
+		Controller string `msgpack:"controller"` // scsi, ide, virtio, mmc, or nvme
+		Removable  bool   `msgpack:"removable"`  // removable?
+		Vendor     string `msgpack:"vendor"`     // vendor string
+		Model      string `msgpack:"model"`      // model string
+		Serial     string `msgpack:"serial"`     // serial number
 
-	Partitions []ST_Partition `msgpack:"partitions"` // partitions
-	SMART      ST_SMART       `msgpack:"smart"`      // SMART data
-}
+		Partitions []ST_Partition `msgpack:"partitions"` // partitions
+		SMART      ST_SMART       `msgpack:"smart"`      // SMART data
+	}
 
-type ST_Partition struct {
-	Name       string `msgpack:"name"`       // name (nvme0n1p1, sda1, etc.)
-	FsLabel    string `msgpack:"fST_label"`  // filesystem label
-	Size       uint64 `msgpack:"size"`       // size
-	Type       string `msgpack:"type"`       // filesystem type
-	Mountpoint string `msgpack:"mountpoint"` // mount point
-	Readonly   bool   `msgpack:"ro"`         // readonly?
-	UUID       string `msgpack:"uuid"`       // part uuid
-}
+	ST_Partition struct {
+		Name       string `msgpack:"name"`       // name (nvme0n1p1, sda1, etc.)
+		FsLabel    string `msgpack:"fs_label"`   // filesystem label
+		Size       uint64 `msgpack:"size"`       // size
+		Type       string `msgpack:"type"`       // filesystem type
+		Mountpoint string `msgpack:"mountpoint"` // mount point
+		Readonly   bool   `msgpack:"ro"`         // readonly?
+		UUID       string `msgpack:"uuid"`       // part uuid
+	}
 
-type ST_SMART struct {
-	// generic
-	DataAvailable bool   `msgpack:"available"`      // Is SMART data even available for this disk?
-	Temperature   uint64 `msgpack:"temperature"`    // SMART: Temperature in Celsius
-	Read          uint64 `msgpack:"read"`           // SMART: Data units (LBA) read
-	Written       uint64 `msgpack:"written"`        // SMART: Data units (LBA) written
-	PowerOnHours  uint64 `msgpack:"power_on_hours"` // SMART: Power on time in hours
-	PowerCycles   uint64 `msgpack:"power_cycles"`   // SMART: Power cycles
+	ST_SMART struct {
+		// generic
+		DataAvailable bool   `msgpack:"available"`      // Is SMART data even available for this disk?
+		Temperature   uint64 `msgpack:"temperature"`    // SMART: Temperature in Celsius
+		Read          uint64 `msgpack:"read"`           // SMART: Data units (LBA) read
+		Written       uint64 `msgpack:"written"`        // SMART: Data units (LBA) written
+		PowerOnHours  uint64 `msgpack:"power_on_hours"` // SMART: Power on time in hours
+		PowerCycles   uint64 `msgpack:"power_cycles"`   // SMART: Power cycles
 
-	// ata
-	AtaReallocSectors    uint64 `msgpack:"ata_realloc_sectors"`    // SMART/ATA: Reallocated_Sector_Ct
-	AtaUncorrectableErrs uint64 `msgpack:"ata_uncorrectable_errs"` // SMART/ATA: Uncorrectable_Error_Cnt
+		// ata
+		AtaReallocSectors    uint64 `msgpack:"ata_realloc_sectors"`    // SMART/ATA: Reallocated_Sector_Ct
+		AtaUncorrectableErrs uint64 `msgpack:"ata_uncorrectable_errs"` // SMART/ATA: Uncorrectable_Error_Cnt
 
-	// nvme
-	NvmeCritWarning     uint8  `msgpack:"nvme_crit_warning"`     // SMART/NVMe: Critical Warning
-	NvmeAvailSpare      uint8  `msgpack:"nvme_avail_spare"`      // SMART/NVMe: Available Spare
-	NvmePercentUsed     uint8  `msgpack:"nvme_percent_used"`     // SMART/NVMe: Percentage Used
-	NvmeUnsafeShutdowns uint64 `msgpack:"nvme_unsafe_shutdowns"` // SMART/NVMe: Unexpected Power Losses
-	NvmeMediaErrs       uint64 `msgpack:"nvme_media_errs"`       // SMART/NVMe: Media and Data Integrity Errors
-}
+		// nvme
+		NvmeCritWarning     uint8  `msgpack:"nvme_crit_warning"`     // SMART/NVMe: Critical Warning
+		NvmeAvailSpare      uint8  `msgpack:"nvme_avail_spare"`      // SMART/NVMe: Available Spare
+		NvmePercentUsed     uint8  `msgpack:"nvme_percent_used"`     // SMART/NVMe: Percentage Used
+		NvmeUnsafeShutdowns uint64 `msgpack:"nvme_unsafe_shutdowns"` // SMART/NVMe: Unexpected Power Losses
+		NvmeMediaErrs       uint64 `msgpack:"nvme_media_errs"`       // SMART/NVMe: Media and Data Integrity Errors
+	}
+)
 
 func ST_AssembleSMART(diskPath string) (ST_SMART, error) {
 	var SMART ST_SMART

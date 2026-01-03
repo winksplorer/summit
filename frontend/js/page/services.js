@@ -8,6 +8,8 @@ _.onReady(() => {
     _.comm.request('srv.list').then(srvs => {
         const frag = document.createDocumentFragment();
 
+        srvs.sort((a, b) => a.name.localeCompare(b.name));
+
         for (const srv of srvs) {
             const inputPair = _.helpers.newEl('div', 'input-pair', '');
             const actions = _.helpers.newElWithID('div', 'services_actions', `${srv.name}_actions`);

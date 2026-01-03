@@ -155,24 +155,51 @@ func (mgr *S_OpenRCManager) ListServices() ([]S_Service, error) {
 	}
 
 	srvList := strings.Split(strings.TrimSpace(list), "\n")
+
 	var services []S_Service
+	srvChannel := make(chan S_Service, len(srvList))
+	errChannel := make(chan error, 1)
+	var wg sync.WaitGroup
 
 	for _, srv := range srvList {
-		info, err := H_Execute(false, "rc-service", srv, "status", "describe")
-		if err != nil {
-			return nil, err
-		}
+		wg.Add(1)
+		go mgr.ServiceStatusAndDescription(srv, srvChannel, errChannel, &wg)
+	}
 
-		infoLines := strings.Split(strings.TrimSpace(info), "\n")
+	wg.Wait()
+	close(srvChannel)
+	close(errChannel)
 
-		services = append(services, S_Service{
-			Name:        srv,
-			Description: infoLines[1][3:],
-			Running:     strings.Fields(infoLines[0])[2] == "started",
-		})
+	if err := <-errChannel; err != nil {
+		return nil, err
+	}
+
+	for service := range srvChannel {
+		services = append(services, service)
 	}
 
 	return services, nil
+}
+
+func (mgr *S_OpenRCManager) ServiceStatusAndDescription(name string, srvChannel chan S_Service, errChannel chan error, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	info, err := H_Execute(false, "rc-service", name, "status", "describe")
+	if err != nil && !strings.Contains(err.Error(), "exit status 3") {
+		select {
+		case errChannel <- err:
+		default:
+		}
+		return
+	}
+
+	infoLines := strings.Split(strings.TrimSpace(info), "\n")
+
+	srvChannel <- S_Service{
+		Name:        name,
+		Description: infoLines[1][3:],
+		Running:     strings.Fields(infoLines[0])[2] == "started",
+	}
 }
 
 func (mgr *S_OpenRCManager) StartService(name string) error {
