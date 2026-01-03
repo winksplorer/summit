@@ -1,6 +1,7 @@
 // summit frontend/js/main/helpers.js - helper functions
 
 _.helpers.newButton = (text, disabled, cb) => Object.assign(document.createElement('button'), { textContent: text, onclick: cb, disabled: disabled || false });
+_.helpers.newCheckbox = (checked, cb) => Object.assign(document.createElement('input'), { type: 'checkbox', onchange: cb, checked: checked });
 _.helpers.newElWithID = (tag, classes, id) => Object.assign(document.createElement(tag), { className: classes, id: id});
 _.helpers.newEl = (tag, classes, content, id) => 
     Object.assign(document.createElement(tag),

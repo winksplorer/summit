@@ -51,6 +51,8 @@ var Comm_Handlers = map[string]func(Comm_Message, string) (any, error){
 	"srv.start":       Comm_SrvStart,
 	"srv.stop":        Comm_SrvStop,
 	"srv.restart":     Comm_SrvRestart,
+	"srv.enable":      Comm_SrvEnable,
+	"srv.disable":     Comm_SrvDisable,
 }
 
 var Comm_Events = map[string]func(ctx context.Context, conn *websocket.Conn, id uint32){

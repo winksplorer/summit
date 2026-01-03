@@ -25,11 +25,15 @@ _.onReady(() => {
 
                 _.helpers.newButton('restart', !srv.running, () =>
                     _.comm.request('srv.restart', srv.name).then(_.page.updateService(srv.name, true, true)).catch(e => _.ui.dispatchMsg("couldn't restart service", e))
+                ),
+
+                _.helpers.newCheckbox(srv.enabled, v =>
+                    _.comm.request(v.target.checked ? 'srv.enable' : 'srv.disable', srv.name).catch(e => _.ui.dispatchMsg(`couldn't ${v.target.checked ? 'enable' : 'disable'} service`, e))
                 )
             )
 
             inputPair.append(
-                _.helpers.newEl('span', srv.running ? '' : 'services_stopped', `${srv.name}: ${srv.description}`, `${srv.name}_name`),
+                _.helpers.newEl('span', srv.running ? '' : 'services_stopped', `${srv.name.replace('.service', '')}: ${srv.description}`, `${srv.name}_name`),
                 actions,
             );
 

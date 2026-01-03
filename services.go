@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 	"sync"
 )
@@ -22,6 +23,8 @@ type (
 		StartService(name string) error
 		StopService(name string) error
 		RestartService(name string) error
+		EnableService(name string) error
+		DisableService(name string) error
 	}
 )
 
@@ -136,6 +139,34 @@ func Comm_SrvRestart(data Comm_Message, keyCookie string) (any, error) {
 	return nil, mgr.RestartService(service)
 }
 
+func Comm_SrvEnable(data Comm_Message, keyCookie string) (any, error) {
+	mgr, err := S_GetServiceManager()
+	if err != nil {
+		return nil, err
+	}
+
+	service, ok := data.Data.(string)
+	if !ok {
+		return nil, err
+	}
+
+	return nil, mgr.EnableService(service)
+}
+
+func Comm_SrvDisable(data Comm_Message, keyCookie string) (any, error) {
+	mgr, err := S_GetServiceManager()
+	if err != nil {
+		return nil, err
+	}
+
+	service, ok := data.Data.(string)
+	if !ok {
+		return nil, err
+	}
+
+	return nil, mgr.DisableService(service)
+}
+
 // *** openrc
 type S_OpenRCManager struct{}
 
@@ -149,13 +180,25 @@ func (mgr *S_OpenRCManager) Version() string {
 }
 
 func (mgr *S_OpenRCManager) ListServices() ([]S_Service, error) {
-	list, err := H_Execute(false, "rc-service", "-l")
+	// get the actual name list
+	srvListRaw, err := H_Execute(false, "rc-service", "-l")
 	if err != nil {
 		return nil, err
 	}
 
-	srvList := strings.Split(strings.TrimSpace(list), "\n")
+	enabledRaw, err := H_Execute(false, "rc-update", "show", "default")
+	if err != nil {
+		return nil, err
+	}
 
+	srvList := strings.Split(strings.TrimSpace(srvListRaw), "\n")
+
+	var enabledList []string
+	for _, line := range strings.Split(strings.TrimSpace(enabledRaw), "\n") {
+		enabledList = append(enabledList, strings.Fields(line)[0])
+	}
+
+	// get description and status for each, parallel
 	var services []S_Service
 	srvChannel := make(chan S_Service, len(srvList))
 	errChannel := make(chan error, 1)
@@ -163,17 +206,19 @@ func (mgr *S_OpenRCManager) ListServices() ([]S_Service, error) {
 
 	for _, srv := range srvList {
 		wg.Add(1)
-		go mgr.ServiceStatusAndDescription(srv, srvChannel, errChannel, &wg)
+		go mgr.ServiceStatusAndDescription(srv, enabledList, srvChannel, errChannel, &wg)
 	}
 
 	wg.Wait()
 	close(srvChannel)
 	close(errChannel)
 
+	// error present? return it
 	if err := <-errChannel; err != nil {
 		return nil, err
 	}
 
+	// add all the services
 	for service := range srvChannel {
 		services = append(services, service)
 	}
@@ -181,7 +226,7 @@ func (mgr *S_OpenRCManager) ListServices() ([]S_Service, error) {
 	return services, nil
 }
 
-func (mgr *S_OpenRCManager) ServiceStatusAndDescription(name string, srvChannel chan S_Service, errChannel chan error, wg *sync.WaitGroup) {
+func (mgr *S_OpenRCManager) ServiceStatusAndDescription(name string, enabledList []string, srvChannel chan S_Service, errChannel chan error, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	info, err := H_Execute(false, "rc-service", name, "status", "describe")
@@ -199,6 +244,7 @@ func (mgr *S_OpenRCManager) ServiceStatusAndDescription(name string, srvChannel 
 		Name:        name,
 		Description: infoLines[1][3:],
 		Running:     strings.Fields(infoLines[0])[2] == "started",
+		Enabled:     slices.Contains(enabledList, name),
 	}
 }
 
@@ -217,6 +263,16 @@ func (mgr *S_OpenRCManager) RestartService(name string) error {
 	return err
 }
 
+func (mgr *S_OpenRCManager) EnableService(name string) error {
+	_, err := H_Execute(false, "rc-update", "add", name, "default")
+	return err
+}
+
+func (mgr *S_OpenRCManager) DisableService(name string) error {
+	_, err := H_Execute(false, "rc-update", "del", name, "default")
+	return err
+}
+
 // *** systemd
 type S_SystemdManager struct{}
 
@@ -230,14 +286,24 @@ func (mgr *S_SystemdManager) Version() string {
 }
 
 func (mgr *S_SystemdManager) ListServices() ([]S_Service, error) {
-	list, err := H_Execute(false, "systemctl", "list-units", "--type=service", "--all", "--no-pager", "--no-legend")
+	srvListRaw, err := H_Execute(false, "systemctl", "list-units", "--type=service", "--all", "--no-pager", "--no-legend")
 	if err != nil {
 		return nil, err
 	}
 
-	srvList := strings.Split(strings.TrimSpace(list), "\n")
-	var services []S_Service
+	enabledRaw, err := H_Execute(false, "systemctl", "list-unit-files", "--type=service", "--all", "--no-pager", "--no-legend", "--state=enabled")
+	if err != nil {
+		return nil, err
+	}
 
+	srvList := strings.Split(strings.TrimSpace(srvListRaw), "\n")
+
+	var enabledList []string
+	for _, line := range strings.Split(strings.TrimSpace(enabledRaw), "\n") {
+		enabledList = append(enabledList, strings.Fields(line)[0])
+	}
+
+	var services []S_Service
 	for _, srv := range srvList {
 		if srv[:3] == "\u25cf" {
 			srv = srv[3:]
@@ -249,6 +315,7 @@ func (mgr *S_SystemdManager) ListServices() ([]S_Service, error) {
 			Name:        fields[0],
 			Description: strings.Join(fields[4:], " "),
 			Running:     fields[3] == "running",
+			Enabled:     slices.Contains(enabledList, fields[0]),
 		})
 	}
 
@@ -267,5 +334,15 @@ func (mgr *S_SystemdManager) StopService(name string) error {
 
 func (mgr *S_SystemdManager) RestartService(name string) error {
 	_, err := H_Execute(false, "systemctl", "restart", name)
+	return err
+}
+
+func (mgr *S_SystemdManager) EnableService(name string) error {
+	_, err := H_Execute(false, "systemctl", "enable", name)
+	return err
+}
+
+func (mgr *S_SystemdManager) DisableService(name string) error {
+	_, err := H_Execute(false, "systemctl", "disable", name)
 	return err
 }
