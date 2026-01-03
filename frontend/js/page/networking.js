@@ -17,7 +17,11 @@ _.onReady(() => {
             // put it all together
             container.append(
                 _.helpers.newEl('h3', '', nic.name),
-                _.helpers.newEl('p', '', _.page.constructInfoString(nic)),
+                _.helpers.newEl(
+                    'p',
+                    '',
+                    (`${nic.speed} ${nic.duplex} duplex ${nic.virtual ? 'virtual' : ''} NIC`) + (nic.mac ? `\nMAC address: ${nic.mac}` : '') + (nic.ips ? '\nIP addresses:' : '')
+                ),
                 list,
                 _.helpers.newElWithID('p', '', `${nic.name}-stats`)
             );
@@ -28,12 +32,6 @@ _.onReady(() => {
         $('networking_nics').appendChild(frag);
     });
 
-    // canvas logic
-    const canvas = $('networking_traffic');
-    _.helpers.resizeCanvas(canvas);
-    const ro = new ResizeObserver(() => _.helpers.resizeCanvas(canvas));
-    ro.observe(canvas);
-
     // graph
     let rxSeries = new TimeSeries();
     let txSeries = new TimeSeries();
@@ -43,6 +41,7 @@ _.onReady(() => {
         tooltip: true,
         fps: 30,
         minValue: 0,
+        responsive: true,
         labels: { fillStyle: _.ui.isDarkTheme() ? '#fff' : '#000', fontSize: 15, fontFamily: 'Archivo Narrow' }
     });
 
@@ -69,11 +68,3 @@ _.onReady(() => {
         _.page.statsLast = nics;
     })
 });
-
-_.page.constructInfoString = (nic) => {
-    const line1 = `${nic.speed} ${nic.duplex} duplex ${nic.virtual ? 'virtual' : ''} NIC`;
-    const line2 = nic.mac ? `\nMAC address: ${nic.mac}` : '';
-    const line3 = nic.ips ? '\nIP addresses:' : '';
-
-    return line1+line2+line3
-}
