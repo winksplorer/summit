@@ -7,8 +7,7 @@
 {{end}}
 
 {{define "main"}}
-<main class="nopadding">
-
+<main>
     <header>
         <label for="source">log source</label>
         <select id="source">
@@ -34,7 +33,7 @@
         <button onclick="_.page.updatePageCounter(true)">next</button>
     </header>
 
-    <section id="events-container">
+    <section id="logging_events-container">
         <section class="container logging_event_list">
             <h3>2025-10-02</h3>
             <div><span class="time">19:01:06</span> <span class="msg">abcdefghijklmnopqrstuvwxyzabcdefg</span> <span class="source">test</span></div>

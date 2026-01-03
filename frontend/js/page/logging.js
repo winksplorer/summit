@@ -5,7 +5,7 @@ _.page.page = 0;
 // events are in format of {"2025-10-24": [{"time": 1761364590, "source": "test", "msg": "message"}]}
 _.page.displayEvents = (events) => {
     if (!events) throw new Error('no events to display')
-    const container = $('events-container')
+    const container = $('logging_events-container')
     container.replaceChildren();
 
     // iterate through days

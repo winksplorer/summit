@@ -64,7 +64,6 @@ main {
     display: flex;
     flex-direction: column;
     gap: 1.5em;
-    padding-top: 1em;
 }
 
 .grid {
@@ -87,7 +86,11 @@ main {
     border: 0.05em solid var(--line);
     padding: 1em;
     position: relative;
-    margin: 0 1em;
+    margin: 1em;
+}
+
+.container + .container {
+    margin-top: -1em;
 }
 
 .container > h3 {
@@ -376,10 +379,14 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--text-gray); }
 #logging_no-entries > * { margin: 0; }
 
 /* event container */
-#events-container, .logging_event_list {
+#logging_events-container, .logging_event_list {
     display: flex;
     flex-direction: column;
-    gap: 1.5em;
+    gap: 1em;
+}
+
+#logging_events-container {
+    margin-top: -1.5em;
 }
 
 .logging_event_list {
@@ -460,8 +467,6 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--text-gray); }
 
 
     /* misc */
-
-.nopadding { padding: 0; }
 .spacer { flex: 1; }
 
 .bottom {

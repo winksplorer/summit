@@ -31,7 +31,8 @@ _.onReady(() => {
                 actions,
             );
 
-            frag.append(inputPair, _.helpers.newEl('hr', '', ''));
+            frag.appendChild(inputPair);
+            srvs[srvs.length-1].name !== srv.name && frag.appendChild(_.helpers.newEl('hr', '', ''))
         }
 
         $('services_srvs').appendChild(frag);
