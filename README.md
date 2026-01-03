@@ -16,9 +16,11 @@ summit is a portable and self-contained Linux server management web dashboard th
 - Config system + settings page
 - PAM-based login system
 - HTTP/2 & HTTPS
+- Live stats 
 - xterm.js-based terminal
 - Storage page (disk info, part info, SMART)
 - Networking page (NIC info, live traffic graph)
+- Services page (start/stop/restart, enable/disable, systemd/openrc)
 
 ## Screenshots
 

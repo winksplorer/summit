@@ -26,11 +26,12 @@ The frontend can either:
 
 As previously stated, MessagePack is the data protocol.
 
-A message is made up of 3 parts:
+A message is made up of 4 parts:
 
 - A `t` (type) value must be in every message. It's used to say what the purpose of the message is.
 - `id` is a random uint32 that must be repeated in all response messages.
-- `data` represents any attached data in a message. When an error occurs, this part is replaced with `error`.
+- `data` represents any attached data in a message.
+- `error` represents any error. On successes, this is just a blank struct. On failures, this is filled out.
 
 ## Example cases
 

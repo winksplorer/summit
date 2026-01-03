@@ -32,7 +32,7 @@ type (
 var S_SrvMgr S_ServiceManager
 
 func S_Init() error {
-	log.Println("S_Init: Init Storage Manager.")
+	log.Println("S_Init: Init Service Manager.")
 
 	initSystem, err := S_DetermineInitSystem()
 	if err != nil {
