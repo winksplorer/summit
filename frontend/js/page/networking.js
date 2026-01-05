@@ -20,7 +20,7 @@ _.onReady(() => {
                 _.helpers.newEl(
                     'p',
                     '',
-                    (`${nic.speed} ${nic.duplex} duplex ${nic.virtual ? 'virtual' : ''} NIC`) + (nic.mac ? `\nMAC address: ${nic.mac}` : '') + (nic.ips ? '\nIP addresses:' : '')
+                    (`${nic.speed === -1 ? '' : `${nic.speed}Mb/s`} ${nic.duplex} duplex ${nic.virtual ? 'virtual' : ''} NIC`) + (nic.mac ? `\nMAC address: ${nic.mac}` : '') + (nic.ips ? '\nIP addresses:' : '')
                 ),
                 list,
                 _.helpers.newElWithID('p', '', `${nic.name}-stats`)

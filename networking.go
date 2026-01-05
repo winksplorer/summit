@@ -18,7 +18,7 @@ type N_NIC struct {
 	Name    string   `msgpack:"name"`    // name (enp3s0, lo, etc.)
 	MAC     string   `msgpack:"mac"`     // MAC address
 	Virtual bool     `msgpack:"virtual"` // is this NIC virtual?
-	Speed   string   `msgpack:"speed"`   // speed, human readable
+	Speed   int      `msgpack:"speed"`   // speed
 	Duplex  string   `msgpack:"duplex"`  // duplex
 	IPs     []string `msgpack:"ips"`     // ip addr(s)
 }
@@ -54,12 +54,17 @@ func N_GetNics() ([]N_NIC, error) {
 			ips = append(ips, v.String())
 		}
 
+		speed, err := strconv.Atoi(nic.Speed)
+		if err != nil {
+			return nil, err
+		}
+
 		// assemble
 		nics = append(nics, N_NIC{
 			Name:    nic.Name,
 			MAC:     nic.MACAddress,
 			Virtual: nic.IsVirtual,
-			Speed:   nic.Speed + "Mb/s",
+			Speed:   speed,
 			Duplex:  nic.Duplex,
 			IPs:     ips,
 		})
