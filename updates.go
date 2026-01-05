@@ -15,8 +15,13 @@ type (
 		NewVer     string `msgpack:"new_ver"`     // the version that the package will upgrade to
 	}
 
+	U_PkgMgrVersion struct {
+		VersionStr     string `msgpack:"version_str"`      // version string
+		UpdateIndexCmd string `msgpack:"update_index_cmd"` // command to update index
+	}
+
 	U_PackageManager interface {
-		Version() string
+		Version() U_PkgMgrVersion
 		ListUpgradable() ([]U_UpgradablePackage, error)
 		UpdateIndex() error
 	}
@@ -73,13 +78,19 @@ func Comm_UpdatesUpdateindex(data Comm_Message, keyCookie string) (any, error) {
 // *** apk (alpine)
 type U_ApkManager struct{}
 
-func (mgr *U_ApkManager) Version() string {
-	v, err := H_Execute(false, "apk", "--version")
-	if err != nil {
-		return "unknown"
+func (mgr *U_ApkManager) Version() U_PkgMgrVersion {
+	res := U_PkgMgrVersion{
+		UpdateIndexCmd: "apk update",
+		VersionStr:     "unknown",
 	}
 
-	return v
+	v, err := H_Execute(false, "apk", "--version")
+	if err != nil {
+		return res
+	}
+
+	res.VersionStr = v
+	return res
 }
 
 func (mgr *U_ApkManager) ListUpgradable() ([]U_UpgradablePackage, error) {
@@ -115,13 +126,19 @@ func (mgr *U_ApkManager) UpdateIndex() error {
 // *** apt (debian-based distros)
 type U_AptManager struct{}
 
-func (mgr *U_AptManager) Version() string {
-	v, err := H_Execute(false, "apt", "--version")
-	if err != nil {
-		return "unknown"
+func (mgr *U_AptManager) Version() U_PkgMgrVersion {
+	res := U_PkgMgrVersion{
+		UpdateIndexCmd: "apt update",
+		VersionStr:     "unknown",
 	}
 
-	return v
+	v, err := H_Execute(false, "apt", "--version")
+	if err != nil {
+		return res
+	}
+
+	res.VersionStr = v
+	return res
 }
 
 func (mgr *U_AptManager) ListUpgradable() ([]U_UpgradablePackage, error) {
@@ -139,8 +156,10 @@ func (mgr *U_AptManager) ListUpgradable() ([]U_UpgradablePackage, error) {
 
 		fields := strings.Fields(v)
 
+		splitName := strings.Split(fields[0], "/")
+
 		pkgs = append(pkgs, U_UpgradablePackage{
-			Name:       strings.Split(fields[0], "/")[0],
+			Name:       splitName[0] + ":" + fields[2] + "/" + splitName[1],
 			CurrentVer: fields[5][:len(fields[5])-1],
 			NewVer:     fields[1],
 		})

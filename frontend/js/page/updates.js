@@ -3,7 +3,8 @@
 _.onReady(() => {
     // container title = package manager version
      _.comm.request('updates.pkgmgr').then(ver => {
-        $('updates_header').textContent = ver
+        $('updates_header').textContent = ver.version_str;
+        $('updates_update-index-cmd').textContent = ver.update_index_cmd;
     });
 
     // update indexes
@@ -22,7 +23,7 @@ _.onReady(() => {
             for (const pkg of pkgs) {
                 const inputPair = _.helpers.newEl('div', 'input-pair', '');
                 inputPair.append(
-                    _.helpers.newEl('span', '', `${pkg.name}: ${pkg.current_ver} -> ${pkg.new_ver}`),
+                    _.helpers.newEl('span', '', `${pkg.name} - ${pkg.current_ver} \u2192 ${pkg.new_ver}`),
                     _.helpers.newButton('upgrade', false, null)
                 );
 
