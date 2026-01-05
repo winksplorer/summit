@@ -42,17 +42,20 @@ type (
 )
 
 var Comm_Handlers = map[string]func(Comm_Message, string) (any, error){
-	"config.set":      Comm_ConfigSet,
-	"log.read":        Comm_LogRead,
-	"storage.getdevs": Comm_StorageGetdevs,
-	"net.getnics":     Comm_NetGetnics,
-	"srv.initver":     Comm_SrvInitver,
-	"srv.list":        Comm_SrvList,
-	"srv.start":       Comm_SrvStart,
-	"srv.stop":        Comm_SrvStop,
-	"srv.restart":     Comm_SrvRestart,
-	"srv.enable":      Comm_SrvEnable,
-	"srv.disable":     Comm_SrvDisable,
+	"config.set":          Comm_ConfigSet,
+	"log.read":            Comm_LogRead,
+	"storage.getdevs":     Comm_StorageGetdevs,
+	"net.getnics":         Comm_NetGetnics,
+	"srv.initver":         Comm_SrvInitver,
+	"srv.list":            Comm_SrvList,
+	"srv.start":           Comm_SrvStart,
+	"srv.stop":            Comm_SrvStop,
+	"srv.restart":         Comm_SrvRestart,
+	"srv.enable":          Comm_SrvEnable,
+	"srv.disable":         Comm_SrvDisable,
+	"updates.pkgmgr":      Comm_UpdatesPkgmgr,
+	"updates.list":        Comm_UpdatesList,
+	"updates.updateindex": Comm_UpdatesUpdateindex,
 }
 
 var Comm_Events = map[string]func(ctx context.Context, conn *websocket.Conn, id uint32){
