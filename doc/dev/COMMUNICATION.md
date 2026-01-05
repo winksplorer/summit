@@ -144,3 +144,45 @@ The frontend (and backend, if it ever requests data from the frontend) will alwa
 - Lists network interfaces.
 - Request: `{}`
 - Response: `[{"name": "enp5s0", "mac": "<mac addr>", "virtual": false, "speed": "1000Mb/s", "duplex": "full", "ips": ["192.168.1.42/24", "<ipv6 addr>/64"]}]`
+
+### `srv.initver`
+
+- Returns the init system version.
+- Request: `{}`
+- Response: `"systemd 259 (259-1)"`
+
+### `srv.list`
+
+- Lists all services.
+- Request: `{}`
+- Response: `[{"name": "alsa-restore.service", "description": "Save/Restore Sound Card State", "running": false, "enabled": false}]`
+
+### `srv.start`
+
+- Starts a service.
+- Request: `"ssh.service"`
+- Response: `{}`
+
+### `srv.stop`
+
+- Stops a service.
+- Request: `"ssh.service"`
+- Response: `{}`
+
+### `srv.restart`
+
+- Restarts a service.
+- Request: `"ssh.service"`
+- Response: `{}`
+
+### `srv.enable`
+
+- Enables a service.
+- Request: `"ssh.service"`
+- Response: `{}`
+
+### `srv.disable`
+
+- Disables a service.
+- Request: `"ssh.service"`
+- Response: `{}`
