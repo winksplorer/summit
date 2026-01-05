@@ -1,0 +1,20 @@
+{{define "updates"}}
+    {{template "base" .}}
+{{end}}
+
+{{define "head"}}
+<script src="js/page/updates.js" defer></script>
+{{end}}
+
+{{define "main"}}
+<main>
+    <section class="container" id="updates_pkgs">
+        <h3 id="updates_header"></h3>
+    </section>
+
+    <div class="center-message" id="updates_updating-index">
+        <h1>updating package index</h1>
+        <p>running <code id="updates_update-index-cmd">apt update</code></p>
+    </div>
+</main>
+{{end}}

@@ -156,6 +156,17 @@ ul {
     margin:0;
 }
 
+.center-message {
+    align-self: center;
+    margin-top: 30vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.center-message > * { margin: 0; }
+
     /* inputs */
 
 /* buttons, dropdowns, and text inputs */
@@ -369,18 +380,6 @@ input[type="range"]::-moz-range-thumb:hover { background: var(--text-gray); }
 #message > * { margin: 0.25em 0.5em; }
 
     /* page specific shit */
-
-/* the "no entries" message on the logging page */
-#logging_no-entries {
-    align-self: center;
-    margin-top: 30vh;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#logging_no-entries > * { margin: 0; }
 
 /* event container */
 #logging_events-container, .logging_event_list {
