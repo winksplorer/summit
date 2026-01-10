@@ -11,8 +11,8 @@ _.onReady(() => {
         srvs.sort((a, b) => a.name.localeCompare(b.name));
 
         for (const srv of srvs) {
-            const inputPair = _.helpers.newEl('div', 'input-pair', '');
-            const actions = _.helpers.newElWithID('div', 'services_actions', `${srv.name}_actions`);
+            const inputPair = _.helpers.newEl('div', null, 'input-pair');
+            const actions = _.helpers.newEl('div', null, 'services_actions', `${srv.name}_actions`);
 
             actions.append(
                 _.helpers.newButton('start', srv.running, () =>
@@ -33,12 +33,12 @@ _.onReady(() => {
             )
 
             inputPair.append(
-                _.helpers.newEl('span', srv.running ? '' : 'services_stopped', `${srv.name.replace('.service', '')}: ${srv.description}`, `${srv.name}_name`),
+                _.helpers.newEl('span', `${srv.name.replace('.service', '')}: ${srv.description}`, !srv.running && 'services_stopped', `${srv.name}_name`),
                 actions,
             );
 
             frag.appendChild(inputPair);
-            srvs[srvs.length-1].name !== srv.name && frag.appendChild(_.helpers.newEl('hr', '', ''))
+            srvs[srvs.length-1].name !== srv.name && frag.appendChild(_.helpers.newEl('hr'))
         }
 
         $('services_srvs').appendChild(frag);

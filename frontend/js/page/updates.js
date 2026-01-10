@@ -17,18 +17,18 @@ _.onReady(() => {
 
             frag.append(
                 _.helpers.newButton('upgrade all', !pkgs.length, null),
-                _.helpers.newEl('hr', '', '')
+                _.helpers.newEl('hr')
             );
 
             for (const pkg of pkgs) {
-                const inputPair = _.helpers.newEl('div', 'input-pair', '');
+                const inputPair = _.helpers.newEl('div', null, 'input-pair');
                 inputPair.append(
-                    _.helpers.newEl('span', '', `${pkg.name} - ${pkg.current_ver} \u2192 ${pkg.new_ver}`),
+                    _.helpers.newEl('span', `${pkg.name} - ${pkg.current_ver} \u2192 ${pkg.new_ver}`),
                     _.helpers.newButton('upgrade', false, null)
                 );
 
                 frag.appendChild(inputPair);
-                pkgs[pkgs.length-1].name !== pkg.name && frag.appendChild(_.helpers.newEl('hr', '', ''));
+                pkgs[pkgs.length-1].name !== pkg.name && frag.appendChild(_.helpers.newEl('hr'));
             }
 
             $('updates_pkgs').appendChild(frag);

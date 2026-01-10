@@ -7,15 +7,15 @@ _.onReady(() => {
 
         // go through each one
         for (const dev of devs) {
-            const container = _.helpers.newEl('section', 'container storage_dev-container', '');
+            const container = _.helpers.newEl('section', null, 'container storage_dev-container');
 
             // parent section
-            const parent = _.helpers.newEl('div', 'storage_parent-dev', '');
-            parent.appendChild(_.helpers.newEl('p', dev.smart.available ? 'storage_before-smart' : '', _.page.constructParentString(dev)));
+            const parent = _.helpers.newEl('div', null, 'storage_parent-dev');
+            parent.appendChild(_.helpers.newEl('p', _.page.constructParentString(dev), dev.smart.available && 'storage_before-smart'));
             dev.smart.available && parent.appendChild(_.page.getSmartList(dev));
 
             // partition section
-            const parts = _.helpers.newEl('table', '', '');
+            const parts = _.helpers.newEl('table');
             const header = parts.insertRow(0);
 
             for (const h of ['name', 'label', 'size', 'type', 'mountpoint', 'readonly?', 'uuid'])
@@ -31,9 +31,9 @@ _.onReady(() => {
 
             // put it all together
             container.append(
-                _.helpers.newEl('h3', '', dev.name),
+                _.helpers.newEl('h3', dev.name),
                 parent,
-                _.helpers.newEl('div', 'storage_container-divider', ''),
+                _.helpers.newEl('div', null, 'storage_container-divider'),
                 parts
             );
 
@@ -56,7 +56,7 @@ _.page.constructParentString = (dev) => {
 }
 
 _.page.getSmartList = (dev) => {
-    const list = _.helpers.newEl('ul', 'storage_smart', '');
+    const list = _.helpers.newEl('ul', null, 'storage_smart');
 
     for (const v of [
             `temperature: ${dev.smart.temperature}°C`,
@@ -64,7 +64,7 @@ _.page.getSmartList = (dev) => {
             `blocks written: ${dev.smart.written}`,
             `power on hours: ${dev.smart.power_on_hours}`,
             `power cycles: ${dev.smart.power_cycles}`
-        ]) list.appendChild(_.helpers.newEl('li', '', v));
+        ]) list.appendChild(_.helpers.newEl('li', v));
     
     if (dev.controller === 'NVMe') {
         for (const v of [
@@ -73,12 +73,12 @@ _.page.getSmartList = (dev) => {
             `percent used: ${dev.smart.nvme_percent_used}%`,
             `unsafe shutdowns: ${dev.smart.nvme_unsafe_shutdowns}`,
             `media and data integrity errors: ${dev.smart.nvme_media_errs}`
-        ]) list.appendChild(_.helpers.newEl('li', '', v));
+        ]) list.appendChild(_.helpers.newEl('li', v));
     } else if (['IDE', 'SCSI'].includes(dev.controller)) {
         for (const v of [
             `reallocated sectors: ${dev.smart.ata_realloc_sectors}`,
             `uncorrectable errors: ${dev.smart.ata_uncorrectable_errs}`,
-        ]) list.appendChild(_.helpers.newEl('li', '', v));
+        ]) list.appendChild(_.helpers.newEl('li', v));
     }
 
     return list

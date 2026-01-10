@@ -9,21 +9,22 @@ _.onReady(() => {
 
         // go through each one
         for (const nic of nics) {
-            const container = _.helpers.newEl('section', 'container', '');
-            const list = _.helpers.newEl('ul', 'storage_smart', '');
+            const container = _.helpers.newEl('section', null, 'container');
+            const list = _.helpers.newEl('ul', null, 'storage_smart');
 
-            for (const ip of nic.ips || []) list.appendChild(_.helpers.newEl('li', '', ip));
+            for (const ip of nic.ips || []) list.appendChild(_.helpers.newEl('li', ip));
 
             // put it all together
             container.append(
-                _.helpers.newEl('h3', '', nic.name),
+                _.helpers.newEl('h3', nic.name),
                 _.helpers.newEl(
                     'p',
-                    '',
-                    (`${nic.speed === -1 ? '' : `${nic.speed}Mb/s`} ${nic.duplex} duplex ${nic.virtual ? 'virtual' : ''} NIC`) + (nic.mac ? `\nMAC address: ${nic.mac}` : '') + (nic.ips ? '\nIP addresses:' : '')
+                    (`${nic.speed === -1 ? '' : `${nic.speed}Mb/s`} ${nic.duplex} duplex ${nic.virtual ? 'virtual' : ''} NIC`)
+                    + (nic.mac ? `\nMAC address: ${nic.mac}` : '')
+                    + (nic.ips ? '\nIP addresses:' : '')
                 ),
                 list,
-                _.helpers.newElWithID('p', '', `${nic.name}-stats`)
+                _.helpers.newEl('p', null, null, `${nic.name}-stats`)
             );
 
             frag.appendChild(container);

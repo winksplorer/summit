@@ -1,20 +1,21 @@
 // summit frontend/js/main/helpers.js - helper functions
 
-_.helpers.newButton = (text, disabled, cb) => Object.assign(document.createElement('button'), { textContent: text, onclick: cb, disabled: disabled || false });
-_.helpers.newCheckbox = (checked, cb) => Object.assign(document.createElement('input'), { type: 'checkbox', onchange: cb, checked: checked });
-_.helpers.newElWithID = (tag, classes, id) => Object.assign(document.createElement(tag), { className: classes, id: id});
-_.helpers.newEl = (tag, classes, content, id) => 
+_.helpers.newEl = (tag, content, classes, id, extra) => 
     Object.assign(document.createElement(tag),
         {
-            className: classes,
+            className: classes || '',
             id: id || '',
-            innerHTML: content
+            innerHTML: content && content
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
-                .replace(/\n/g, "<br>")
-        }
+                .replace(/\n/g, "<br>") || null,
+        },
+        extra || {}
     );
+
+_.helpers.newButton = (text, disabled, cb) => _.helpers.newEl('button', text, null, null, { disabled, onclick: cb });
+_.helpers.newCheckbox = (checked, cb) => _.helpers.newEl('input', null, null, null, { type: 'checkbox', onchange: cb, checked });
 
 _.helpers.getCSSVar = (varName) => getComputedStyle(document.documentElement).getPropertyValue(`--${varName}`).trim();
 _.helpers.shortenText = (str, head = 14, tail = 4) => (str.length <= head + tail + 1) ? str : `${str.slice(0, head)}...${str.slice(-tail)}`;

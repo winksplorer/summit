@@ -10,17 +10,17 @@ _.page.displayEvents = (events) => {
 
     // iterate through days
     for (const [day, list] of Object.entries(events).sort(([a], [b]) => b.localeCompare(a))) {
-        const dayContainer = _.helpers.newEl('section', 'container logging_event_list', '');
-        dayContainer.appendChild(_.helpers.newEl('h3', '', day))
+        const dayContainer = _.helpers.newEl('section', null, 'container logging_event_list');
+        dayContainer.appendChild(_.helpers.newEl('h3', day))
 
         // iterate through events
         const frag = document.createDocumentFragment();
         for (const {time, msg, source} of list) {
-            const div = _.helpers.newEl('div', '', '');
+            const div = _.helpers.newEl('div');
             div.append(
-                _.helpers.newEl('span', 'time', new Date(time*1000).toLocaleTimeString(_CONFIG.ui?.timeFormat || 'en-uk', _.timeOptions)),
-                _.helpers.newEl('span', 'msg', msg),
-                _.helpers.newEl('span', 'source', source)
+                _.helpers.newEl('span', new Date(time*1000).toLocaleTimeString(_CONFIG.ui?.timeFormat || 'en-uk', _.timeOptions), 'time'),
+                _.helpers.newEl('span', msg, 'msg'),
+                _.helpers.newEl('span', source, 'source')
             )
 
             frag.appendChild(div);
