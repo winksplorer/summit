@@ -13,14 +13,14 @@ _.onReady(() => {
 
         _.comm.request('updates.list').then(pkgs => {
             const frag = document.createDocumentFragment();
-            pkgs.sort((a, b) => a.name.localeCompare(b.name));
+            pkgs && pkgs.sort((a, b) => a.name.localeCompare(b.name));
 
             frag.append(
-                _.helpers.newButton('upgrade all', !pkgs.length, null),
+                _.helpers.newButton('upgrade all', pkgs ? !pkgs.length : true, null),
                 _.helpers.newEl('hr')
             );
 
-            for (const pkg of pkgs) {
+            for (const pkg of pkgs || []) {
                 const inputPair = _.helpers.newEl('div', null, 'input-pair');
                 inputPair.append(
                     _.helpers.newEl('span', `${pkg.name} - ${pkg.current_ver} \u2192 ${pkg.new_ver}`),

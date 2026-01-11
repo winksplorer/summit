@@ -3,14 +3,14 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/prescott2m/summit)
 ![x64 glibc compiled size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/prescott2m/6afa57f72db1f0883a5a9782a9718ffe/raw/x64_glibc_size.json)
 
-summit is a portable and self-contained Linux server management web dashboard that fits in 10MB.
+summit is a single-binary Linux server management web dashboard focused on compatibility and size.
 
 > [!IMPORTANT]
 > A lot of features (containers, system updates, etc.) are missing currently.
 
 ## Features
 
-- Portability (Tested with Debian oldstable, Debian unstable/sid and Alpine Linux so far)
+- Portability across distros (Tested with Debian oldstable, Debian unstable/sid and Alpine Linux so far)
 - Single-file deployment with Go embedding
 - Custom WebSocket + MessagePack API
 - Config system + settings page
