@@ -21,6 +21,7 @@ type (
 	}
 
 	U_PackageManager interface {
+		IsStub() bool
 		Version() U_PkgMgrVersion
 		ListUpgradable() ([]U_UpgradablePackage, error)
 		UpdateIndex() error
@@ -32,10 +33,7 @@ var U_PkgMgr U_PackageManager
 func U_Init() error {
 	log.Println("U_Init: Init software update manager.")
 
-	pkgMgr, err := U_DeterminePackageManager()
-	if err != nil {
-		return err
-	}
+	pkgMgr := U_DeterminePackageManager()
 
 	switch pkgMgr {
 	case "apk":
@@ -43,24 +41,25 @@ func U_Init() error {
 	case "apt":
 		U_PkgMgr = &U_AptManager{}
 	default:
-		return fmt.Errorf("unknown init system: %s", pkgMgr)
+		log.Println("U_Init: Unknown package manager, using stub.")
+		U_PkgMgr = &U_StubManager{}
 	}
 
 	return nil
 }
 
-func U_DeterminePackageManager() (string, error) {
+func U_DeterminePackageManager() string {
 	// apk
 	if _, err := os.Stat("/etc/apk"); err == nil {
-		return "apk", nil
+		return "apk"
 	}
 
 	// apt
 	if _, err := os.Stat("/etc/apt"); err == nil {
-		return "apt", nil
+		return "apt"
 	}
 
-	return "", fmt.Errorf("unable to determine package manager")
+	return ""
 }
 
 func Comm_UpdatesPkgmgr(data Comm_Message, keyCookie string) (any, error) {
@@ -75,8 +74,31 @@ func Comm_UpdatesUpdateindex(data Comm_Message, keyCookie string) (any, error) {
 	return nil, U_PkgMgr.UpdateIndex()
 }
 
+// *** stub
+type U_StubManager struct{}
+
+func (mgr *U_StubManager) IsStub() bool {
+	return true
+}
+
+func (mgr *U_StubManager) Version() U_PkgMgrVersion {
+	return U_PkgMgrVersion{VersionStr: "stub"}
+}
+
+func (mgr *U_StubManager) ListUpgradable() ([]U_UpgradablePackage, error) {
+	return []U_UpgradablePackage{}, fmt.Errorf("using stub manager")
+}
+
+func (mgr *U_StubManager) UpdateIndex() error {
+	return fmt.Errorf("using stub manager")
+}
+
 // *** apk (alpine)
 type U_ApkManager struct{}
+
+func (mgr *U_ApkManager) IsStub() bool {
+	return false
+}
 
 func (mgr *U_ApkManager) Version() U_PkgMgrVersion {
 	res := U_PkgMgrVersion{
@@ -85,11 +107,10 @@ func (mgr *U_ApkManager) Version() U_PkgMgrVersion {
 	}
 
 	v, err := H_Execute(false, "apk", "--version")
-	if err != nil {
-		return res
+	if err == nil {
+		res.VersionStr = v
 	}
 
-	res.VersionStr = v
 	return res
 }
 
@@ -126,6 +147,10 @@ func (mgr *U_ApkManager) UpdateIndex() error {
 // *** apt (debian-based distros)
 type U_AptManager struct{}
 
+func (mgr *U_AptManager) IsStub() bool {
+	return false
+}
+
 func (mgr *U_AptManager) Version() U_PkgMgrVersion {
 	res := U_PkgMgrVersion{
 		UpdateIndexCmd: "apt update",
@@ -133,11 +158,10 @@ func (mgr *U_AptManager) Version() U_PkgMgrVersion {
 	}
 
 	v, err := H_Execute(false, "apt", "--version")
-	if err != nil {
-		return res
+	if err == nil {
+		res.VersionStr = v
 	}
 
-	res.VersionStr = v
 	return res
 }
 

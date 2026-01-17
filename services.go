@@ -19,6 +19,7 @@ type (
 	}
 
 	S_ServiceManager interface {
+		IsStub() bool
 		Version() string
 		ListServices() ([]S_Service, error)
 		StartService(name string) error
@@ -34,10 +35,7 @@ var S_SrvMgr S_ServiceManager
 func S_Init() error {
 	log.Println("S_Init: Init service manager.")
 
-	initSystem, err := S_DetermineInitSystem()
-	if err != nil {
-		return err
-	}
+	initSystem := S_DetermineInitSystem()
 
 	switch initSystem {
 	case "systemd":
@@ -45,34 +43,35 @@ func S_Init() error {
 	case "openrc":
 		S_SrvMgr = &S_OpenRCManager{}
 	default:
-		return fmt.Errorf("unknown init system: %s", initSystem)
+		log.Println("U_Init: Unknown init system, using stub.")
+		S_SrvMgr = &S_StubManager{}
 	}
 
 	return nil
 }
 
-func S_DetermineInitSystem() (string, error) {
+func S_DetermineInitSystem() string {
 	comm, err := os.ReadFile("/proc/1/comm")
 	if err != nil {
-		return "", err
+		return ""
 	}
 
 	// check command name
 	switch strings.TrimSpace(string(comm)) {
 	case "systemd":
-		return "systemd", nil
+		return "systemd"
 	case "openrc-init":
-		return "openrc", nil
+		return "openrc"
 	case "runit":
-		return "runit", nil
+		return "runit"
 	}
 
 	// not sure? check for /run/openrc
 	if _, err = os.Stat("/run/openrc"); err == nil {
-		return "openrc", nil
+		return "openrc"
 	}
 
-	return "", fmt.Errorf("unable to determine init system: %s", string(comm))
+	return ""
 }
 
 func S_CommOp(data Comm_Message, f func(string) error) (any, error) {
@@ -112,8 +111,47 @@ func Comm_SrvDisable(data Comm_Message, keyCookie string) (any, error) {
 	return S_CommOp(data, S_SrvMgr.DisableService)
 }
 
+// *** stub
+type S_StubManager struct{}
+
+func (mgr *S_StubManager) IsStub() bool {
+	return true
+}
+
+func (mgr *S_StubManager) Version() string {
+	return "stub"
+}
+
+func (mgr *S_StubManager) ListServices() ([]S_Service, error) {
+	return []S_Service{}, fmt.Errorf("using stub manager")
+}
+
+func (mgr *S_StubManager) StartService(name string) error {
+	return fmt.Errorf("using stub manager")
+}
+
+func (mgr *S_StubManager) StopService(name string) error {
+	return fmt.Errorf("using stub manager")
+}
+
+func (mgr *S_StubManager) RestartService(name string) error {
+	return fmt.Errorf("using stub manager")
+}
+
+func (mgr *S_StubManager) EnableService(name string) error {
+	return fmt.Errorf("using stub manager")
+}
+
+func (mgr *S_StubManager) DisableService(name string) error {
+	return fmt.Errorf("using stub manager")
+}
+
 // *** openrc
 type S_OpenRCManager struct{}
+
+func (mgr *S_OpenRCManager) IsStub() bool {
+	return false
+}
 
 func (mgr *S_OpenRCManager) Version() string {
 	v, err := H_Execute(false, "openrc", "-V")
@@ -223,6 +261,10 @@ func (mgr *S_OpenRCManager) DisableService(name string) error {
 
 // *** systemd
 type S_SystemdManager struct{}
+
+func (mgr *S_SystemdManager) IsStub() bool {
+	return false
+}
 
 func (mgr *S_SystemdManager) Version() string {
 	v, err := H_Execute(false, "systemctl", "--version")

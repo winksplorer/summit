@@ -4,10 +4,12 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/user"
+	"slices"
 	"strconv"
 	"sync"
 	"time"
@@ -104,9 +106,13 @@ func REST_Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = json.Unmarshal(config, &configData)
-		if err != nil {
+		if err := json.Unmarshal(config, &configData); err != nil {
 			H_ISE(w, "REST_Login: Couldn't parse config file", err)
+			return
+		}
+
+		if err := A_ChangeAvailablePages(configData); err != nil {
+			H_ISE(w, "REST_Login: Couldn't update available pages", err)
 			return
 		}
 
@@ -252,4 +258,20 @@ func A_Authenticated(w http.ResponseWriter, r *http.Request) bool {
 		return false
 	}
 	return true
+}
+
+func A_ChangeAvailablePages(configData map[string]any) error {
+	raw, err := IT_RawValue(configData, "ui.pages")
+	if err != nil {
+		return err
+	}
+
+	val, ok := raw.([]any)
+	if !ok {
+		return fmt.Errorf("ui.pages isn't a list")
+	}
+
+	return IT_Set(configData, "ui.pages", slices.DeleteFunc(val, func(e any) bool {
+		return (e == "services" && S_SrvMgr.IsStub()) || (e == "updates" && U_PkgMgr.IsStub())
+	}))
 }
